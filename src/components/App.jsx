@@ -1,34 +1,32 @@
 // @ts-check
 
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import cn from 'classnames';
-import { addChannel, addMessage, addChannelId } from '../reducers';
+import * as actions from '../reducers';
 
+const Channels = () => {
+  const channels = useSelector(state => state.toolkit.channels);
+  const currentChannelId = useSelector(state => state.toolkit.currentChannelId);
+  const dispatch = useDispatch();
 
-const mapStateToProps = (state) => {
-  const { channels, messages, currentChannelId } = state;
-  const props = { channels, messages, currentChannelId };
-  return props;
-};
-
-const actionCreators = {
-    addChannel, addMessage, addChannelId 
-};
-
-const Channels = ({ channels, currentChannelId }) => {
   const btnClass = (id) => {
     return cn('nav-link btn-block mb-2 text-left btn', {
-    'btn-primary': currentChannelId === id,
-    'btn-light': currentChannelId !== id,
-  })
-};
+      'btn-primary': currentChannelId === id,
+      'btn-light': currentChannelId !== id,
+    })
+  };
+
+  const switchChannelHandler = (id) => useCallback(() => {
+    dispatch(actions.addChannelId(id));
+  }, [currentChannelId]);
+
   const addChannelHandler = () => {
     console.log('Need make handler');
   };
 
   const channelsButtoms = channels.map(({ id, name }) => <li className="nav-item" key={id}>
-        <button type="button" className={btnClass(id)} onClick={addChannelHandler}>{name}</button>
+        <button type="button" className={btnClass(id)} onClick={switchChannelHandler(id)}>{name}</button>
     </li>);
 
   return (
@@ -44,7 +42,9 @@ const Channels = ({ channels, currentChannelId }) => {
   );
 };
 
-const Messages = ({ messages }) => {
+const Messages = () => {
+  const messages = useSelector(state => state.toolkit.messages);
+
   const handleUpdateChatText = () => {
     console.log('Need chat text handler');
   };
@@ -77,14 +77,13 @@ const Messages = ({ messages }) => {
   )
 };
 
-const ChatBox = (store) => {
-  const { channels, messages, currentChannelId } = store.gon;
+const ChatBox = () => {
   return (
     <div className="row h-100 pb-3">
-      <Channels channels={channels} currentChannelId={currentChannelId} />
-      <Messages messages= {messages} />
+      <Channels />
+      <Messages />
     </div>
   );
 };
 
-export default connect(mapStateToProps, actionCreators)(ChatBox);
+export default ChatBox;
