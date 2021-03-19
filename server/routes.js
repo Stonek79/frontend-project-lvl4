@@ -31,7 +31,7 @@ const buildState = (defaultState) => {
 
 export default (app, io, defaultState = {}) => {
   const state = buildState(defaultState);
-
+console.log(state, 'server');
   app
     .get('/', (_req, reply) => {
       reply.view('index.pug', { gon: state });

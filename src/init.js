@@ -1,39 +1,53 @@
-import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import ChatBox from './components/App.jsx';
-import chatReducers from './reducers';
+import { io } from "socket.io-client";
 
+import App from './components/App.jsx';
+import rootReducer, { addChannel, removeChannel, renameChannel, addMessage } from './reducers';
 
 export default (gon) => {
-    const { channels, messages, currentChannelId } = gon;
+  
+  const middleware = getDefaultMiddleware({
+    immutableCheck: false,
+    serializableCheck: false,
+    thunk: true,
+  });
 
-    const middleware = getDefaultMiddleware({
-      immutableCheck: false,
-      serializableCheck: false,
-      thunk: true,
-    });
+  const preloadedState = {
+    chat: gon,
+  };
 
-    const roorReducer = combineReducers({
-      toolkit: chatReducers,
-    });
+  const store = configureStore({
+    reducer: rootReducer,
+    middleware,
+    devTools: process.env.NODE_ENV !== 'production',
+    preloadedState,
+  });
+  
+  const socket = io();
 
-    const preloadedState = {
-      toolkit: {channels, messages, currentChannelId},
-    };
+  socket.on('newChannel', ({ data }) => {
+    store.dispatch(addChannel(data.attributes));
+  });
 
-    const store = configureStore({
-      reducer: roorReducer,
-      middleware,
-      devTools: process.env.NODE_ENV !== 'production',
-      preloadedState,
-    });
+  socket.on('removeChannel', ({ data: { id } }) => {
+    store.dispatch(removeChannel({ channelId: id }));
+  });
 
-    render(
-      <Provider store={store}>
-        <ChatBox />
-        </Provider>,
-      document.getElementById('chat'),
-    );
+  socket.on('renameChannel', ({ data: { id, attributes } }) => {
+    store.dispatch(renameChannel({ id, attributes }));
+  });
+
+  socket.on('newMessage', ({ data }) => {
+    store.dispatch(addMessage(data.attributes));
+  });
+
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('chat'),
+  );
 };
