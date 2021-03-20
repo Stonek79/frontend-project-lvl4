@@ -3,12 +3,20 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { io } from "socket.io-client";
-
+import Cookies from 'js-cookie';
 import App from './components/App.jsx';
 import rootReducer, { addChannel, removeChannel, renameChannel, addMessage } from './reducers';
+const faker = require('faker');
+
+if (!Cookies.get('username')) {
+  Cookies.set('username', faker.name.findName());
+}
+
+const user = Cookies.get('username');
+export const UserNameContext = React.createContext(user);
 
 export default (gon) => {
-  
+
   const middleware = getDefaultMiddleware({
     immutableCheck: false,
     serializableCheck: false,
@@ -32,8 +40,8 @@ export default (gon) => {
     store.dispatch(addChannel(data.attributes));
   });
 
-  socket.on('removeChannel', ({ data: { id } }) => {
-    store.dispatch(removeChannel({ channelId: id }));
+  socket.on('removeChannel', ({ data }) => {
+    store.dispatch(removeChannel(data.id));
   });
 
   socket.on('renameChannel', ({ data: { id, attributes } }) => {
@@ -46,7 +54,9 @@ export default (gon) => {
 
   render(
     <Provider store={store}>
-      <App />
+      <UserNameContext.Provider value={user}>
+        <App />
+      </UserNameContext.Provider>
     </Provider>,
     document.getElementById('chat'),
   );

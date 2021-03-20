@@ -16,6 +16,7 @@ const renderModal = (modalInfo, dispatch) => {
       isOpen={isOpen}
       closeModal={actions.closeModal}
       dispatch={dispatch}
+      type={type}
     />
   );
 };

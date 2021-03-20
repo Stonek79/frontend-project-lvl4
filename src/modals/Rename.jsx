@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import { FormControl, FormGroup, Modal } from 'react-bootstrap';
+import { Button, Form, FormControl, FormGroup, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import routes from '../routes';
 import { useSelector } from 'react-redux';
@@ -25,16 +25,20 @@ const Rename = (props) => {
   const currentChannal = channels.find((channel) => channel.id === channelId);
   const currentChannalId = currentChannal.id;
 
-  const textInput = useRef(null);
-
-  useEffect(() => {
-    textInput.current.focus();
-    textInput.current.select();
-  }, [textInput]);
-
   const formik = useFormik({
-    initialValues: { body: currentChannal.name }, onSubmit: generateRename(closeModal, currentChannalId, dispatch),
+    initialValues: {
+      body: currentChannal.name
+    },
+    onSubmit: generateRename(closeModal, currentChannalId, dispatch),
   });
+
+  const textInput = useRef();
+  useEffect(() => {
+    setTimeout(() => {
+      textInput.current.select();
+    }, 1)
+    
+  }, [textInput]);
 
   return (
     <Modal show={isOpen} onHide={() => dispatch(closeModal())}>
@@ -42,28 +46,24 @@ const Rename = (props) => {
         <Modal.Title>Rename</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form onSubmit={formik.handleSubmit}>
+        <Form>
           <FormGroup>
             <FormControl
-              data-testid="input-body"
               ref={textInput}
               name="body"
               required
-              onBlur={formik.handleBlur}
               value={formik.values.body}
               onChange={formik.handleChange}
             />
           </FormGroup>
-          <div className="d-flex justify-content-between">
-            <input className="btn btn-secondary" type="button" onClick={() => dispatch(closeModal())} value="Cancel" />
-            <input className="btn btn-primary" type="submit" value="Submit" />
-          </div>
-        </form>
+        </Form>
       </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>{'   '}
+        <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
+      </Modal.Footer>
     </Modal>
   );
 };
 
 export default Rename;
-
-// проблема с автофокусом и автовыделением

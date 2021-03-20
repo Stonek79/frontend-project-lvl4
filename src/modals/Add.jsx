@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import { FormControl, FormGroup, Modal } from 'react-bootstrap';
+import { Button, Form, FormControl, FormGroup, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import routes from '../routes';
 
@@ -17,14 +17,13 @@ const generateSubmit = ({ closeModal, dispatch }) => async (value) => {
 };
 
 const Add = (props) => {
-  const { closeModal, isOpen, dispatch } = props;
+  const { closeModal, isOpen, dispatch, type } = props;
 
   const formik = useFormik({ initialValues: { body: '' }, onSubmit: generateSubmit(props) });
   
-  const textInput = useRef(null);
-  
+  const textInput = useRef();
   useEffect(() => {
-    textInput.current.focus();
+    type === 'adding' ? textInput.current.focus() : null;
   }, [textInput]);
   
   return (
@@ -33,28 +32,24 @@ const Add = (props) => {
         <Modal.Title>Add</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form onSubmit={formik.handleSubmit}>
+        <Form>
           <FormGroup>
             <FormControl
-              data-testid="input-body"
               ref={textInput}
               name="body"
               required
-              onBlur={formik.handleBlur}
               value={formik.values.body}
               onChange={formik.handleChange}
             />
           </FormGroup>
-          <div className="d-flex justify-content-between">
-            <input className="btn btn-secondary" type="button" onClick={() => dispatch(closeModal())} value="Cancel" />
-            <input className="btn btn-primary" type="submit" value="Submit" />
-          </div>
-        </form>
+        </Form>
       </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>{'   '}
+        <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
+      </Modal.Footer>
     </Modal>
   );
 };
 
 export default Add;
-
-// проблема с автофокусом, не работает

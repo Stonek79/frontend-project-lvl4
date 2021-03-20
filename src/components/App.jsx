@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { UserNameContext } from '../init';
 
 import Channels from './Channels';
 import Messages from './Messages';
@@ -21,11 +22,14 @@ const ChatBox = () => {
         modalInfo={modalInfo}
         dispatch={dispatch}
       />
-      <Messages
-        messages={messages}
-        currentChannelId={currentChannelId}
-        dispatch={dispatch}
-       />
+      <UserNameContext.Consumer>
+        {value => <Messages
+          user={value}
+          messages={messages}
+          currentChannelId={currentChannelId}
+          modalInfo={modalInfo}
+        />}
+       </UserNameContext.Consumer>
     </div>
   );
 };

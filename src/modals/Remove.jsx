@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import routes from '../routes';
 import { useSelector } from 'react-redux';
 
@@ -22,12 +22,12 @@ const Remove = (props) => {
           <Modal.Title>Remove</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h5>Remove this channel?</h5>
-          <div className="d-flex justify-content-between">
-            <input className="btn btn-secondary" type="button" onClick={() => dispatch(closeModal())} value="Cancel" />
-            <input className="btn btn-primary" type="submit" value="Submit" onClick={deleteChannel} />
-          </div>
+          <p>Remove this channel?</p>
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => dispatch(closeModal())}>Close</Button>
+          <Button variant="primary" onClick={deleteChannel}>Remove</Button>
+        </Modal.Footer>
       </Modal>
   );
 };

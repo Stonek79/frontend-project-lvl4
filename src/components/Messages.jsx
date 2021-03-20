@@ -3,13 +3,12 @@ import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import routes from '../routes';
 import axios from 'axios';
-import user from '../Cookie';
 
 const messageList = (messages, currentChannelId) => messages
   .filter((message) => message.channelId === currentChannelId)
   .map(({ user, text, id }) => <div key ={id} className="text-break"><b>{user}</b>: {text}</div>);
 
-const Messages = ({ messages, currentChannelId }) => {
+const Messages = ({ messages, currentChannelId, user, modalInfo }) => {
 
   const generateSubmit = (user, channelId) => async (value) => {
     const { channelPath } = routes;
@@ -29,7 +28,7 @@ const Messages = ({ messages, currentChannelId }) => {
 
   const textInput = useRef(null);
   useEffect(() => {
-    textInput.current.focus();
+    !modalInfo.isOpen ? textInput.current.focus() : null;
   });
 
   return (
@@ -44,7 +43,6 @@ const Messages = ({ messages, currentChannelId }) => {
               <div className="input-group">
                 <input
                   className="mr-2 form-control"
-                  aria-label="body"
                   ref={textInput}
                   name="body"
                   required

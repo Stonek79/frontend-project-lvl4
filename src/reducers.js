@@ -21,13 +21,12 @@ const chatReducers = createSlice({
     },
 
     removeChannel(state, action) {
-      const { channelId } = action.payload;
-      state.channels.filter((channel) => channel.id !== channelId);
+      state.channels = state.channels.filter((ch) => ch.id !== action.payload);
     },
 
     renameChannel(state, action) {
-      const { id, newName } = action;
-      state.channels.map((channel) => channel.id === id ? channel.name = newName : channel);
+      const { id, attributes: { name } } = action.payload;
+      state.channels.map((channel) => channel.id === id ? channel.name = name : channel);
     }
   },
 })
