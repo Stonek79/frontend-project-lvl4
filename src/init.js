@@ -34,6 +34,8 @@ export default (gon) => {
     preloadedState,
   });
   
+  
+
   const socket = io();
 
   socket.on('newChannel', ({ data }) => {
