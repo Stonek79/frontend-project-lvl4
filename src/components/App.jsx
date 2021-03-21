@@ -27,7 +27,6 @@ const ChatBox = () => {
           user={value}
           messages={messages}
           currentChannelId={currentChannelId}
-          modalInfo={modalInfo}
         />}
        </UserNameContext.Consumer>
     </div>

@@ -40,9 +40,10 @@ const modalReducers = createSlice({
   },
   reducers: {
     openModal(state, action) {
+      const { type, id } = action.payload;
       state.isOpen = true;
-      state.type = action.payload.type;
-      state.channelId = action.payload.id;
+      state.type = type;
+      state.channelId = id;
     },
     closeModal(state) {
       state.isOpen = false;

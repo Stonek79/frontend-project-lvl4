@@ -8,27 +8,39 @@ const messageList = (messages, currentChannelId) => messages
   .filter((message) => message.channelId === currentChannelId)
   .map(({ user, text, id }) => <div key ={id} className="text-break"><b>{user}</b>: {text}</div>);
 
-const Messages = ({ messages, currentChannelId, user, modalInfo }) => {
+const Messages = ({ messages, currentChannelId, user }) => {
 
   const generateSubmit = (user, channelId) => async (value) => {
-    const { channelPath } = routes;
+    const { channelMessagesPath } = routes;
     const message = { user, text: value.body };
   
-    await axios.post(channelPath(channelId) + '/messages', {
-      data: {
-        channelId,
-        attributes: message,
-      },
-    });
-  
-    formik.resetForm();
+    try {
+      await axios.post(channelMessagesPath(channelId), {
+        data: {
+          channelId,
+          attributes: message,
+        },
+      });
+      formik.resetForm();
+    } catch (err) {
+      formik.values.feedback = { state: 'is-invalid', message: err.message };
+    }
   };
 
-  const formik = useFormik({ initialValues: { body: '' }, onSubmit: generateSubmit(user, currentChannelId) });
+  const formik = useFormik({
+    initialValues: {
+      body: '',
+      feedback: {
+        state: '',
+        message: '',
+      },
+    },
+      onSubmit: generateSubmit(user, currentChannelId)
+    });
 
   const textInput = useRef(null);
   useEffect(() => {
-    !modalInfo.isOpen ? textInput.current.focus() : null;
+    textInput.current.focus();
   });
 
   return (
@@ -42,7 +54,7 @@ const Messages = ({ messages, currentChannelId, user, modalInfo }) => {
             <div className="form-group">
               <div className="input-group">
                 <input
-                  className="mr-2 form-control"
+                  className={`mr-2 form-control ${formik.values.feedback.state}`}
                   ref={textInput}
                   name="body"
                   required
@@ -50,7 +62,7 @@ const Messages = ({ messages, currentChannelId, user, modalInfo }) => {
                   onChange={formik.handleChange}
                 />
                 <button aria-label="submit" type="submit" className="btn btn-primary">Submit</button>
-                <div className="d-block invalid-feedback">&nbsp;</div>
+                <div className="d-block invalid-feedback">{formik.values.feedback.message}</div>
               </div>
             </div>
           </form>

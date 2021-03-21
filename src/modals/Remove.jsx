@@ -13,8 +13,9 @@ const generateRemove = (closeModal, currentId, dispatch) => async () => {
 
 const Remove = (props) => {
   const { closeModal, isOpen, dispatch } = props;
+
   const currentId = useSelector(state => state.modal.channelId);
-  const deleteChannel = generateRemove(closeModal, currentId, dispatch);
+  const removeChannel = generateRemove(closeModal, currentId, dispatch);
   
   return (
       <Modal show={isOpen} onHide={() => dispatch(closeModal())}>
@@ -26,7 +27,7 @@ const Remove = (props) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => dispatch(closeModal())}>Close</Button>
-          <Button variant="primary" onClick={deleteChannel}>Remove</Button>
+          <Button variant="primary" onClick={removeChannel}>Remove</Button>
         </Modal.Footer>
       </Modal>
   );

@@ -5,7 +5,7 @@ import axios from 'axios';
 import routes from '../routes';
 import { useSelector } from 'react-redux';
 
-const generateRename = (closeModal, channelId, dispatch) => async (value) => {
+const generateRename = ({ closeModal, dispatch }, channelId) => async (value) => {
   const { channelPath } = routes;
 
   await axios.patch(channelPath(channelId), {
@@ -20,6 +20,7 @@ const generateRename = (closeModal, channelId, dispatch) => async (value) => {
 
 const Rename = (props) => {
   const { closeModal, isOpen, dispatch } = props;
+
   const channelId = useSelector(state => state.modal.channelId);
   const channels = useSelector(state => state.chat.channels);
   const currentChannal = channels.find((channel) => channel.id === channelId);
@@ -29,7 +30,7 @@ const Rename = (props) => {
     initialValues: {
       body: currentChannal.name
     },
-    onSubmit: generateRename(closeModal, currentChannalId, dispatch),
+    onSubmit: generateRename(props, currentChannalId),
   });
 
   const textInput = useRef();
@@ -59,7 +60,7 @@ const Rename = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>{'   '}
+        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
         <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
       </Modal.Footer>
     </Modal>

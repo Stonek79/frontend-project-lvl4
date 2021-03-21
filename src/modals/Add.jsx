@@ -17,13 +17,15 @@ const generateSubmit = ({ closeModal, dispatch }) => async (value) => {
 };
 
 const Add = (props) => {
-  const { closeModal, isOpen, dispatch, type } = props;
+  const { closeModal, isOpen, dispatch } = props;
 
   const formik = useFormik({ initialValues: { body: '' }, onSubmit: generateSubmit(props) });
   
   const textInput = useRef();
   useEffect(() => {
-    type === 'adding' ? textInput.current.focus() : null;
+    setTimeout(() => {
+      textInput.current.select();
+    }, 1)
   }, [textInput]);
   
   return (
@@ -45,7 +47,7 @@ const Add = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>{'   '}
+        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
         <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
       </Modal.Footer>
     </Modal>
