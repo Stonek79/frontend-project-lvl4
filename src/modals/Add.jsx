@@ -42,6 +42,7 @@ const Add = (props) => {
               required
               value={formik.values.body}
               onChange={formik.handleChange}
+              maxLength={20}
             />
           </FormGroup>
         </Form>

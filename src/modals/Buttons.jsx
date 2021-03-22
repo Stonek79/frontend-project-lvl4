@@ -12,13 +12,13 @@ const Buttons = ({
 !removable ? 
   <Button 
     variant={btnClass}
-    style={{width: "100%", margin: "5px"}}
+    style={{width: "95%", margin: "5px"}}
     className={`text-left`}
     onClick={handleChangeChannel}>
     {name}
   </Button>
   :
-    <ButtonGroup style={{width: "100%", margin: "5px"}}>
+    <ButtonGroup style={{width: "95%", margin: "5px"}}>
         <Button
           variant={btnClass}
           className={`text-left`}

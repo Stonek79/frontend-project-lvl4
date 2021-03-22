@@ -16,7 +16,7 @@ const user = Cookies.get('username');
 export const UserNameContext = React.createContext(user);
 
 export default (gon) => {
-
+  const { channels, messages, currentChannelId } = gon;
   const middleware = getDefaultMiddleware({
     immutableCheck: false,
     serializableCheck: false,
@@ -24,7 +24,13 @@ export default (gon) => {
   });
 
   const preloadedState = {
-    chat: gon,
+    chat: {
+      channels,
+      currentChannelId,
+    },
+    message: {
+      messages,
+    },
   };
 
   const store = configureStore({
@@ -33,8 +39,6 @@ export default (gon) => {
     devTools: process.env.NODE_ENV !== 'production',
     preloadedState,
   });
-  
-  
 
   const socket = io();
 

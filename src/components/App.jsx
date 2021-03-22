@@ -11,7 +11,7 @@ const ChatBox = () => {
   const channels = useSelector(state => state.chat.channels);
   const currentChannelId = useSelector(state => state.chat.currentChannelId);
   const modalInfo = useSelector((state) => state.modal);
-  const messages = useSelector(state => state.chat.messages);
+  const messages = useSelector(state => state.message.messages);
   const dispatch = useDispatch();
 
   return (

@@ -4,16 +4,11 @@ const chatReducers = createSlice({
   name: 'chat',
   initialState: {
     channels: [],
-    messages: [],
     currentChannelId: '',
   },
   reducers: {
     addChannel(state, action) {
       state.channels.push(action.payload);
-    },
-  
-    addMessage(state, action) {
-      state.messages.push(action.payload);
     },
   
     addChannelId(state, action) {
@@ -29,7 +24,24 @@ const chatReducers = createSlice({
       state.channels.map((channel) => channel.id === id ? channel.name = name : channel);
     }
   },
-})
+});
+
+const messageReducers = createSlice({
+  name: 'message',
+  initialState: {
+    messages: [],
+  },
+  reducers: {
+    addMessage(state, action) {
+      state.messages.push(action.payload);
+    },
+  },
+  extraReducers: {
+    [chatReducers.actions.removeChannel]: (state, action) => {
+      state.messages = state.messages.filter((m) => m.channelId !== action.payload);
+    },
+  },
+});
 
 const modalReducers = createSlice({
   name: 'modal',
@@ -53,18 +65,18 @@ const modalReducers = createSlice({
   },
 });
 
-
 export default combineReducers({
   chat: chatReducers.reducer,
   modal: modalReducers.reducer,
+  message: messageReducers.reducer,
 });
 
 export const { 
   addChannel,
-  addMessage, 
   addChannelId, 
   removeChannel, 
   renameChannel 
 } = chatReducers.actions;
 
 export const { openModal, closeModal } = modalReducers.actions;
+export const { addMessage } = messageReducers.actions;
