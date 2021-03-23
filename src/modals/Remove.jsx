@@ -1,13 +1,17 @@
 import React from 'react';
 import axios from 'axios';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, ButtonGroup, Modal } from 'react-bootstrap';
 import routes from '../routes';
 import { useSelector } from 'react-redux';
 
-
 const generateRemove = (closeModal, currentId, dispatch) => async () => {
   const { channelPath } = routes;
-  await axios.delete(channelPath(currentId));
+  console.log('remove');
+  try {
+    await axios.delete(channelPath(currentId));
+  } catch(e) {
+    console.log(e);
+  }
   dispatch(closeModal());
 };
 
@@ -16,18 +20,18 @@ const Remove = (props) => {
 
   const currentId = useSelector(state => state.modal.channelId);
   const removeChannel = generateRemove(closeModal, currentId, dispatch);
-  
+
   return (
       <Modal show={isOpen} onHide={() => dispatch(closeModal())}>
         <Modal.Header closeButton>
           <Modal.Title>Remove</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Remove this channel?</p>
+          <p><b>Remove this channel?</b></p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => dispatch(closeModal())}>Close</Button>
-          <Button variant="primary" onClick={removeChannel}>Remove</Button>
+        <Modal.Footer style={{'justify-content': 'space-between'}}>
+          <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
+          <Button variant="danger" type="submit" onClick={removeChannel}>Remove</Button>
         </Modal.Footer>
       </Modal>
   );
