@@ -39,7 +39,7 @@ const Rename = (props) => {
   useEffect(() => {
     setTimeout(() => {
       textInput.current.select();
-    }, 1),
+    }, 1);
   }, [textInput]);
 
   return (
