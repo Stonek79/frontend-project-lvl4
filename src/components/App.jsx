@@ -1,8 +1,8 @@
 // @ts-check
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { UserNameContext } from '../init';
+import UserNameContext from '../UserNameContext';
 
 import Channels from './Channels';
 import Messages from './Messages';
@@ -12,6 +12,7 @@ const ChatBox = () => {
   const currentChannelId = useSelector(state => state.chat.currentChannelId);
   const modalInfo = useSelector((state) => state.modal);
   const messages = useSelector(state => state.message.messages);
+  const user = useContext(UserNameContext);
   const dispatch = useDispatch();
 
   return (
@@ -22,13 +23,11 @@ const ChatBox = () => {
         modalInfo={modalInfo}
         dispatch={dispatch}
       />
-      <UserNameContext.Consumer>
-        {value => <Messages
-          user={value}
+      <Messages
+          user={user}
           messages={messages}
           currentChannelId={currentChannelId}
-        />}
-       </UserNameContext.Consumer>
+        />
     </div>
   );
 };
