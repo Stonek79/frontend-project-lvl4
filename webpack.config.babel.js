@@ -1,12 +1,12 @@
 // @ts-check
 
 import path from 'path';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
   mode,
+  entry: './src/index.js',
   externals: {
     gon: 'gon',
   },
@@ -23,9 +23,7 @@ module.exports = {
     publicPath: '/assets/',
     compress: true,
   },
-  plugins: [
-    new MiniCssExtractPlugin(),
-  ],
+  
   module: {
     rules: [
       {
@@ -36,7 +34,7 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          { loader: MiniCssExtractPlugin.loader },
+          { loader: 'style-loader' },
           { loader: 'css-loader' },
           { loader: 'postcss-loader' },
           { loader: 'sass-loader' },

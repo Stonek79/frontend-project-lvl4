@@ -16,6 +16,9 @@ if (!Cookies.get('username')) {
 const user = Cookies.get('username');
 
 export default ({ channels, messages, currentChannelId }) => {
+  if (process.env.NODE_ENV !== 'production') {
+    localStorage.debug = 'chat:*';
+  }
 
   const middleware = getDefaultMiddleware({
     immutableCheck: false,
