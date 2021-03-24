@@ -8,10 +8,10 @@ import Channels from './Channels';
 import Messages from './Messages';
 
 const ChatBox = () => {
-  const channels = useSelector(state => state.chat.channels);
-  const currentChannelId = useSelector(state => state.chat.currentChannelId);
+  const channels = useSelector((state) => state.chat.channels);
+  const currentChannelId = useSelector((state) => state.chat.currentChannelId);
   const modalInfo = useSelector((state) => state.modal);
-  const messages = useSelector(state => state.message.messages);
+  const messages = useSelector((state) => state.message.messages);
   const user = useContext(UserNameContext);
   const dispatch = useDispatch();
 
@@ -24,10 +24,10 @@ const ChatBox = () => {
         dispatch={dispatch}
       />
       <Messages
-          user={user}
-          messages={messages}
-          currentChannelId={currentChannelId}
-        />
+        user={user}
+        messages={messages}
+        currentChannelId={currentChannelId}
+      />
     </div>
   );
 };

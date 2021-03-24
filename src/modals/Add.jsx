@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import { Button, Form, FormControl, FormGroup, Modal } from 'react-bootstrap';
+import {
+  Button, Form, FormControl, FormGroup, Modal
+} from 'react-bootstrap';
 import axios from 'axios';
 import routes from '../routes';
 
@@ -20,14 +22,14 @@ const Add = (props) => {
   const { closeModal, isOpen, dispatch } = props;
 
   const formik = useFormik({ initialValues: { body: '' }, onSubmit: generateSubmit(props) });
-  
+
   const textInput = useRef();
   useEffect(() => {
     setTimeout(() => {
       textInput.current.select();
-    }, 1)
+    }, 1),
   }, [textInput]);
-  
+
   return (
     <Modal show={isOpen} onHide={() => dispatch(closeModal())}>
       <Modal.Header closeButton>
@@ -47,7 +49,7 @@ const Add = (props) => {
           </FormGroup>
         </Form>
       </Modal.Body>
-      <Modal.Footer style={{justifyContent: 'space-between'}}>
+      <Modal.Footer style={{ justifyContent: 'space-between' }}>
         <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
         <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
       </Modal.Footer>

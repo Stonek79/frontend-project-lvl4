@@ -22,7 +22,7 @@ module.exports = {
     publicPath: '/assets/',
     compress: true,
   },
-  
+
   module: {
     rules: [
       {

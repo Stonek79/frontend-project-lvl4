@@ -1,4 +1,6 @@
-import { combineReducers, createSlice } from "@reduxjs/toolkit";
+/* eslint-disable no-param-reassign */
+
+import { combineReducers, createSlice } from '@reduxjs/toolkit';
 
 const chatReducers = createSlice({
   name: 'chat',
@@ -10,7 +12,7 @@ const chatReducers = createSlice({
     addChannel(state, action) {
       state.channels.push(action.payload);
     },
-  
+
     addChannelId(state, action) {
       state.currentChannelId = action.payload;
     },
@@ -21,8 +23,8 @@ const chatReducers = createSlice({
 
     renameChannel(state, action) {
       const { id, attributes: { name } } = action.payload;
-      state.channels.map((channel) => channel.id === id ? channel.name = name : channel);
-    }
+      state.channels.map((channel) => (channel.id === id ? channel.name = name : channel));
+    },
   },
 });
 
@@ -73,11 +75,11 @@ export default combineReducers({
   message: messageReducers.reducer,
 });
 
-export const { 
+export const {
   addChannel,
-  addChannelId, 
-  removeChannel, 
-  renameChannel 
+  addChannelId,
+  removeChannel,
+  renameChannel,
 } = chatReducers.actions;
 
 export const { openModal, closeModal } = modalReducers.actions;

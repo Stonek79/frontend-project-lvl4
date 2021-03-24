@@ -1,20 +1,29 @@
-
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import routes from '../routes';
 import axios from 'axios';
-import { Button, Form, FormControl, FormGroup, FormText, InputGroup } from 'react-bootstrap';
+import {
+  Button,
+  Form,
+  FormControl,
+  FormGroup,
+  FormText,
+  InputGroup
+} from 'react-bootstrap';
+import routes from '../routes';
 
 const messageList = (messages, currentChannelId) => messages
   .filter((message) => message.channelId === currentChannelId)
-  .map(({ user, text, id }) => <FormText key ={id} className="text-break"><b>{user}</b>: {text}</FormText>);
+  .map(({ user, text, id }) => <FormText key={id} className="text-break">
+    <b>{user}</b>
+    :
+    {text}
+    </FormText>);
 
 const Messages = ({ messages, currentChannelId, user }) => {
-
-  const generateSubmit = (user, channelId) => async (value) => {
+  const generateSubmit = (name , channelId) => async (value) => {
     const { channelMessagesPath } = routes;
-    const message = { user, text: value.body };
-  
+    const message = { user: name, text: value.body };
+
     try {
       await axios.post(channelMessagesPath(channelId), {
         data: {
@@ -36,7 +45,7 @@ const Messages = ({ messages, currentChannelId, user }) => {
         message: '',
       },
     },
-      onSubmit: generateSubmit(user, currentChannelId)
+    onSubmit: generateSubmit(user, currentChannelId),
   });
 
   const textInput = useRef(null);
@@ -47,12 +56,12 @@ const Messages = ({ messages, currentChannelId, user }) => {
   });
 
   return (
-    <Form className="col h-100" onSubmit={formik.handleSubmit} >
+    <Form className="col h-100" onSubmit={formik.handleSubmit}>
       <FormGroup className="d-flex flex-column h-100">
         <FormGroup id="message-box" className="chat-messages overflow-auto mb-3">
           {messageList(messages, currentChannelId)}
-          </FormGroup>
-        <InputGroup noValidate className={'mt-auto'}>
+        </FormGroup>
+        <InputGroup noValidate className='mt-auto'>
           <FormControl
             className={`${formik.values.feedback.state}`}
             ref={textInput}
@@ -63,12 +72,12 @@ const Messages = ({ messages, currentChannelId, user }) => {
             disabled={formik.isSubmitting}
           >
           </FormControl>
-          <Button variant="primary" type="submit" style={{marginLeft: '8px'}} disabled={formik.isSubmitting}>Submit</Button>
+          <Button variant="primary" type="submit" style={{ marginLeft: '8px' }} disabled={formik.isSubmitting}>Submit</Button>
         </InputGroup>
-        <FormGroup className={'text-danger'}>{formik.values.feedback.message}</FormGroup>
+        <FormGroup className='text-danger'>{formik.values.feedback.message}</FormGroup>
       </FormGroup>
     </Form>
-  )
+  );
 };
 
 export default Messages;

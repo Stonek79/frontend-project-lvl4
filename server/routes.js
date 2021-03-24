@@ -33,7 +33,7 @@ export default (app, io, defaultState = {}) => {
   const state = buildState(defaultState);
 
   app
-     .get('/', (_req, reply) => {
+    .get('/', (_req, reply) => {
       reply.view('index.pug', { gon: state });
     })
     .get('/api/v1/channels', (_req, reply) => {
@@ -112,7 +112,6 @@ export default (app, io, defaultState = {}) => {
       reply.send(response);
     })
     .post('/api/v1/channels/:channelId/messages', (req, reply) => {
-      
       const { data: { attributes } } = req.body;
       const message = {
         ...attributes,
@@ -128,7 +127,7 @@ export default (app, io, defaultState = {}) => {
           attributes: message,
         },
       };
-        reply.send(data);
-        io.emit('newMessage', data);
+      reply.send(data);
+      io.emit('newMessage', data);
     });
 };

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import { Button, Form, FormControl, FormGroup, Modal } from 'react-bootstrap';
+import {
+  Button, Form, FormControl, FormGroup, Modal,
+} from 'react-bootstrap';
 import axios from 'axios';
-import routes from '../routes';
 import { useSelector } from 'react-redux';
+import routes from '../routes';
 
 const generateRename = ({ closeModal, dispatch }, channelId) => async (value) => {
   const { channelPath } = routes;
@@ -21,14 +23,14 @@ const generateRename = ({ closeModal, dispatch }, channelId) => async (value) =>
 const Rename = (props) => {
   const { closeModal, isOpen, dispatch } = props;
 
-  const channelId = useSelector(state => state.modal.channelId);
-  const channels = useSelector(state => state.chat.channels);
+  const channelId = useSelector((state) => state.modal.channelId);
+  const channels = useSelector((state) => state.chat.channels);
   const currentChannal = channels.find((channel) => channel.id === channelId);
   const currentChannalId = currentChannal.id;
 
   const formik = useFormik({
     initialValues: {
-      body: currentChannal.name
+      body: currentChannal.name,
     },
     onSubmit: generateRename(props, currentChannalId),
   });
@@ -37,8 +39,7 @@ const Rename = (props) => {
   useEffect(() => {
     setTimeout(() => {
       textInput.current.select();
-    }, 1)
-    
+    }, 1),
   }, [textInput]);
 
   return (
@@ -60,7 +61,7 @@ const Rename = (props) => {
           </FormGroup>
         </Form>
       </Modal.Body>
-      <Modal.Footer style={{justifyContent: 'space-between'}}>
+      <Modal.Footer style={{ justifyContent: 'space-between' }}>
         <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
         <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
       </Modal.Footer>

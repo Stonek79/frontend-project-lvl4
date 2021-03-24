@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import * as actions from '../reducers';
-import getModal from '../modals/index.js'
+import getModal from '../modals/index.js';
 import Buttons from '../modals/Buttons';
 
 const renderModal = (modalInfo, dispatch) => {
@@ -23,14 +23,16 @@ const renderModal = (modalInfo, dispatch) => {
 const { addChannelId, openModal } = actions;
 
 const handleAddButton = (dispatch) => dispatch(openModal({ type: 'adding' }));
-const handleRemoveButton = (dispatch, id) => dispatch(openModal({type: 'removing', id}));
-const handleRenameButton = (dispatch, id) => dispatch(openModal({type: 'renaming', id}));
+const handleRemoveButton = (dispatch, id) => dispatch(openModal({ type: 'removing', id }));
+const handleRenameButton = (dispatch, id) => dispatch(openModal({ type: 'renaming', id }));
 const handleChangeChannel = (dispatch, id) => dispatch(addChannelId(id));
 
 const channelsButtons = (channels, btnClass, dispatch) => channels
   .map(({ id, name, removable }) =>
-    (<li key={id} className="nav-item">
-      <Buttons 
+    (<li
+      key={id}
+      className="nav-item">
+      <Buttons
         name={name}
         removable={removable}
         btnClass={btnClass(id)}
@@ -38,16 +40,14 @@ const channelsButtons = (channels, btnClass, dispatch) => channels
         handleRenameButton={() => handleRenameButton(dispatch, id)}
         handleChangeChannel={() => handleChangeChannel(dispatch, id)}
       />
-    </li>)
-  );
+    </li>));
 
 const Channels = ({
-  channels, currentChannelId, modalInfo, dispatch
-  }) => {
-    
+  channels, currentChannelId, modalInfo, dispatch,
+}) => {
   const btnClass = (id) => cn({
-    'primary': currentChannelId === id,
-    'light': currentChannelId !== id,
+    primary: currentChannelId === id,
+    light: currentChannelId !== id,
   });
 
   return (
@@ -67,4 +67,3 @@ const Channels = ({
 };
 
 export default Channels;
-  

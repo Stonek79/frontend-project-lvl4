@@ -2,11 +2,14 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client';
 import Cookies from 'js-cookie';
 import App from './components/App.jsx';
-import rootReducer, { addChannel, removeChannel, renameChannel, addMessage } from './reducers';
+import rootReducer, {
+  addChannel, removeChannel, renameChannel, addMessage,
+} from './reducers';
 import UserNameContext from './UserNameContext.js';
+
 const faker = require('faker');
 
 if (!Cookies.get('username')) {
@@ -16,7 +19,6 @@ if (!Cookies.get('username')) {
 const user = Cookies.get('username');
 
 export default ({ channels, messages, currentChannelId }) => {
-
   const middleware = getDefaultMiddleware({
     immutableCheck: false,
     serializableCheck: false,
