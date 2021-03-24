@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
+import cn from 'classnames';
 import axios from 'axios';
 import {
   Button,
@@ -7,22 +9,24 @@ import {
   FormControl,
   FormGroup,
   FormText,
-  InputGroup
+  InputGroup,
 } from 'react-bootstrap';
 import routes from '../routes';
 
 const messageList = (messages, currentChannelId) => messages
   .filter((message) => message.channelId === currentChannelId)
-  .map(({ user, text, id }) => <FormText key={id} className="text-break">
-    <b>{user}</b>
-    :
-    {text}
-    </FormText>);
+  .map(({ user, text, id }) => (
+    <FormText key={id} className="text-break">
+      <b>{user}</b>
+      :
+      {text}
+    </FormText>
+  ));
 
 const Messages = ({ messages, currentChannelId, user }) => {
-  const generateSubmit = (name , channelId) => async (value) => {
+  const generateSubmit = (name, channelId) => async (values, { setStatus, resetForm }) => {
     const { channelMessagesPath } = routes;
-    const message = { user: name, text: value.body };
+    const message = { user: name, text: values.body };
 
     try {
       await axios.post(channelMessagesPath(channelId), {
@@ -31,23 +35,20 @@ const Messages = ({ messages, currentChannelId, user }) => {
           attributes: message,
         },
       });
-      formik.resetForm();
+      resetForm();
     } catch (err) {
-      formik.values.feedback = { state: 'is-invalid', message: err.message };
+      setStatus(err.message);
     }
   };
 
   const formik = useFormik({
     initialValues: {
       body: '',
-      feedback: {
-        state: '',
-        message: '',
-      },
     },
     onSubmit: generateSubmit(user, currentChannelId),
   });
 
+  const className = cn({ 'is-invalid': formik.status });
   const textInput = useRef(null);
   useEffect(() => {
     const messageBox = document.getElementById('message-box');
@@ -61,20 +62,19 @@ const Messages = ({ messages, currentChannelId, user }) => {
         <FormGroup id="message-box" className="chat-messages overflow-auto mb-3">
           {messageList(messages, currentChannelId)}
         </FormGroup>
-        <InputGroup noValidate className='mt-auto'>
+        <InputGroup noValidate className="mt-auto">
           <FormControl
-            className={`${formik.values.feedback.state}`}
+            className={className}
             ref={textInput}
             name="body"
             required
             value={formik.values.body}
             onChange={formik.handleChange}
             disabled={formik.isSubmitting}
-          >
-          </FormControl>
+          />
           <Button variant="primary" type="submit" style={{ marginLeft: '8px' }} disabled={formik.isSubmitting}>Submit</Button>
         </InputGroup>
-        <FormGroup className='text-danger'>{formik.values.feedback.message}</FormGroup>
+        <FormGroup className="text-danger">{formik.status}</FormGroup>
       </FormGroup>
     </Form>
   );

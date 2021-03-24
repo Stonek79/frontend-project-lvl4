@@ -29,18 +29,21 @@ const handleChangeChannel = (dispatch, id) => dispatch(addChannelId(id));
 
 const channelsButtons = (channels, btnClass, dispatch) => channels
   .map(({ id, name, removable }) =>
-    (<li
-      key={id}
-      className="nav-item">
-      <Buttons
-        name={name}
-        removable={removable}
-        btnClass={btnClass(id)}
-        handleRemoveButton={() => handleRemoveButton(dispatch, id)}
-        handleRenameButton={() => handleRenameButton(dispatch, id)}
-        handleChangeChannel={() => handleChangeChannel(dispatch, id)}
-      />
-    </li>));
+    (
+      <li
+        key={id}
+        className="nav-item"
+      >
+        <Buttons
+          name={name}
+          removable={removable}
+          btnClass={btnClass(id)}
+          handleRemoveButton={() => handleRemoveButton(dispatch, id)}
+          handleRenameButton={() => handleRenameButton(dispatch, id)}
+          handleChangeChannel={() => handleChangeChannel(dispatch, id)}
+        />
+      </li>
+    ));
 
 const Channels = ({
   channels, currentChannelId, modalInfo, dispatch,
