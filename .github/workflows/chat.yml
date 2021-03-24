@@ -1,0 +1,26 @@
+name: Rollbar CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [13.x]
+
+    steps:
+    - name: Notify finish deploy to Rollbar
+      uses: rollbar/github-deploy-action@1.1.0
+      id: rollbar_post_deploy
+      with:
+        environment: 'production'
+        version: ${{ github.sha }}
+        status: 'succeeded'
+      env:
+        ROLLBAR_ACCESS_TOKEN: ${{ 624e36580fb24db4a79e4d4185d3bb2b }}
+        ROLLBAR_USERNAME: ${{ github.actor }}
+
