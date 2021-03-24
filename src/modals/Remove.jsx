@@ -1,17 +1,12 @@
 import React from 'react';
 import axios from 'axios';
-import { Button, ButtonGroup, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import routes from '../routes';
 import { useSelector } from 'react-redux';
 
 const generateRemove = (closeModal, currentId, dispatch) => async () => {
   const { channelPath } = routes;
-  console.log('remove');
-  try {
-    await axios.delete(channelPath(currentId));
-  } catch(e) {
-    console.log(e);
-  }
+  await axios.delete(channelPath(currentId));
   dispatch(closeModal());
 };
 
@@ -29,7 +24,7 @@ const Remove = (props) => {
         <Modal.Body>
           <p><b>Remove this channel?</b></p>
         </Modal.Body>
-        <Modal.Footer style={{'justify-content': 'space-between'}}>
+        <Modal.Footer style={{justifyContent: 'space-between'}}>
           <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
           <Button variant="danger" type="submit" onClick={removeChannel}>Remove</Button>
         </Modal.Footer>

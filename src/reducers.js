@@ -33,10 +33,10 @@ const messageReducers = createSlice({
   },
   reducers: {
     addMessage(state, action) {
-      console.log('reducer');
       state.messages.push(action.payload);
     },
   },
+
   extraReducers: {
     [chatReducers.actions.removeChannel]: (state, action) => {
       state.messages = state.messages.filter((m) => m.channelId !== action.payload);
@@ -58,6 +58,7 @@ const modalReducers = createSlice({
       state.type = type;
       state.channelId = id;
     },
+
     closeModal(state) {
       state.isOpen = false;
       state.type = null;

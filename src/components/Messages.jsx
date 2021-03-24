@@ -4,14 +4,6 @@ import { useFormik } from 'formik';
 import routes from '../routes';
 import axios from 'axios';
 import { Button, Form, FormControl, FormGroup, FormText, InputGroup } from 'react-bootstrap';
-// import { rollbar } from '../../server/routes';
-// import Rollbar from 'rollbar';
-
-// export const rollbar = new Rollbar({
-//   accessToken: '624e36580fb24db4a79e4d4185d3bb2b',
-//   captureUncaught: true,
-//   captureUnhandledRejections: true
-// });
 
 const messageList = (messages, currentChannelId) => messages
   .filter((message) => message.channelId === currentChannelId)
@@ -31,9 +23,7 @@ const Messages = ({ messages, currentChannelId, user }) => {
         },
       });
       formik.resetForm();
-      console.log('message');
     } catch (err) {
-      // rollbar.log('errror is ', err)
       formik.values.feedback = { state: 'is-invalid', message: err.message };
     }
   };
@@ -47,7 +37,7 @@ const Messages = ({ messages, currentChannelId, user }) => {
       },
     },
       onSubmit: generateSubmit(user, currentChannelId)
-    });
+  });
 
   const textInput = useRef(null);
   useEffect(() => {

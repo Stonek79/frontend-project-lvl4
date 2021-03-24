@@ -34,18 +34,9 @@ const setUpStaticAssets = (app) => {
   });
 };
 
-
-export const rollbar = new Rollbar({
-  accessToken: '624e36580fb24db4a79e4d4185d3bb2b',
-  captureUncaught: true,
-  captureUnhandledRejections: true
-});
-
-import Rollbar from 'rollbar';
-
 export default (options = {}) => {
   const app = fastify({ logger: true, prettyPrint: true });
-try {
+
   setUpViews(app);
   setUpStaticAssets(app);
 
@@ -54,7 +45,4 @@ try {
   addRoutes(app, io, options.state || {});
 
   return app;
-} catch(e) {
-  rollbar.error('The error is ', e);
-}
 };

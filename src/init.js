@@ -15,9 +15,8 @@ if (!Cookies.get('username')) {
 const user = Cookies.get('username');
 export const UserNameContext = React.createContext(user);
 
-export default (gon) => {
+export default ({ channels, messages, currentChannelId }) => {
 
-  const { channels, messages, currentChannelId } = gon;
   const middleware = getDefaultMiddleware({
     immutableCheck: false,
     serializableCheck: false,

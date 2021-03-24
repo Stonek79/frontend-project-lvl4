@@ -60,7 +60,7 @@ const Rename = (props) => {
           </FormGroup>
         </Form>
       </Modal.Body>
-      <Modal.Footer style={{'justify-content': 'space-between'}}>
+      <Modal.Footer style={{justifyContent: 'space-between'}}>
         <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
         <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
       </Modal.Footer>
