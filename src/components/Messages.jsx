@@ -13,33 +13,35 @@ import {
 } from 'react-bootstrap';
 import routes from '../routes';
 
-const messageList = (messages, currentChannelId) => messages
-  .filter((message) => message.channelId === currentChannelId)
-  .map(({ user, text, id }) => (
-    <FormText key={id} className="text-break">
-      <b>{user}</b>
-      :
-      {text}
-    </FormText>
-  ));
+const messageList = ({ user, text, id }) => (
+  <FormText key={id} className="text-break">
+    <b>{user}</b>
+    :
+    {' '}
+    {text}
+  </FormText>
+);
+
+const generateSubmit = (name, channelId) => async (values, { setStatus, resetForm }) => {
+  const { channelMessagesPath } = routes;
+  const message = { user: name, text: values.body };
+
+  try {
+    await axios.post(channelMessagesPath(channelId), {
+      data: {
+        channelId,
+        attributes: message,
+      },
+    });
+    resetForm();
+  } catch (err) {
+    setStatus(err.message);
+  }
+};
 
 const Messages = ({ messages, currentChannelId, user }) => {
-  const generateSubmit = (name, channelId) => async (values, { setStatus, resetForm }) => {
-    const { channelMessagesPath } = routes;
-    const message = { user: name, text: values.body };
-
-    try {
-      await axios.post(channelMessagesPath(channelId), {
-        data: {
-          channelId,
-          attributes: message,
-        },
-      });
-      resetForm();
-    } catch (err) {
-      setStatus(err.message);
-    }
-  };
+  const currentMessages = messages
+    .filter((message) => message.channelId === currentChannelId);
 
   const formik = useFormik({
     initialValues: {
@@ -60,7 +62,7 @@ const Messages = ({ messages, currentChannelId, user }) => {
     <Form className="col h-100" onSubmit={formik.handleSubmit}>
       <FormGroup className="d-flex flex-column h-100">
         <FormGroup id="message-box" className="chat-messages overflow-auto mb-3">
-          {messageList(messages, currentChannelId)}
+          {currentMessages.map(messageList)}
         </FormGroup>
         <InputGroup noValidate className="mt-auto">
           <FormControl
@@ -71,6 +73,7 @@ const Messages = ({ messages, currentChannelId, user }) => {
             value={formik.values.body}
             onChange={formik.handleChange}
             disabled={formik.isSubmitting}
+            maxLength={1000}
           />
           <Button variant="primary" type="submit" style={{ marginLeft: '8px' }} disabled={formik.isSubmitting}>Submit</Button>
         </InputGroup>

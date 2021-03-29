@@ -3,18 +3,27 @@ import axios from 'axios';
 import { Button, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import routes from '../routes';
+import { addChannelId } from '../slices/channelSlice';
 
-const generateRemove = (closeModal, currentId, dispatch) => async () => {
+const generateRemove = ({
+  closeModal, currentId, dispatch, currentChannelId,
+}) => async () => {
   const { channelPath } = routes;
   await axios.delete(channelPath(currentId));
   dispatch(closeModal());
+  if (currentChannelId > 3) {
+    dispatch(addChannelId(1));
+  }
 };
 
 const Remove = (props) => {
   const { closeModal, isOpen, dispatch } = props;
 
   const currentId = useSelector((state) => state.modal.channelId);
-  const removeChannel = generateRemove(closeModal, currentId, dispatch);
+  const currentChannelId = useSelector((state) => state.chat.currentChannelId);
+  const removeChannel = generateRemove({
+    closeModal, currentId, dispatch, currentChannelId,
+  });
 
   return (
     <Modal show={isOpen} onHide={() => dispatch(closeModal())}>

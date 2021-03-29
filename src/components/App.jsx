@@ -14,12 +14,13 @@ const ChatBox = () => {
   const messages = useSelector((state) => state.message.messages);
   const user = useContext(UserNameContext);
   const dispatch = useDispatch();
+  const isPrimary = (id) => currentChannelId === id;
 
   return (
     <div className="row h-100 pb-3">
       <Channels
         channels={channels}
-        currentChannelId={currentChannelId}
+        isPrimary={isPrimary}
         modalInfo={modalInfo}
         dispatch={dispatch}
       />

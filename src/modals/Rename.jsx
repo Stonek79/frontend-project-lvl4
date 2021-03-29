@@ -7,17 +7,25 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import routes from '../routes';
 
-const generateRename = ({ closeModal, dispatch }, channelId) => async (value) => {
+const generateRename = ({
+  closeModal,
+  dispatch,
+  channels,
+}, channelId) => async (value, { setStatus }) => {
   const { channelPath } = routes;
-
-  await axios.patch(channelPath(channelId), {
-    data: {
-      attributes: {
-        name: value.body,
+  const cNames = channels.map((ch) => ch.name);
+  if (cNames.includes(value.body)) {
+    setStatus('Channel name already exist. Choose anothe channel name.');
+  } else {
+    await axios.patch(channelPath(channelId), {
+      data: {
+        attributes: {
+          name: value.body.trim(),
+        },
       },
-    },
-  });
-  dispatch(closeModal());
+    });
+    dispatch(closeModal());
+  }
 };
 
 const Rename = (props) => {
@@ -60,10 +68,11 @@ const Rename = (props) => {
             />
           </FormGroup>
         </Form>
+        <FormGroup className="text-danger">{formik.status}</FormGroup>
       </Modal.Body>
       <Modal.Footer style={{ justifyContent: 'space-between' }}>
         <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
-        <Button variant="primary" type="submit" onClick={formik.handleSubmit}>Submit</Button>
+        <Button variant="primary" type="submit" onClick={formik.handleSubmit} disabled={!formik.values.body.trim()}>Submit</Button>
       </Modal.Footer>
     </Modal>
   );

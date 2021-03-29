@@ -1,29 +1,20 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import React from 'react';
-import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { io } from 'socket.io-client';
 import Cookies from 'js-cookie';
+import faker from 'faker';
 import App from './components/App.jsx';
-import rootReducer, {
-  addChannel, removeChannel, renameChannel, addMessage,
-} from './reducers';
+import rootReducer from './slices/index.js';
+import { addChannel, removeChannel, renameChannel } from './slices/channelSlice';
+import { addMessage } from './slices/messageSlice';
 import UserNameContext from './UserNameContext.js';
-
-const faker = require('faker');
 
 if (!Cookies.get('username')) {
   Cookies.set('username', faker.name.findName());
 }
 
-const user = Cookies.get('username');
-
-export default ({ channels, messages, currentChannelId }) => {
-  const middleware = getDefaultMiddleware({
-    immutableCheck: false,
-    serializableCheck: false,
-    thunk: true,
-  });
+export default ({ channels, messages, currentChannelId }, socket) => {
+  const user = Cookies.get('username');
 
   const preloadedState = {
     chat: {
@@ -37,12 +28,9 @@ export default ({ channels, messages, currentChannelId }) => {
 
   const store = configureStore({
     reducer: rootReducer,
-    middleware,
     devTools: process.env.NODE_ENV !== 'production',
     preloadedState,
   });
-
-  const socket = io();
 
   socket.on('newChannel', ({ data }) => {
     store.dispatch(addChannel(data.attributes));
@@ -60,12 +48,11 @@ export default ({ channels, messages, currentChannelId }) => {
     store.dispatch(addMessage(data.attributes));
   });
 
-  render(
+  return (
     <Provider store={store}>
       <UserNameContext.Provider value={user}>
         <App />
       </UserNameContext.Provider>
-    </Provider>,
-    document.getElementById('chat'),
+    </Provider>
   );
 };
