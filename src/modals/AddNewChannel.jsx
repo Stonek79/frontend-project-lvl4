@@ -9,17 +9,24 @@ import routes from '../routes';
 const generateSubmit = ({ closeModal, dispatch, channels }) => async (value, { setStatus }) => {
   const { channelsPath } = routes;
   const cNames = channels.map((ch) => ch.name);
-  if (cNames.includes(value.body)) {
-    setStatus('Channel name already exist. Choose anothe channel name.');
-  } else {
-    await axios.post(channelsPath(), {
-      data: {
-        attributes: {
-          name: value.body.trim(),
+
+  try {
+    if (cNames.includes(value.body)) {
+      setStatus('Channel name already exist. Choose anothe channel name.');
+    } else {
+      setStatus('Adding in process');
+      await axios.post(channelsPath(), {
+        data: {
+          attributes: {
+            name: value.body.trim(),
+          },
         },
-      },
-    });
-    dispatch(closeModal());
+      });
+      setStatus('done');
+      dispatch(closeModal());
+    }
+  } catch (err) {
+    setStatus(`Sorry, some ${err.message}, try later`);
   }
 };
 
@@ -57,8 +64,14 @@ const AddNewChannel = (props) => {
         <FormGroup className="text-danger">{formik.status}</FormGroup>
       </Modal.Body>
       <Modal.Footer style={{ justifyContent: 'space-between' }}>
-        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())}>Cancel</Button>
-        <Button variant="primary" type="submit" onClick={formik.handleSubmit} disabled={!formik.values.body.trim()}>Submit</Button>
+        <Button variant="secondary" type="cancel" onClick={() => dispatch(closeModal())} disabled={formik.isSubmitting}>Cancel</Button>
+        <Button variant="primary" type="submit" onClick={formik.handleSubmit} disabled={!formik.values.body.trim() || formik.isSubmitting}>
+          {formik.status === 'Adding in process'
+            ? (
+              <span className="spinner-border spinner-border" role="status" aria-hidden="true" />
+            )
+            : 'Add channel'}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

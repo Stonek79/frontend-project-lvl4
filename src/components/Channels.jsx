@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button, Form, FormGroup } from 'react-bootstrap';
+import {
+  Button, Form, FormGroup, FormLabel, ListGroup,
+} from 'react-bootstrap';
 import renderModal from '../modals/ModalRender';
 import { openModal } from '../slices/modalSlice.js';
 import { addChannelId } from '../slices/channelSlice.js';
@@ -30,23 +32,23 @@ const Channels = ({
 
   return (
     <>
-      <Form className="col-3 border-right">
+      <Form className="col-3 h-100">
         <FormGroup className="d-flex mb-2">
-          <span><b>Channels</b></span>
+          <FormLabel><b>Channels</b></FormLabel>
           <Button
             type="button"
-            variant="light"
+            variant="outline-primary"
             className="ml-auto p-1"
             onClick={handleAddButton(dispatch)}
           >
-            +
+            <b>+</b>
           </Button>
           {renderModal(modalInfo, dispatch, channels)}
         </FormGroup>
-        <FormGroup style={{ overflow: 'auto' }}>
-          <ul className="nav flex-column nav-pills nav-fill">
+        <FormGroup className="h-100 overflow-auto">
+          <ListGroup className="nav">
             {channels.map(madeButton)}
-          </ul>
+          </ListGroup>
         </FormGroup>
       </Form>
     </>

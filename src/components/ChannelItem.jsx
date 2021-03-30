@@ -34,8 +34,8 @@ const ChannelItem = ({
       </Button>
       <Dropdown.Toggle split variant={btnClass ? 'primary' : 'light'} style={{ width: '15%' }} />
       <Dropdown.Menu variant={btnClass ? 'primary' : 'light'} className="flex-grow-0" title="">
-        <Dropdown.Item href="#/remove" onClick={handleRemoveButton}>Remove</Dropdown.Item>
-        <Dropdown.Item href="#/rename" onClick={handleRenameButton}>Rename</Dropdown.Item>
+        <Dropdown.Item onClick={handleRemoveButton}>Remove</Dropdown.Item>
+        <Dropdown.Item onClick={handleRenameButton}>Rename</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   ));

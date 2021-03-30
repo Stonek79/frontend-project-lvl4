@@ -17,7 +17,7 @@ const messageReducers = createSlice({
 
   extraReducers: {
     [chatReducers.actions.removeChannel]: (state, action) => {
-      remove(state.massages, (m) => m.channelId === action.payload);
+      remove(state.messages, (m) => m.channelId !== action.payload);
     },
   },
 });
