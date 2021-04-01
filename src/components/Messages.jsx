@@ -27,12 +27,14 @@ const generateSubmit = (name, channelId) => async (values, { setStatus, resetFor
   const message = { user: name, text: values.body };
 
   try {
+    setStatus('Sending a message to chat, please wait, slow connection');
     await axios.post(channelMessagesPath(channelId), {
       data: {
         channelId,
         attributes: message,
       },
     });
+    setStatus('done');
     resetForm();
   } catch (err) {
     setStatus(err.message);
@@ -75,7 +77,13 @@ const Messages = ({ messages, currentChannelId, user }) => {
             disabled={formik.isSubmitting}
             maxLength={1000}
           />
-          <Button variant="primary" type="submit" style={{ marginLeft: '8px' }} disabled={formik.isSubmitting}>Submit</Button>
+          <Button variant="primary" type="submit" style={{ marginLeft: '8px' }} disabled={formik.isSubmitting}>
+            {formik.status === 'Sending a message to chat, please wait, slow connection'
+              ? (
+                <span className="spinner-border spinner-border" role="status" aria-hidden="true" />
+              )
+              : 'Add message'}
+          </Button>
         </InputGroup>
         <FormGroup className="text-danger">{formik.status}</FormGroup>
       </FormGroup>
