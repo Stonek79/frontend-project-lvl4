@@ -1,8 +1,8 @@
 import React from 'react';
-import getModal from './index.js';
-import { closeModal } from '../slices/modalSlice';
+import getModal from '../modals/index.js';
+import { closeModal } from '../slices/modalsSlice';
 
-const renderModal = (modalInfo, dispatch, channels) => {
+const Modals = ({ modalInfo, dispatch, channels }) => {
   const { type, isOpen } = modalInfo;
   if (!type) {
     return null;
@@ -19,4 +19,4 @@ const renderModal = (modalInfo, dispatch, channels) => {
   );
 };
 
-export default renderModal;
+export default Modals;

@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import remove from 'lodash/remove';
 
-const chatReducers = createSlice({
+const channelsSlice = createSlice({
   name: 'channelsData',
   initialState: {
     channels: [],
@@ -11,19 +11,25 @@ const chatReducers = createSlice({
   },
   reducers: {
     addChannel(state, action) {
-      state.channels.push(action.payload);
+      const { attributes } = action.payload;
+      state.channels.push(attributes);
     },
 
     addChannelId(state, action) {
-      state.currentChannelId = action.payload;
+      const { id } = action.payload;
+      state.currentChannelId = id;
     },
 
     removeChannel(state, action) {
-      remove(state.channels, (ch) => ch.id === action.payload);
+      const { id } = action.payload;
+      if (state.currentChannelId === id) {
+        state.currentChannelId = 1;
+      }
+      remove(state.channels, (ch) => ch.id === id);
     },
 
     renameChannel(state, action) {
-      const { id, attributes: { name } } = action.payload;
+      const { id, name } = action.payload;
       const currentChannel = state.channels.find((channel) => channel.id === id);
       currentChannel.name = name;
     },
@@ -35,6 +41,6 @@ export const {
   addChannelId,
   removeChannel,
   renameChannel,
-} = chatReducers.actions;
+} = channelsSlice.actions;
 
-export default chatReducers;
+export default channelsSlice.reducer;

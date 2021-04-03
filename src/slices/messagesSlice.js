@@ -2,26 +2,28 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import remove from 'lodash/remove';
-import chatReducers from './channelSlice';
+import { removeChannel } from './channelsSlice';
 
 const messageReducers = createSlice({
-  name: 'message',
+  name: 'messagesData',
   initialState: {
     messages: [],
   },
   reducers: {
     addMessage(state, action) {
-      state.messages.push(action.payload);
+      const { attributes } = action.payload;
+      state.messages.push(attributes);
     },
   },
 
   extraReducers: {
-    [chatReducers.actions.removeChannel]: (state, action) => {
-      remove(state.messages, (m) => m.channelId !== action.payload);
+    [removeChannel]: (state, action) => {
+      const { id } = action.payload;
+      remove(state.messages, (m) => m.channelId === id);
     },
   },
 });
 
 export const { addMessage } = messageReducers.actions;
 
-export default messageReducers;
+export default messageReducers.reducer;

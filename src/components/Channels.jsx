@@ -2,32 +2,30 @@ import React from 'react';
 import {
   Button, Form, FormGroup, FormLabel, ListGroup,
 } from 'react-bootstrap';
-import renderModal from '../modals/ModalRender';
-import { openModal } from '../slices/modalSlice.js';
-import { addChannelId } from '../slices/channelSlice.js';
+import { openModal } from '../slices/modalsSlice.js';
+import { addChannelId } from '../slices/channelsSlice.js';
 import ChannelItem from './ChannelItem';
 
 const handleAddButton = (dispatch) => () => dispatch(openModal({ type: 'adding' }));
 const handleRemoveButton = (dispatch, id) => () => dispatch(openModal({ type: 'removing', id }));
 const handleRenameButton = (dispatch, id) => () => dispatch(openModal({ type: 'renaming', id }));
-const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId(id));
+const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }));
 
 const Channels = ({
-  channels, isPrimary, modalInfo, dispatch,
+  channels, isPrimary, dispatch,
 }) => {
   const madeButton = ({
     id, name, removable,
   }) => (
-    <li key={id} className="nav-item">
-      <ChannelItem
-        name={name}
-        removable={removable}
-        btnClass={isPrimary(id)}
-        handleRemoveButton={handleRemoveButton(dispatch, id)}
-        handleRenameButton={handleRenameButton(dispatch, id)}
-        handleChangeChannel={handleChangeChannel(dispatch, id)}
-      />
-    </li>
+    <ChannelItem
+      key={id}
+      name={name}
+      removable={removable}
+      btnClass={isPrimary(id)}
+      handleRemoveButton={handleRemoveButton(dispatch, id)}
+      handleRenameButton={handleRenameButton(dispatch, id)}
+      handleChangeChannel={handleChangeChannel(dispatch, id)}
+    />
   );
 
   return (
@@ -43,7 +41,6 @@ const Channels = ({
           >
             <b>+</b>
           </Button>
-          {renderModal(modalInfo, dispatch, channels)}
         </FormGroup>
         <FormGroup className="h-100 overflow-auto">
           <ListGroup className="nav">

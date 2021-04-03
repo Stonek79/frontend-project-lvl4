@@ -2,17 +2,18 @@
 
 import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import UserNameContext from '../UserNameContext';
+import Context from '../Context.js';
+import Modals from './Modas.jsx';
 
 import Channels from './Channels';
 import Messages from './Messages';
 
-const ChatBox = () => {
-  const channels = useSelector((state) => state.chat.channels);
-  const currentChannelId = useSelector((state) => state.chat.currentChannelId);
-  const modalInfo = useSelector((state) => state.modal);
-  const messages = useSelector((state) => state.message.messages);
-  const user = useContext(UserNameContext);
+const App = () => {
+  const channels = useSelector((state) => state.channels.channels);
+  const currentChannelId = useSelector((state) => state.channels.currentChannelId);
+  const modalInfo = useSelector((state) => state.modals);
+  const messages = useSelector((state) => state.messages.messages);
+  const { user } = useContext(Context);
   const dispatch = useDispatch();
   const isPrimary = (id) => currentChannelId === id;
 
@@ -21,7 +22,6 @@ const ChatBox = () => {
       <Channels
         channels={channels}
         isPrimary={isPrimary}
-        modalInfo={modalInfo}
         dispatch={dispatch}
       />
       <Messages
@@ -29,8 +29,13 @@ const ChatBox = () => {
         messages={messages}
         currentChannelId={currentChannelId}
       />
+      <Modals
+        modalInfo={modalInfo}
+        dispatch={dispatch}
+        channels={channels}
+      />
     </div>
   );
 };
 
-export default ChatBox;
+export default App;

@@ -5,54 +5,56 @@ import Cookies from 'js-cookie';
 import faker from 'faker';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
-import { addChannel, removeChannel, renameChannel } from './slices/channelSlice';
-import { addMessage } from './slices/messageSlice';
-import UserNameContext from './UserNameContext.js';
-
-if (!Cookies.get('username')) {
-  Cookies.set('username', faker.name.findName());
-}
+import { addChannel, removeChannel, renameChannel } from './slices/channelsSlice';
+import { addMessage } from './slices/messagesSlice';
+import Context from './Context.js';
 
 export default ({ channels, messages, currentChannelId }, socket) => {
+  if (!Cookies.get('username')) {
+    Cookies.set('username', faker.name.findName());
+  }
+
   const user = Cookies.get('username');
+  const values = {
+    user,
+  };
 
   const preloadedState = {
-    chat: {
+    channels: {
       channels,
       currentChannelId,
     },
-    message: {
+    messages: {
       messages,
     },
   };
 
   const store = configureStore({
     reducer: rootReducer,
-    devTools: process.env.NODE_ENV !== 'production',
     preloadedState,
   });
 
-  socket.on('newChannel', ({ data }) => {
-    store.dispatch(addChannel(data.attributes));
+  socket.on('newChannel', ({ data: { attributes } }) => {
+    store.dispatch(addChannel({ attributes }));
   });
 
-  socket.on('removeChannel', ({ data }) => {
-    store.dispatch(removeChannel(data.id));
+  socket.on('removeChannel', ({ data: { id } }) => {
+    store.dispatch(removeChannel({ id }));
   });
 
-  socket.on('renameChannel', ({ data: { id, attributes } }) => {
-    store.dispatch(renameChannel({ id, attributes }));
+  socket.on('renameChannel', ({ data: { id, attributes: { name } } }) => {
+    store.dispatch(renameChannel({ id, name }));
   });
 
-  socket.on('newMessage', ({ data }) => {
-    store.dispatch(addMessage(data.attributes));
+  socket.on('newMessage', ({ data: { attributes } }) => {
+    store.dispatch(addMessage({ attributes }));
   });
 
   return (
     <Provider store={store}>
-      <UserNameContext.Provider value={user}>
+      <Context.Provider value={values}>
         <App />
-      </UserNameContext.Provider>
+      </Context.Provider>
     </Provider>
   );
 };

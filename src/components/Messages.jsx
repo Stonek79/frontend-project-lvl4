@@ -3,6 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import cn from 'classnames';
 import axios from 'axios';
+import * as Yup from 'yup';
+import { animateScroll as scroll } from 'react-scroll';
+
 import {
   Button,
   Form,
@@ -13,7 +16,7 @@ import {
 } from 'react-bootstrap';
 import routes from '../routes';
 
-const messageList = ({ user, text, id }) => (
+const Message = ({ user, text, id }) => (
   <FormText key={id} className="text-break">
     <b>{user}</b>
     :
@@ -22,12 +25,12 @@ const messageList = ({ user, text, id }) => (
   </FormText>
 );
 
-const generateSubmit = (name, channelId) => async (values, { setStatus, resetForm }) => {
+const generateSubmit = (name, channelId) => async (values, { setStatus, setErrors, resetForm }) => {
   const { channelMessagesPath } = routes;
   const message = { user: name, text: values.body };
 
   try {
-    setStatus('Sending a message to chat, please wait, slow connection');
+    setStatus('Sending...');
     await axios.post(channelMessagesPath(channelId), {
       data: {
         channelId,
@@ -37,7 +40,9 @@ const generateSubmit = (name, channelId) => async (values, { setStatus, resetFor
     setStatus('done');
     resetForm();
   } catch (err) {
-    setStatus(err.message);
+    console.log(err);
+    setStatus('done');
+    setErrors({ body: 'Net error' });
   }
 };
 
@@ -49,14 +54,25 @@ const Messages = ({ messages, currentChannelId, user }) => {
     initialValues: {
       body: '',
     },
+    validationSchema: Yup.object({
+      body: Yup.string()
+        .max(400, 'Must be 400 characters or less')
+        .required(),
+    }),
     onSubmit: generateSubmit(user, currentChannelId),
   });
 
-  const className = cn({ 'is-invalid': formik.status });
+  const inputClassName = cn({ 'is-invalid': formik.errors.body === 'Net error' });
+  const feedbackClassName = cn({
+    'text-danger': formik.errors.body === 'Net error',
+    'text-info': formik.errors.body !== 'Net error',
+  });
+
   const textInput = useRef(null);
   useEffect(() => {
-    const messageBox = document.getElementById('message-box');
-    messageBox.scrollTo(0, messageBox.scrollHeight);
+    scroll.scrollToBottom({
+      containerId: 'message-box', smooth: false,
+    });
     textInput.current.focus();
   });
 
@@ -64,28 +80,41 @@ const Messages = ({ messages, currentChannelId, user }) => {
     <Form className="col h-100" onSubmit={formik.handleSubmit}>
       <FormGroup className="d-flex flex-column h-100">
         <FormGroup id="message-box" className="chat-messages overflow-auto mb-3">
-          {currentMessages.map(messageList)}
+          {currentMessages.map(Message)}
         </FormGroup>
         <InputGroup noValidate className="mt-auto">
           <FormControl
-            className={className}
+            className={inputClassName}
             ref={textInput}
             name="body"
             required
             value={formik.values.body}
             onChange={formik.handleChange}
             disabled={formik.isSubmitting}
-            maxLength={1000}
+            placeholder="Add message: max length 400 characters"
+            maxLength={401}
           />
-          <Button variant="primary" type="submit" style={{ marginLeft: '8px' }} disabled={formik.isSubmitting}>
-            {formik.status === 'Sending a message to chat, please wait, slow connection'
+          <Button
+            variant="primary"
+            type="submit"
+            style={{ marginLeft: '8px' }}
+            disabled={
+              formik.isSubmitting
+              || !formik.values.body.trim()
+              || (formik.errors.body && formik.errors.body !== 'Net error')
+            }
+          >
+            {formik.status === 'Sending...'
               ? (
-                <span className="spinner-border spinner-border" role="status" aria-hidden="true" />
+                <>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                  Sending...
+                </>
               )
-              : 'Add message'}
+              : 'Send message'}
           </Button>
         </InputGroup>
-        <FormGroup className="text-danger">{formik.status}</FormGroup>
+        <FormGroup className={feedbackClassName}>{formik.errors.body}</FormGroup>
       </FormGroup>
     </Form>
   );
