@@ -3,16 +3,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import remove from 'lodash/remove';
 
-const channelsSlice = createSlice({
-  name: 'channelsData',
+const channelSlice = createSlice({
+  name: 'channelData',
   initialState: {
     channels: [],
     currentChannelId: '',
   },
   reducers: {
     addChannel(state, action) {
-      const { attributes } = action.payload;
-      state.channels.push(attributes);
+      const { channelData } = action.payload;
+      state.channels.push(channelData);
     },
 
     addChannelId(state, action) {
@@ -41,6 +41,6 @@ export const {
   addChannelId,
   removeChannel,
   renameChannel,
-} = channelsSlice.actions;
+} = channelSlice.actions;
 
-export default channelsSlice.reducer;
+export default channelSlice.reducer;

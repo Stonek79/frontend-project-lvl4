@@ -7,7 +7,7 @@ import {
 const ChannelItem = ({
   name,
   removable,
-  btnClass,
+  isPrimary,
   handleRemoveButton,
   handleRenameButton,
   handleChangeChannel,
@@ -15,9 +15,8 @@ const ChannelItem = ({
   ? (
     <li className="nav-item">
       <Button
-        variant={btnClass ? 'primary' : 'light'}
-        style={{ width: '95%', margin: '5px' }}
-        className="text-left"
+        variant={isPrimary ? 'primary' : 'light'}
+        className="nav-link btn-block text-left mb-2"
         onClick={handleChangeChannel}
       >
         {name}
@@ -26,17 +25,16 @@ const ChannelItem = ({
   )
   : (
     <li className="nav-item">
-      <Dropdown style={{ width: '95%', margin: '5px' }} as={ButtonGroup}>
+      <Dropdown className="d-flex mb-2 text-left" as={ButtonGroup}>
         <Button
-          style={{ width: '85%' }}
-          variant={btnClass ? 'primary' : 'light'}
-          className="text-left"
+          variant={isPrimary ? 'primary' : 'light'}
+          className="flex-grow-1 text-left nav-link"
           onClick={handleChangeChannel}
         >
           {name}
         </Button>
-        <Dropdown.Toggle split variant={btnClass ? 'primary' : 'light'} style={{ width: '15%' }} />
-        <Dropdown.Menu variant={btnClass ? 'primary' : 'light'} className="flex-grow-0" title="">
+        <Dropdown.Toggle split variant={isPrimary ? 'primary' : 'light'} className="flex-grow-0 text-left nav-link" />
+        <Dropdown.Menu variant={isPrimary ? 'primary' : 'light'} title="">
           <Dropdown.Item onClick={handleRemoveButton}>Remove</Dropdown.Item>
           <Dropdown.Item onClick={handleRenameButton}>Rename</Dropdown.Item>
         </Dropdown.Menu>

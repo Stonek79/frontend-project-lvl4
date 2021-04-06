@@ -9,8 +9,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import routes from '../routes';
 
-const generateRename = (prop, channelId) => async (value, { setStatus, setErrors }) => {
-  const { closeModal, dispatch } = prop;
+const generateRename = (close, channelId) => async (value, { setStatus, setErrors }) => {
   const { channelPath } = routes;
 
   try {
@@ -23,18 +22,23 @@ const generateRename = (prop, channelId) => async (value, { setStatus, setErrors
       },
     });
     setStatus('done');
-    dispatch(closeModal());
+    close();
   } catch (err) {
     console.log(err);
     setStatus('done');
-    setErrors({ body: 'Net error' });
+    setErrors({ body: 'Network error' });
   }
 };
 
-const RenameChannel = (props) => {
-  const {
-    closeModal, isOpen, dispatch, channels,
-  } = props;
+const validate = (channelsNames) => Yup.object({
+  body: Yup.string()
+    .min(3, 'Must be at least 3 characters & no space')
+    .max(17, 'Must be 17 characters or less')
+    .notOneOf(channelsNames, 'Channel name already exist.')
+    .required(''),
+});
+
+const RenameChannel = ({ close, channels }) => {
   const channelsNames = channels.map((ch) => ch.name);
 
   const channelId = useSelector((state) => state.modals.channelId);
@@ -46,19 +50,16 @@ const RenameChannel = (props) => {
     initialValues: {
       body: name,
     },
-    validationSchema: Yup.object({
-      body: Yup.string()
-        .max(17, 'Must be 17 characters or less')
-        .notOneOf(channelsNames, 'Channel name already exist.')
-        .required(),
-    }),
-    onSubmit: generateRename(props, currentChannalId),
+    validationSchema: validate(channelsNames),
+    onSubmit: generateRename(close, currentChannalId),
   });
 
-  const inputClassName = cn({ 'is-invalid': formik.errors.body === 'Net error' });
+  const inputClassName = cn({
+    'is-invalid': formik.errors.body === 'Network error',
+  });
   const feedbackClassName = cn({
-    'text-danger': formik.errors.body === 'Net error',
-    'text-info': formik.errors.body !== 'Net error',
+    'text-danger': formik.errors.body === 'Network error',
+    'text-info': formik.errors.body !== 'Network error',
   });
 
   const textInput = useRef();
@@ -69,7 +70,7 @@ const RenameChannel = (props) => {
   }, [textInput]);
 
   return (
-    <Modal show={isOpen} onHide={() => dispatch(closeModal())}>
+    <>
       <Modal.Header closeButton>
         <Modal.Title>Renaming channel</Modal.Title>
       </Modal.Header>
@@ -81,7 +82,7 @@ const RenameChannel = (props) => {
               ref={textInput}
               name="body"
               required
-              value={formik.values.body}
+              value={formik.values.body.trim()}
               onChange={formik.handleChange}
               disabled={formik.isSubmitting}
               maxLength={18}
@@ -94,7 +95,7 @@ const RenameChannel = (props) => {
         <Button
           variant="secondary"
           type="cancel"
-          onClick={() => dispatch(closeModal())}
+          onClick={() => close()}
           disabled={formik.isSubmitting}
         >
           Cancel
@@ -106,20 +107,20 @@ const RenameChannel = (props) => {
           disabled={
             formik.isSubmitting
             || !formik.values.body.trim()
-            || (formik.errors.body && formik.errors.body !== 'Net error')
+            || (formik.errors.body && formik.errors.body !== 'Network error')
           }
         >
           {formik.status === 'Renaming...'
             ? (
               <>
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
                 Renaming...
               </>
             )
             : 'Confirm'}
         </Button>
       </Modal.Footer>
-    </Modal>
+    </>
   );
 };
 

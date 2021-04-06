@@ -2,17 +2,17 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import remove from 'lodash/remove';
-import { removeChannel } from './channelsSlice';
+import { removeChannel } from './channelSlice';
 
-const messageReducers = createSlice({
-  name: 'messagesData',
+const messageSlice = createSlice({
+  name: 'messageData',
   initialState: {
     messages: [],
   },
   reducers: {
     addMessage(state, action) {
-      const { attributes } = action.payload;
-      state.messages.push(attributes);
+      const { messageData } = action.payload;
+      state.messages.push(messageData);
     },
   },
 
@@ -24,6 +24,6 @@ const messageReducers = createSlice({
   },
 });
 
-export const { addMessage } = messageReducers.actions;
+export const { addMessage } = messageSlice.actions;
 
-export default messageReducers.reducer;
+export default messageSlice.reducer;

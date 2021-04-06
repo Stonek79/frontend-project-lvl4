@@ -8,7 +8,7 @@ import axios from 'axios';
 import * as Yup from 'yup';
 import routes from '../routes';
 
-const generateSubmit = ({ closeModal, dispatch }) => async (value, { setStatus, setErrors }) => {
+const generateSubmit = ({ close }) => async (value, { setStatus, setErrors }) => {
   const { channelsPath } = routes;
 
   try {
@@ -21,37 +21,39 @@ const generateSubmit = ({ closeModal, dispatch }) => async (value, { setStatus, 
       },
     });
     setStatus('done');
-    dispatch(closeModal());
+    close();
   } catch (err) {
     console.log(err);
     setStatus('done');
-    setErrors({ body: 'Net error' });
+    setErrors({ body: 'Network error' });
   }
 };
 
-const CreateChannel = (props) => {
-  const {
-    closeModal, isOpen, dispatch, channels,
-  } = props;
+const validate = (channelsNames) => Yup.object({
+  body: Yup.string()
+    .min(3, 'Must be at least 3 characters & no space')
+    .max(17, 'Must be 17 characters or less')
+    .notOneOf(channelsNames, 'Channel name already exist.')
+    .required(''),
+});
+
+const CreateChannel = ({ close, channels }) => {
   const channelsNames = channels.map((ch) => ch.name);
 
   const formik = useFormik({
     initialValues: {
       body: '',
     },
-    validationSchema: Yup.object({
-      body: Yup.string()
-        .max(17, 'Must be 17 characters or less')
-        .notOneOf(channelsNames, 'Channel name already exist.')
-        .required(),
-    }),
-    onSubmit: generateSubmit(props),
+    validationSchema: validate(channelsNames),
+    onSubmit: generateSubmit({ close }),
   });
 
-  const inputClassName = cn({ 'is-invalid': formik.errors.body === 'Net error' });
+  const inputClassName = cn({
+    'is-invalid': formik.errors.body === 'Network error',
+  });
   const feedbackClassName = cn({
-    'text-danger': formik.errors.body === 'Net error',
-    'text-info': formik.errors.body !== 'Net error',
+    'text-danger': formik.errors.body === 'Network error',
+    'text-info': formik.errors.body !== 'Network error',
   });
 
   const textInput = useRef();
@@ -62,7 +64,7 @@ const CreateChannel = (props) => {
   }, [textInput]);
 
   return (
-    <Modal show={isOpen} onHide={() => dispatch(closeModal())}>
+    <>
       <Modal.Header closeButton>
         <Modal.Title>Create Channel</Modal.Title>
       </Modal.Header>
@@ -74,10 +76,9 @@ const CreateChannel = (props) => {
               ref={textInput}
               name="body"
               required
-              value={formik.values.body}
+              value={formik.values.body.trim()}
               onChange={formik.handleChange}
               disabled={formik.isSubmitting}
-              placeholder="Channel name: max length 17 characters"
               maxLength={18}
             />
           </InputGroup>
@@ -88,7 +89,7 @@ const CreateChannel = (props) => {
         <Button
           variant="secondary"
           type="cancel"
-          onClick={() => dispatch(closeModal())}
+          onClick={() => close()}
           disabled={formik.isSubmitting}
         >
           Cancel
@@ -100,20 +101,20 @@ const CreateChannel = (props) => {
           disabled={
             formik.isSubmitting
             || !formik.values.body.trim()
-            || (formik.errors.body && formik.errors.body !== 'Net error')
+            || (formik.errors.body && formik.errors.body !== 'Network error')
           }
         >
           {formik.status === 'Adding...'
             ? (
               <>
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
                 Creating...
               </>
             )
             : 'Create'}
         </Button>
       </Modal.Footer>
-    </Modal>
+    </>
   );
 };
 

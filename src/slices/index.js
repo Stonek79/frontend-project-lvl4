@@ -1,10 +1,10 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import channelsSlice from './channelsSlice';
-import messageReducers from './messagesSlice';
-import modalReducers from './modalsSlice';
+import channelReducer from './channelSlice';
+import messageReducer from './messageSlice';
+import modalReducer from './modalSlice';
 
 export default combineReducers({
-  channels: channelsSlice,
-  modals: modalReducers,
-  messages: messageReducers,
+  channels: channelReducer,
+  modals: modalReducer,
+  messages: messageReducer,
 });

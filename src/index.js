@@ -12,10 +12,10 @@ if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
 
-const { origin } = window.location;
-const socket = io(origin);
+const url = window.location.origin;
+const socket = io(url);
 
 const element = document.getElementById('chat');
-const chat = run(gon, socket);
+const virtualDom = run(gon, socket);
 
-render(chat, element);
+render(virtualDom, element);

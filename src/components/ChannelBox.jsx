@@ -1,9 +1,10 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Form, FormGroup, FormLabel, ListGroup,
 } from 'react-bootstrap';
-import { openModal } from '../slices/modalsSlice.js';
-import { addChannelId } from '../slices/channelsSlice.js';
+import { openModal } from '../slices/modalSlice.js';
+import { addChannelId } from '../slices/channelSlice.js';
 import ChannelItem from './ChannelItem';
 
 const handleAddButton = (dispatch) => () => dispatch(openModal({ type: 'adding' }));
@@ -11,22 +12,11 @@ const handleRemoveButton = (dispatch, id) => () => dispatch(openModal({ type: 'r
 const handleRenameButton = (dispatch, id) => () => dispatch(openModal({ type: 'renaming', id }));
 const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }));
 
-const Channels = ({
-  channels, isPrimary, dispatch,
-}) => {
-  const madeButton = ({
-    id, name, removable,
-  }) => (
-    <ChannelItem
-      key={id}
-      name={name}
-      removable={removable}
-      btnClass={isPrimary(id)}
-      handleRemoveButton={handleRemoveButton(dispatch, id)}
-      handleRenameButton={handleRenameButton(dispatch, id)}
-      handleChangeChannel={handleChangeChannel(dispatch, id)}
-    />
-  );
+const ChannelBox = () => {
+  const currentChannelId = useSelector((state) => state.channels.currentChannelId);
+  const isPrimary = (id) => currentChannelId === id;
+  const channels = useSelector((state) => state.channels.channels);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -44,7 +34,20 @@ const Channels = ({
         </FormGroup>
         <FormGroup className="h-100 overflow-auto">
           <ListGroup className="nav">
-            {channels.map(madeButton)}
+            {channels.map((channel) => {
+              const { id, name, removable } = channel;
+              return (
+                <ChannelItem
+                  key={id}
+                  name={name}
+                  removable={removable}
+                  isPrimary={isPrimary(id)}
+                  handleRemoveButton={handleRemoveButton(dispatch, id)}
+                  handleRenameButton={handleRenameButton(dispatch, id)}
+                  handleChangeChannel={handleChangeChannel(dispatch, id)}
+                />
+              );
+            })}
           </ListGroup>
         </FormGroup>
       </Form>
@@ -52,4 +55,4 @@ const Channels = ({
   );
 };
 
-export default Channels;
+export default ChannelBox;
