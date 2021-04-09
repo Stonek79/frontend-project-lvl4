@@ -3,21 +3,22 @@ import axios from 'axios';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
-import cn from 'classnames';
 import routes from '../routes';
+import { locales } from '../constants';
 
-const generateRemove = (close, currentId) => async (values, { setStatus, setErrors }) => {
+const { netError } = locales;
+const generateRemove = (close, currentId) => async (values, { setSubmitting, setErrors }) => {
   const { channelPath } = routes;
 
   try {
-    setStatus('Removing...');
+    setSubmitting(true);
     await axios.delete(channelPath(currentId));
-    setStatus('done');
+    setSubmitting(false);
     close();
   } catch (err) {
     console.log(err);
-    setStatus('done');
-    setErrors({ body: 'Network error' });
+    setSubmitting(false);
+    setErrors({ channelInfo: netError });
   }
 };
 
@@ -25,15 +26,12 @@ const RemoveChannel = ({ close }) => {
   const currentId = useSelector((state) => state.modals.channelId);
   const formik = useFormik({
     initialValues: {
-      body: '',
+      channelInfo: '',
     },
     onSubmit: generateRemove(close, currentId),
   });
 
-  const feedbackClassName = cn({
-    'text-danger': formik.errors.body === 'Network error',
-    'text-info': formik.errors.body !== 'Network error',
-  });
+  const isError = formik.errors.channelInfo === netError;
 
   return (
     <>
@@ -42,13 +40,17 @@ const RemoveChannel = ({ close }) => {
       </Modal.Header>
       <Modal.Body className="text-danger">
         <p><b>Are you really want to remove this channel?</b></p>
-        <FormGroup className={feedbackClassName}>{formik.errors.body}</FormGroup>
+        <FormGroup
+          className={isError ? 'text-danger' : 'text-info'}
+        >
+          {formik.errors.channelInfo}
+        </FormGroup>
       </Modal.Body>
-      <Modal.Footer style={{ justifyContent: 'space-between' }}>
+      <Modal.Footer className="justify-content-between">
         <Button
           variant="secondary"
           type="cancel"
-          onClick={() => close()}
+          onClick={close}
           disabled={formik.isSubmitting}
         >
           Cancel
@@ -59,7 +61,7 @@ const RemoveChannel = ({ close }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.status === 'Removing...'
+          {formik.isSubmitting
             ? (
               <>
                 <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />

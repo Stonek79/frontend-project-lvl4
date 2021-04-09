@@ -3,38 +3,43 @@ import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
-import cn from 'classnames';
 import axios from 'axios';
 import * as Yup from 'yup';
 import routes from '../routes';
+import { charactersLength, locales } from '../constants';
 
-const generateSubmit = ({ close }) => async (value, { setStatus, setErrors }) => {
+const { min, max } = charactersLength;
+const {
+  netError, notOneOf, minMessage, maxMessage, required,
+} = locales;
+
+const generateSubmit = ({ close }) => async (value, { setErrors, setSubmitting }) => {
   const { channelsPath } = routes;
 
   try {
-    setStatus('Adding...');
+    setSubmitting(true);
     await axios.post(channelsPath(), {
       data: {
         attributes: {
-          name: value.body.trim(),
+          name: value.channelName.trim(),
         },
       },
     });
-    setStatus('done');
+    setSubmitting(false);
     close();
   } catch (err) {
     console.log(err);
-    setStatus('done');
-    setErrors({ body: 'Network error' });
+    setSubmitting(false);
+    setErrors({ channelName: netError });
   }
 };
 
-const validate = (channelsNames) => Yup.object({
-  body: Yup.string()
-    .min(3, 'Must be at least 3 characters & no space')
-    .max(17, 'Must be 17 characters or less')
-    .notOneOf(channelsNames, 'Channel name already exist.')
-    .required(''),
+const validationSchema = (channelsNames) => Yup.object({
+  channelName: Yup.string()
+    .min(min, minMessage(min))
+    .max(max, maxMessage(max))
+    .notOneOf(channelsNames, notOneOf)
+    .required(required),
 });
 
 const CreateChannel = ({ close, channels }) => {
@@ -42,26 +47,19 @@ const CreateChannel = ({ close, channels }) => {
 
   const formik = useFormik({
     initialValues: {
-      body: '',
+      channelName: '',
     },
-    validationSchema: validate(channelsNames),
+    validateOnChange: false,
+    validateOnBlur: false,
+    validationSchema: validationSchema(channelsNames),
     onSubmit: generateSubmit({ close }),
   });
 
-  const inputClassName = cn({
-    'is-invalid': formik.errors.body === 'Network error',
-  });
-  const feedbackClassName = cn({
-    'text-danger': formik.errors.body === 'Network error',
-    'text-info': formik.errors.body !== 'Network error',
-  });
-
+  const isError = formik.errors.channelName === netError;
   const textInput = useRef();
   useEffect(() => {
-    setTimeout(() => {
-      textInput.current.select();
-    }, 1);
-  }, [textInput]);
+    textInput.current.select();
+  }, []);
 
   return (
     <>
@@ -72,24 +70,29 @@ const CreateChannel = ({ close, channels }) => {
         <Form onSubmit={formik.handleSubmit}>
           <InputGroup noValidate className="mt-auto">
             <FormControl
-              className={inputClassName}
+              isInvalid={isError}
               ref={textInput}
-              name="body"
+              name="channelName"
               required
-              value={formik.values.body.trim()}
+              value={formik.values.channelName}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
               maxLength={18}
             />
           </InputGroup>
         </Form>
-        <FormGroup className={feedbackClassName}>{formik.errors.body}</FormGroup>
+        <FormGroup
+          className={isError ? 'text-danger' : 'text-info'}
+        >
+          {formik.errors.channelName}
+        </FormGroup>
       </Modal.Body>
-      <Modal.Footer style={{ justifyContent: 'space-between' }}>
+      <Modal.Footer className="justify-content-between">
         <Button
           variant="secondary"
           type="cancel"
-          onClick={() => close()}
+          onClick={close}
           disabled={formik.isSubmitting}
         >
           Cancel
@@ -98,13 +101,8 @@ const CreateChannel = ({ close, channels }) => {
           variant="primary"
           type="submit"
           onClick={formik.handleSubmit}
-          disabled={
-            formik.isSubmitting
-            || !formik.values.body.trim()
-            || (formik.errors.body && formik.errors.body !== 'Network error')
-          }
         >
-          {formik.status === 'Adding...'
+          {formik.isSubmitting
             ? (
               <>
                 <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />

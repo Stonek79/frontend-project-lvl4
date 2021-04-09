@@ -21,17 +21,18 @@ const channelSlice = createSlice({
     },
 
     removeChannel(state, action) {
-      const { id } = action.payload;
-      if (state.currentChannelId === id) {
-        state.currentChannelId = 1;
+      const defaultChannel = state.channels.find((ch) => ch.name === 'general');
+      const { channelId } = action.payload;
+      if (state.currentChannelId === channelId) {
+        state.currentChannelId = defaultChannel.id;
       }
-      remove(state.channels, (ch) => ch.id === id);
+      remove(state.channels, (ch) => ch.id === channelId);
     },
 
     renameChannel(state, action) {
-      const { id, name } = action.payload;
-      const currentChannel = state.channels.find((channel) => channel.id === id);
-      currentChannel.name = name;
+      const { channelId, channelName } = action.payload;
+      const currentChannel = state.channels.find((channel) => channel.id === channelId);
+      currentChannel.name = channelName;
     },
   },
 });

@@ -25,7 +25,7 @@ const ModalComponent = () => {
 
   const Component = modals[type];
   return (
-    <Modal show={isOpen} onHide={() => close()}>
+    <Modal show={isOpen} onHide={close}>
       <Component
         close={close}
         channels={channels}

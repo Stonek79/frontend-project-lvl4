@@ -1,14 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
+import Cookies from 'js-cookie';
+import faker from 'faker';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
 import { addChannel, removeChannel, renameChannel } from './slices/channelSlice';
 import { addMessage } from './slices/messageSlice';
 import Context from './Context.js';
-import contextValues from './contextValues.js';
 
 export default (props, socket) => {
+  if (!Cookies.get('username')) {
+    Cookies.set('username', faker.name.findName());
+  }
+  const user = Cookies.get('username');
+  const contextValues = {
+    user,
+  };
+
   const { channels, messages, currentChannelId } = props;
   const preloadedState = {
     channels: {
@@ -26,23 +35,21 @@ export default (props, socket) => {
   });
 
   socket.on('newChannel', ({ data: { attributes } }) => {
-    const channelData = { ...attributes };
-    store.dispatch(addChannel({ channelData }));
+    store.dispatch(addChannel({ channelData: attributes }));
   });
 
   socket.on('removeChannel', ({ data: { id } }) => {
-    store.dispatch(removeChannel({ id }));
+    store.dispatch(removeChannel({ channelId: id }));
   });
 
   socket.on('renameChannel', ({ data }) => {
     const { id, attributes } = data;
     const { name } = attributes;
-    store.dispatch(renameChannel({ id, name }));
+    store.dispatch(renameChannel({ channelId: id, channelName: name }));
   });
 
   socket.on('newMessage', ({ data: { attributes } }) => {
-    const messageData = { ...attributes };
-    store.dispatch(addMessage({ messageData }));
+    store.dispatch(addMessage({ messageData: attributes }));
   });
 
   return (

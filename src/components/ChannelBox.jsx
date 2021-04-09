@@ -7,14 +7,13 @@ import { openModal } from '../slices/modalSlice.js';
 import { addChannelId } from '../slices/channelSlice.js';
 import ChannelItem from './ChannelItem';
 
-const handleAddButton = (dispatch) => () => dispatch(openModal({ type: 'adding' }));
-const handleRemoveButton = (dispatch, id) => () => dispatch(openModal({ type: 'removing', id }));
-const handleRenameButton = (dispatch, id) => () => dispatch(openModal({ type: 'renaming', id }));
+const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: 'adding' }));
+const handleRemoveChannel = (dispatch, id) => () => dispatch(openModal({ type: 'removing', id }));
+const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({ type: 'renaming', id }));
 const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }));
 
 const ChannelBox = () => {
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
-  const isPrimary = (id) => currentChannelId === id;
   const channels = useSelector((state) => state.channels.channels);
   const dispatch = useDispatch();
 
@@ -27,7 +26,7 @@ const ChannelBox = () => {
             type="button"
             variant="outline-primary"
             className="ml-auto p-1"
-            onClick={handleAddButton(dispatch)}
+            onClick={handleAddChannel(dispatch)}
           >
             <b>+</b>
           </Button>
@@ -41,9 +40,9 @@ const ChannelBox = () => {
                   key={id}
                   name={name}
                   removable={removable}
-                  isPrimary={isPrimary(id)}
-                  handleRemoveButton={handleRemoveButton(dispatch, id)}
-                  handleRenameButton={handleRenameButton(dispatch, id)}
+                  isPrimary={currentChannelId === id}
+                  handleRemoveChannel={handleRemoveChannel(dispatch, id)}
+                  handleRenameChannel={handleRenameChannel(dispatch, id)}
                   handleChangeChannel={handleChangeChannel(dispatch, id)}
                 />
               );
