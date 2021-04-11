@@ -45,8 +45,9 @@ export default (props, socket) => {
   socket.io.on('reconnect', async () => {
     console.log(socket.connected, store.getState(), 'reconnect IO');
     const currentId = store.getState().channels.currentChannelId;
-    await axios.get(routes.channelMessagesPath(currentId));
-    console.log(store.getState());
+    const req = await axios.get(routes.channelMessagesPath(currentId));
+    console.log(req, store.getState());
+    return req;
   });
 
   socket.on('disconnect', () => {
