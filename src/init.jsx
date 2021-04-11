@@ -42,8 +42,12 @@ export default (props, socket) => {
     console.log(socket.connected, 'connect');
   });
 
-  socket.on('reconnect', () => { console.log(socket.connected, 'reconnect'); });
-  socket.io.on('reconnect', () => { console.log(socket.connected, 'reconnect IO'); });
+  socket.io.on('reconnect', () => {
+    console.log(socket.connected, store.getState(), 'reconnect IO');
+    const currentId = store.getState().channels.currentChannelId;
+    store.dispatch(addChannelId({ id: currentId }));
+    console.log(store.getState());
+  });
 
   socket.on('disconnect', () => {
     console.log(socket.connected, 'disconnect');
