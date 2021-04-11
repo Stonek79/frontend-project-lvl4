@@ -39,7 +39,7 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.io.on('reconnect', async () => {
+  socket.on('connect', async () => {
     console.log(socket.connected, store.getState(), 'reconnect');
     const currentId = store.getState().channels.currentChannelId;
     const currentMessages = store.getState().messages.messages
