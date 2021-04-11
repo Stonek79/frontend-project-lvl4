@@ -19,7 +19,6 @@ const messageSlice = createSlice({
   extraReducers: {
     [removeChannel]: (state, action) => {
       const { channelId } = action.payload;
-      console.log(state, action);
       remove(state.messages, (m) => m.channelId === channelId);
     },
   },

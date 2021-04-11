@@ -38,16 +38,24 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.on('connect', () => {
-    console.log(socket.connected, 'connect');
-  });
-
-  socket.io.on('reconnect', async () => {
-    console.log(socket.connected, store.getState(), 'reconnect IO');
+  socket.on('connect', async () => {
+    console.log(socket.connected, store.getState(), 'connect');
     const currentId = store.getState().channels.currentChannelId;
     const req = await axios.get(routes.channelMessagesPath(currentId));
     console.log(req, store.getState());
-    return req;
+    // return req;
+  });
+
+  // socket.io.on('reconnect', async () => {
+  //   console.log(socket.connected, store.getState(), 'reconnect IO');
+  //   const currentId = store.getState().channels.currentChannelId;
+  //   const req = await axios.get(routes.channelMessagesPath(currentId));
+  //   console.log(req, store.getState());
+  //   return req;
+  // });
+
+  socket.onAny((event, ...args) => {
+    console.log(`got ${event}`, args);
   });
 
   socket.on('disconnect', () => {
