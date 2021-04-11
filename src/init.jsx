@@ -4,10 +4,11 @@ import { Provider } from 'react-redux';
 import Cookies from 'js-cookie';
 import faker from 'faker';
 import axios from 'axios';
+import differenceBy from 'lodash/differenceBy';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
 import {
-  addChannel, addChannelId, removeChannel, renameChannel,
+  addChannel, removeChannel, renameChannel,
 } from './slices/channelSlice';
 import { addMessage } from './slices/messageSlice';
 import Context from './Context.jsx';
@@ -41,9 +42,12 @@ export default (props, socket) => {
   socket.on('connect', async () => {
     console.log(socket.connected, store.getState(), 'connect');
     const currentId = store.getState().channels.currentChannelId;
+    const currentMessages = store.getState().messages.messages
+      .filter((m) => m.channelId === currentId);
     const req = await axios.get(routes.channelMessagesPath(currentId));
-    store.dispatch(addMessage({ messageData: req }));
-    console.log(req, store.getState());
+    const newMessages = differenceBy(currentMessages, req.data.data.map((m) => m.attributes), 'id');
+    newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m.attributes })));
+    console.log(store.getState(), 'stor');
   });
 
   socket.on('disconnect', () => {
