@@ -3,6 +3,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import Cookies from 'js-cookie';
 import faker from 'faker';
+import axios from 'axios';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
 import {
@@ -10,6 +11,7 @@ import {
 } from './slices/channelSlice';
 import { addMessage } from './slices/messageSlice';
 import Context from './Context.jsx';
+import routes from './routes.js';
 
 export default (props, socket) => {
   if (!Cookies.get('username')) {
@@ -37,10 +39,11 @@ export default (props, socket) => {
   });
 
   socket.on('connect', () => {
-    const { channelId } = store.getState().channels.currentChannelId;
     console.log(socket.connected, 'connect');
-    store.dispatch(addChannelId({ id: channelId }));
   });
+
+  socket.on('reconnect_attempt', () => { console.log(socket.connected, 'reconnect_attempt'); });
+  socket.io.on('reconnect_attempt', () => { console.log(socket.connected, 'reconnect_attempt IO'); });
 
   socket.on('disconnect', () => {
     console.log(socket.connected, 'disconnect');
