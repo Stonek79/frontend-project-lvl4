@@ -42,8 +42,8 @@ export default (props, socket) => {
     console.log(socket.connected, 'connect');
   });
 
-  socket.on('reconnect_attempt', () => { console.log(socket.connected, 'reconnect_attempt'); });
-  socket.io.on('reconnect_attempt', () => { console.log(socket.connected, 'reconnect_attempt IO'); });
+  socket.on('reconnect', () => { console.log(socket.connected, 'reconnect'); });
+  socket.io.on('reconnect', () => { console.log(socket.connected, 'reconnect IO'); });
 
   socket.on('disconnect', () => {
     console.log(socket.connected, 'disconnect');
