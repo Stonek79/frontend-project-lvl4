@@ -84,7 +84,7 @@ const MessageForm = ({ user, currentChannelId }) => {
               ? (
                 <>
                   <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                  {t('buttons.sending')}
+                  {t('buttons.process.sending')}
                 </>
               )
               : t('buttons.send')}

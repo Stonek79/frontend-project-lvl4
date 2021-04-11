@@ -37,12 +37,13 @@ export default (props, socket) => {
   });
 
   socket.on('connect', () => {
-    console.log(socket.connected);
-    store.dispatch(addChannelId({ id: currentChannelId }));
+    const { channelId } = store.getState().channels.currentChannelId;
+    console.log(socket.connected, 'connect');
+    store.dispatch(addChannelId({ id: channelId }));
   });
 
   socket.on('disconnect', () => {
-    console.log(socket.connected);
+    console.log(socket.connected, 'disconnect');
   });
 
   socket.on('newChannel', ({ data: { attributes } }) => {

@@ -108,7 +108,7 @@ const CreateChannel = ({ close, channels }) => {
             ? (
               <>
                 <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                {t('buttons.creating')}
+                {t('buttons.process.creating')}
               </>
             )
             : t('buttons.create')}

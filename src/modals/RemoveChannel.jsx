@@ -72,7 +72,7 @@ const RemoveChannel = ({ close }) => {
             ? (
               <>
                 <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                {t('buttons.removing')}
+                {t('buttons.process.removing')}
               </>
             )
             : t('buttons.remove')}

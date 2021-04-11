@@ -118,7 +118,7 @@ const RenameChannel = ({ close, channels }) => {
             ? (
               <>
                 <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                {t('buttons.renaming')}
+                {t('buttons.process.renaming')}
               </>
             )
             : t('buttons.rename')}
