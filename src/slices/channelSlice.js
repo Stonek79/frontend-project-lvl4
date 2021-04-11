@@ -44,4 +44,6 @@ export const {
   renameChannel,
 } = channelSlice.actions;
 
+export const getChannels = (state) => state.channels.channels;
+export const getCurrentChannelId = (state) => state.channels.currentChannelId;
 export default channelSlice.reducer;

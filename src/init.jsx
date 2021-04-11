@@ -5,9 +5,11 @@ import Cookies from 'js-cookie';
 import faker from 'faker';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
-import { addChannel, removeChannel, renameChannel } from './slices/channelSlice';
+import {
+  addChannel, addChannelId, removeChannel, renameChannel,
+} from './slices/channelSlice';
 import { addMessage } from './slices/messageSlice';
-import Context from './Context.js';
+import Context from './Context.jsx';
 
 export default (props, socket) => {
   if (!Cookies.get('username')) {
@@ -32,6 +34,15 @@ export default (props, socket) => {
   const store = configureStore({
     reducer: rootReducer,
     preloadedState,
+  });
+
+  socket.on('connect', () => {
+    console.log(socket.connected);
+    store.dispatch(addChannelId({ id: currentChannelId }));
+  });
+
+  socket.on('disconnect', () => {
+    console.log(socket.connected);
   });
 
   socket.on('newChannel', ({ data: { attributes } }) => {

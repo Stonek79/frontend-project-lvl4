@@ -1,10 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Form, FormGroup, FormLabel, ListGroup,
 } from 'react-bootstrap';
 import { openModal } from '../slices/modalSlice.js';
-import { addChannelId } from '../slices/channelSlice.js';
+import { addChannelId, getChannels, getCurrentChannelId } from '../slices/channelSlice.js';
 import ChannelItem from './ChannelItem';
 
 const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: 'adding' }));
@@ -13,15 +14,16 @@ const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({ type: '
 const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }));
 
 const ChannelBox = () => {
-  const currentChannelId = useSelector((state) => state.channels.currentChannelId);
-  const channels = useSelector((state) => state.channels.channels);
+  const { t } = useTranslation();
+  const currentChannelId = useSelector(getCurrentChannelId);
+  const channels = useSelector(getChannels);
   const dispatch = useDispatch();
 
   return (
     <>
       <Form className="col-3 h-100">
         <FormGroup className="d-flex mb-2">
-          <FormLabel><b>Channels</b></FormLabel>
+          <FormLabel><b>{t('labels.channels')}</b></FormLabel>
           <Button
             type="button"
             variant="outline-primary"

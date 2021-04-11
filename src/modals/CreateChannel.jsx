@@ -4,16 +4,16 @@ import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import routes from '../routes';
-import { charactersLength, locales } from '../constants';
+import charactersLength from '../constants';
+import locales from '../locales/locales';
 
-const { min, max } = charactersLength;
-const {
-  netError, notOneOf, minMessage, maxMessage, required,
-} = locales;
+const { minLength, maxLength } = charactersLength;
+const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
 
-const generateSubmit = ({ close }) => async (value, { setErrors, setSubmitting }) => {
+const generateSubmit = ({ close }, t) => async (value, { setErrors, setSubmitting }) => {
   const { channelsPath } = routes;
 
   try {
@@ -30,19 +30,20 @@ const generateSubmit = ({ close }) => async (value, { setErrors, setSubmitting }
   } catch (err) {
     console.log(err);
     setSubmitting(false);
-    setErrors({ channelName: netError });
+    setErrors({ channelName: t(`errors.${netError}`) });
   }
 };
 
-const validationSchema = (channelsNames) => Yup.object({
-  channelName: Yup.string()
-    .min(min, minMessage(min))
-    .max(max, maxMessage(max))
-    .notOneOf(channelsNames, notOneOf)
-    .required(required),
-});
-
 const CreateChannel = ({ close, channels }) => {
+  const { t } = useTranslation();
+
+  const validationSchema = (channelsNames) => Yup.object({
+    channelName: Yup.string().trim()
+      .min(minLength, t(`errors.${min}`)(minLength))
+      .max(maxLength, t(`errors.${max}`)(maxLength))
+      .notOneOf(channelsNames, t(`errors.${notOneOf}`))
+      .required(required),
+  });
   const channelsNames = channels.map((ch) => ch.name);
 
   const formik = useFormik({
@@ -52,10 +53,10 @@ const CreateChannel = ({ close, channels }) => {
     validateOnChange: false,
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
-    onSubmit: generateSubmit({ close }),
+    onSubmit: generateSubmit({ close }, t),
   });
 
-  const isError = formik.errors.channelName === netError;
+  const isError = formik.errors.channelName === t(`errors.${netError}`);
   const textInput = useRef();
   useEffect(() => {
     textInput.current.select();
@@ -64,7 +65,7 @@ const CreateChannel = ({ close, channels }) => {
   return (
     <>
       <Modal.Header closeButton>
-        <Modal.Title>Create Channel</Modal.Title>
+        <Modal.Title>{t('titles.createChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -78,7 +79,7 @@ const CreateChannel = ({ close, channels }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              maxLength={18}
+              maxLength={17}
             />
           </InputGroup>
         </Form>
@@ -101,15 +102,16 @@ const CreateChannel = ({ close, channels }) => {
           variant="primary"
           type="submit"
           onClick={formik.handleSubmit}
+          disabled={formik.isSubmitting}
         >
           {formik.isSubmitting
             ? (
               <>
                 <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                Creating...
+                {t('buttons.creating')}
               </>
             )
-            : 'Create'}
+            : t('buttons.create')}
         </Button>
       </Modal.Footer>
     </>

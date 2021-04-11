@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal } from 'react-bootstrap';
-import { closeModal } from '../slices/modalSlice';
+import { closeModal, getModalInfo } from '../slices/modalSlice';
 import CreateChannel from '../modals/CreateChannel.jsx';
 import RemoveChannel from '../modals/RemoveChannel.jsx';
 import RenameChannel from '../modals/RenameChannel.jsx';
+import { getChannels } from '../slices/channelSlice';
 
 const modals = {
   adding: CreateChannel,
@@ -13,8 +14,8 @@ const modals = {
 };
 
 const ModalComponent = () => {
-  const modalInfo = useSelector((state) => state.modals);
-  const channels = useSelector((state) => state.channels.channels);
+  const modalInfo = useSelector(getModalInfo);
+  const channels = useSelector(getChannels);
   const dispatch = useDispatch();
   const { type, isOpen } = modalInfo;
   if (!type) {

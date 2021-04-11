@@ -3,8 +3,10 @@ import React, { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { animateScroll as scroll } from 'react-scroll';
 import { FormGroup, FormText } from 'react-bootstrap';
-import Context from '../Context.js';
+import Context from '../Context.jsx';
 import MessageForm from './MessageForm.jsx';
+import { getCurrentChannelId } from '../slices/channelSlice.js';
+import { getMessages } from '../slices/messageSlice.js';
 
 const Message = ({ user, text, id }) => (
   <FormText key={id} className="text-break">
@@ -15,8 +17,8 @@ const Message = ({ user, text, id }) => (
 );
 
 const MessageBox = () => {
-  const currentChannelId = useSelector((state) => state.channels.currentChannelId);
-  const messages = useSelector((state) => state.messages.messages);
+  const currentChannelId = useSelector(getCurrentChannelId);
+  const messages = useSelector(getMessages);
   const { user } = useContext(Context);
 
   const currentMessages = messages

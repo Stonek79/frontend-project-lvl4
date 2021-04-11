@@ -2,20 +2,18 @@ import React, { useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import {
-  Button,
-  Form,
-  FormControl,
-  FormGroup,
-  InputGroup,
+  Button, Form, FormControl, FormGroup, InputGroup,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import { charactersLength, locales } from '../constants';
+import charactersLength from '../constants';
 import routes from '../routes';
+import locales from '../locales/locales';
 
 const { messageMax } = charactersLength;
-const { netError, maxMessage, required } = locales;
+const { number: { max }, mixed: { netError } } = locales;
 
-const handleSubmit = (name, channelId) => async (values, {
+const handleSubmit = (name, channelId, t) => async (values, {
   setSubmitting, setErrors, resetForm,
 }) => {
   const { channelMessagesPath } = routes;
@@ -33,26 +31,29 @@ const handleSubmit = (name, channelId) => async (values, {
   } catch (err) {
     console.log(err);
     setSubmitting(false);
-    setErrors({ message: netError });
+    setErrors({ message: t(`errors.${netError}`) });
   }
 };
 
-const validationSchema = Yup.object({
-  message: Yup.string()
-    .max(messageMax, maxMessage(messageMax))
-    .required(''),
-});
-
 const MessageForm = ({ user, currentChannelId }) => {
+  const { t } = useTranslation();
+
+  const validationSchema = Yup.object({
+    message: Yup.string().trim()
+      .max(messageMax, t(`errors.${max}`)(messageMax))
+      .required(''),
+  });
+
+  Yup.setLocale(locales);
+
   const formik = useFormik({
     initialValues: {
       message: '',
     },
     validationSchema,
-    onSubmit: handleSubmit(user, currentChannelId),
+    onSubmit: handleSubmit(user, currentChannelId, t),
   });
-
-  const isError = formik.errors.message === netError;
+  const isError = formik.errors.message === t(`errors.${netError}`);
 
   const textInput = useRef(null);
   useEffect(() => {
@@ -71,26 +72,22 @@ const MessageForm = ({ user, currentChannelId }) => {
             value={formik.values.message}
             onChange={formik.handleChange}
             disabled={formik.isSubmitting}
-            maxLength={401}
+            maxLength={400}
           />
           <Button
             variant="primary"
             type="submit"
             className="ml-2"
-            disabled={
-            formik.isSubmitting
-            || !formik.values.message.trim()
-            || (formik.errors.message && !isError)
-          }
+            disabled={formik.isSubmitting}
           >
             {formik.isSubmitting
               ? (
                 <>
                   <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                  Sending...
+                  {t('buttons.sending')}
                 </>
               )
-              : 'Send message'}
+              : t('buttons.send')}
           </Button>
         </InputGroup>
         <FormGroup

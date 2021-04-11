@@ -18,12 +18,14 @@ const messageSlice = createSlice({
 
   extraReducers: {
     [removeChannel]: (state, action) => {
-      const { id } = action.payload;
-      remove(state.messages, (m) => m.channelId === id);
+      const { channelId } = action.payload;
+      console.log(state, action);
+      remove(state.messages, (m) => m.channelId === channelId);
     },
   },
 });
 
+export const getMessages = (state) => state.messages.messages;
 export const { addMessage } = messageSlice.actions;
 
 export default messageSlice.reducer;

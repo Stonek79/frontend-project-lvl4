@@ -7,6 +7,7 @@ import { io } from 'socket.io-client';
 import gon from 'gon';
 import run from './init';
 import '../assets/application.scss';
+import './i18n';
 
 if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
