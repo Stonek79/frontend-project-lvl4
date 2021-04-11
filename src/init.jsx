@@ -42,10 +42,10 @@ export default (props, socket) => {
     console.log(socket.connected, 'connect');
   });
 
-  socket.io.on('reconnect', () => {
+  socket.io.on('reconnect', async () => {
     console.log(socket.connected, store.getState(), 'reconnect IO');
     const currentId = store.getState().channels.currentChannelId;
-    store.dispatch(addChannelId({ id: currentId }));
+    await axios.get(routes.channelMessagesPath(currentId));
     console.log(store.getState());
   });
 
