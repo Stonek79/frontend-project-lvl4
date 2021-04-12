@@ -49,7 +49,7 @@ export default (props, socket) => {
         console.log(socket.connected, store.getState(), 'reconnect');
         const newMessages = differenceBy(currentMessages, req.data.data.map((m) => m.attributes), 'id');
         newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m.attributes })));
-        console.log(newMessages, store.getState(), 'stor');
+        console.log(newMessages, req.data.data, store.getState(), 'stor');
       })
       .catch((e) => console.log(e));
   });
