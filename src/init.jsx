@@ -39,15 +39,19 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.on('connect', async () => {
-    console.log(socket.connected, store.getState(), 'reconnect');
+  socket.io.on('reconnect', () => {
     const currentId = store.getState().channels.currentChannelId;
     const currentMessages = store.getState().messages.messages
       .filter((m) => m.channelId === currentId);
-    const req = await axios.get(routes.channelMessagesPath(currentId));
-    const newMessages = differenceBy(currentMessages, req.data.data.map((m) => m.attributes), 'id');
-    newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m.attributes })));
-    console.log(store.getState(), newMessages, 'stor');
+
+    axios.get(routes.channelMessagesPath(currentId))
+      .then((req) => {
+        console.log(socket.connected, store.getState(), 'reconnect');
+        const newMessages = differenceBy(currentMessages, req.data.data.map((m) => m.attributes), 'id');
+        newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m.attributes })));
+        console.log(newMessages, store.getState(), 'stor');
+      })
+      .catch((e) => console.log(e));
   });
 
   socket.on('connect', () => {

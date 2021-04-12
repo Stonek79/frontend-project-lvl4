@@ -14,7 +14,6 @@ const messageSlice = createSlice({
       const { messageData } = action.payload;
       console.log(messageData);
       state.messages.push(messageData);
-      console.log(state.messages);
     },
   },
 
