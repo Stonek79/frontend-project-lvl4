@@ -27,6 +27,13 @@ const generateRemove = ({
   }
 };
 
+const spinnerComponent = (name, t) => (
+  <>
+    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
+    { t(name) }
+  </>
+);
+
 const RemoveChannel = ({ close }) => {
   const { t } = useTranslation();
 
@@ -68,14 +75,7 @@ const RemoveChannel = ({ close }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting
-            ? (
-              <>
-                <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                {t('buttons.process.removing')}
-              </>
-            )
-            : t('buttons.remove')}
+          {formik.isSubmitting ? spinnerComponent('buttons.process.removing', t) : t('buttons.remove')}
         </Button>
       </Modal.Footer>
     </>

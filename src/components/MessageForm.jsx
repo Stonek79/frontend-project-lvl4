@@ -35,6 +35,13 @@ const handleSubmit = (name, channelId, t) => async (values, {
   }
 };
 
+const spinnerComponent = (name, t) => (
+  <>
+    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
+    { t(name) }
+  </>
+);
+
 const MessageForm = ({ user, currentChannelId }) => {
   const { t } = useTranslation();
 
@@ -80,14 +87,7 @@ const MessageForm = ({ user, currentChannelId }) => {
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting
-              ? (
-                <>
-                  <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                  {t('buttons.process.sending')}
-                </>
-              )
-              : t('buttons.send')}
+            {formik.isSubmitting ? spinnerComponent('buttons.process.sending', t) : t('buttons.send')}
           </Button>
         </InputGroup>
         <FormGroup

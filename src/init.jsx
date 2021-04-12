@@ -40,22 +40,17 @@ export default (props, socket) => {
   });
 
   socket.io.on('reconnect', () => {
-    const currentId = store.getState().channels.currentChannelId;
-    const stateMessages = store.getState().messages.messages
-      .filter((m) => m.channelId === currentId);
+    const currentChenId = store.getState().channels.currentChannelId;
+    const currentStateMessages = store.getState().messages.messages
+      .filter((m) => m.channelId === currentChenId);
 
-    axios.get(routes.channelMessagesPath(currentId))
+    axios.get(routes.channelMessagesPath(currentChenId))
       .then((req) => {
-        const currentMessages = req.data.data.map((m) => m.attributes);
-        const newMessages = differenceBy(currentMessages, stateMessages, 'id');
-        newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m })));
-        console.log(stateMessages, currentMessages, store.getState(), 'stor');
+        const allChannwlMessages = req.data.data.map((m) => m.attributes);
+        const missedMessages = differenceBy(allChannwlMessages, currentStateMessages, 'id');
+        missedMessages.forEach((m) => store.dispatch(addMessage({ messageData: m })));
       })
       .catch((e) => console.log(e));
-  });
-
-  socket.on('connect', () => {
-    console.log(socket.connected, 'connect');
   });
 
   socket.on('newChannel', ({ data: { attributes } }) => {

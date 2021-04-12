@@ -38,6 +38,13 @@ const generateRename = ({
   }
 };
 
+const spinnerComponent = (name, t) => (
+  <>
+    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
+    { t(name) }
+  </>
+);
+
 const RenameChannel = ({ close, channels }) => {
   const { t } = useTranslation();
 
@@ -114,14 +121,7 @@ const RenameChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting
-            ? (
-              <>
-                <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                {t('buttons.process.renaming')}
-              </>
-            )
-            : t('buttons.rename')}
+          {formik.isSubmitting ? spinnerComponent('buttons.process.renaming', t) : t('buttons.rename')}
         </Button>
       </Modal.Footer>
     </>

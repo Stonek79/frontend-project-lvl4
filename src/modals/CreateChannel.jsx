@@ -34,6 +34,12 @@ const generateSubmit = ({ close }, t) => async (value, { setErrors, setSubmittin
   }
 };
 
+const spinnerComponent = (name, t) => (
+  <>
+    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
+    { t(name) }
+  </>
+);
 const CreateChannel = ({ close, channels }) => {
   const { t } = useTranslation();
 
@@ -104,14 +110,7 @@ const CreateChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting
-            ? (
-              <>
-                <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-                {t('buttons.process.creating')}
-              </>
-            )
-            : t('buttons.create')}
+          {formik.isSubmitting ? spinnerComponent('buttons.process.creating', t) : t('buttons.create')}
         </Button>
       </Modal.Footer>
     </>
