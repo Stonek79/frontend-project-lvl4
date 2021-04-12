@@ -39,7 +39,7 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.on('connect', () => {
+  socket.io.on('reconnect', () => {
     const currentId = store.getState().channels.currentChannelId;
     const stateMessages = store.getState().messages.messages
       .filter((m) => m.channelId === currentId);
@@ -48,7 +48,7 @@ export default (props, socket) => {
       .then((req) => {
         const currentMessages = req.data.data.map((m) => m.attributes);
         const newMessages = differenceBy(currentMessages, stateMessages, 'id');
-        newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m.attributes })));
+        newMessages.forEach((m) => store.dispatch(addMessage({ messageData: m })));
         console.log(stateMessages, currentMessages, store.getState(), 'stor');
       })
       .catch((e) => console.log(e));
