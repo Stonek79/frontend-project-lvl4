@@ -2,29 +2,63 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import remove from 'lodash/remove';
-import { removeChannel } from './channelSlice';
+import { fetchAddMessage, fetchRemoveChannel } from './services';
 
 const messageSlice = createSlice({
   name: 'messageData',
   initialState: {
+    loading: 'idle',
+    error: null,
     messages: [],
-  },
-  reducers: {
-    addMessage(state, action) {
-      const { messageData } = action.payload;
-      state.messages.push(messageData);
-    },
   },
 
   extraReducers: {
-    [removeChannel]: (state, action) => {
-      const { channelId } = action.payload;
-      remove(state.messages, (m) => m.channelId === channelId);
+    [fetchAddMessage.pending]: (state) => {
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+        state.error = null;
+      }
+    },
+    [fetchAddMessage.fulfilled]: (state, action) => {
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = null;
+        const { messageData } = action.payload;
+        state.messages.push(messageData);
+      }
+    },
+    [fetchAddMessage.rejected]: (state, action) => {
+      const { message } = action.error;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = message;
+      }
+    },
+
+    [fetchRemoveChannel.pending]: (state) => {
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+        state.error = null;
+      }
+    },
+    [fetchRemoveChannel.fulfilled]: (state, action) => {
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = null;
+        const { channelId } = action.payload;
+        remove(state.messages, (m) => m.channelId === channelId);
+      }
+    },
+    [fetchRemoveChannel.rejected]: (state, action) => {
+      const { message } = action.error;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = message;
+      }
     },
   },
 });
 
 export const getMessages = (state) => state.messages.messages;
-export const { addMessage } = messageSlice.actions;
 
 export default messageSlice.reducer;

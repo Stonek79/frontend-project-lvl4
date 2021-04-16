@@ -3,39 +3,28 @@ import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
-import routes from '../routes';
+import { useDispatch, useSelector } from 'react-redux';
 import charactersLength from '../constants';
 import { getChannelId } from '../slices/modalSlice';
 import locales from '../locales/locales';
+import { fetchRenameChannel } from '../slices/services';
 
 const { minLength, maxLength } = charactersLength;
 const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
 
 const generateRename = ({
-  close, currentChannalId, t,
-}) => async (value, { setSubmitting, setErrors }) => {
-  const { channelPath } = routes;
+  close,
+  dispatch,
+  currentChannalId,
+  t,
+}) => async (value, { setErrors }) => {
+  const name = value.channelName.trim();
 
-  try {
-    setSubmitting(true);
-    await axios.patch(channelPath(currentChannalId), {
-      data: {
-        attributes: {
-          name: value.channelName.trim(),
-        },
-      },
-    });
-    setSubmitting(false);
-    close();
-  } catch (err) {
-    console.log(err);
-    setSubmitting(false);
-    setErrors({ channelName: t(`errors.${netError}`) });
-  }
+  const res = await dispatch(fetchRenameChannel({ currentChannalId, name }));
+
+  return res.error ? setErrors({ channelName: t(`errors.${netError}`) }) : close();
 };
 
 const spinnerComponent = (name, t) => (
@@ -46,6 +35,7 @@ const spinnerComponent = (name, t) => (
 );
 
 const RenameChannel = ({ close, channels }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const validationSchema = (channelsNames) => Yup.object({
@@ -70,7 +60,9 @@ const RenameChannel = ({ close, channels }) => {
     validateOnChange: false,
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
-    onSubmit: generateRename({ close, currentChannalId, t }),
+    onSubmit: generateRename({
+      close, currentChannalId, dispatch, t,
+    }),
   });
 
   const isError = formik.errors.channelName === t(`errors.${netError}`);

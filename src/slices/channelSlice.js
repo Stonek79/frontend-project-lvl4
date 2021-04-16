@@ -2,37 +2,92 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import remove from 'lodash/remove';
+import { fetchCreateChannel, fetchRemoveChannel, fetchRenameChannel } from './services';
 
-const channelSlice = createSlice({
+const chSlice = createSlice({
   name: 'channelData',
   initialState: {
+    loading: 'idle',
+    error: null,
     channels: [],
     currentChannelId: '',
   },
   reducers: {
-    addChannel(state, action) {
-      const { channelData } = action.payload;
-      state.channels.push(channelData);
-    },
-
     addChannelId(state, action) {
       const { id } = action.payload;
       state.currentChannelId = id;
     },
-
-    removeChannel(state, action) {
-      const defaultChannel = state.channels.find((ch) => ch.name === 'general');
-      const { channelId } = action.payload;
-      if (state.currentChannelId === channelId) {
-        state.currentChannelId = defaultChannel.id;
+  },
+  extraReducers: {
+    [fetchCreateChannel.pending]: (state) => {
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+        state.error = null;
       }
-      remove(state.channels, (ch) => ch.id === channelId);
+    },
+    [fetchCreateChannel.fulfilled]: (state, action) => {
+      const { channelData } = action.payload;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = null;
+        state.channels.push(channelData);
+      }
+    },
+    [fetchCreateChannel.rejected]: (state, action) => {
+      const { message } = action.error;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = message;
+      }
     },
 
-    renameChannel(state, action) {
-      const { channelId, channelName } = action.payload;
-      const currentChannel = state.channels.find((channel) => channel.id === channelId);
-      currentChannel.name = channelName;
+    [fetchRenameChannel.pending]: (state) => {
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+        state.error = null;
+      }
+    },
+    [fetchRenameChannel.fulfilled]: (state, action) => {
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = null;
+        const { channelId, channelName } = action.payload;
+        const currentChannel = state.channels.find((channel) => channel.id === channelId);
+        currentChannel.name = channelName;
+      }
+    },
+    [fetchRenameChannel.rejected]: (state, action) => {
+      const { message } = action.error;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = message;
+      }
+    },
+
+    [fetchRemoveChannel.pending]: (state) => {
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+        state.error = null;
+      }
+    },
+    [fetchRemoveChannel.fulfilled]: (state, action) => {
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = null;
+        const defaultChannel = state.channels.find((ch) => ch.name === 'general');
+        const { channelId } = action.payload;
+        if (state.currentChannelId === channelId) {
+          state.currentChannelId = defaultChannel.id;
+        }
+        remove(state.channels, (ch) => ch.id === channelId);
+      }
+    },
+    [fetchRemoveChannel.rejected]: (state, action) => {
+      const { message } = action.error;
+      if (state.loading === 'pending') {
+        state.loading = 'idle';
+        state.error = message;
+      }
     },
   },
 });
@@ -42,8 +97,8 @@ export const {
   addChannelId,
   removeChannel,
   renameChannel,
-} = channelSlice.actions;
+} = chSlice.actions;
 
+export default chSlice.reducer;
 export const getChannels = (state) => state.channels.channels;
 export const getCurrentChannelId = (state) => state.channels.currentChannelId;
-export default channelSlice.reducer;

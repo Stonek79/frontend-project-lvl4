@@ -3,35 +3,24 @@ import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import routes from '../routes';
+import { useDispatch } from 'react-redux';
 import charactersLength from '../constants';
 import locales from '../locales/locales';
+import { fetchCreateChannel } from '../slices/services';
 
 const { minLength, maxLength } = charactersLength;
 const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
 
-const generateSubmit = ({ close }, t) => async (value, { setErrors, setSubmitting }) => {
-  const { channelsPath } = routes;
+const generateSubmit = ({
+  close,
+  dispatch,
+  t,
+}) => async (value, { setErrors }) => {
+  const res = await dispatch(fetchCreateChannel(value.channelName.trim()));
 
-  try {
-    setSubmitting(true);
-    await axios.post(channelsPath(), {
-      data: {
-        attributes: {
-          name: value.channelName.trim(),
-        },
-      },
-    });
-    setSubmitting(false);
-    close();
-  } catch (err) {
-    console.log(err);
-    setSubmitting(false);
-    setErrors({ channelName: t(`errors.${netError}`) });
-  }
+  return res.error ? setErrors({ channelName: t(`errors.${netError}`) }) : close();
 };
 
 const spinnerComponent = (name, t) => (
@@ -41,6 +30,7 @@ const spinnerComponent = (name, t) => (
   </>
 );
 const CreateChannel = ({ close, channels }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const validationSchema = (channelsNames) => Yup.object({
@@ -59,7 +49,7 @@ const CreateChannel = ({ close, channels }) => {
     validateOnChange: false,
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
-    onSubmit: generateSubmit({ close }, t),
+    onSubmit: generateSubmit({ close, dispatch, t }),
   });
 
   const isError = formik.errors.channelName === t(`errors.${netError}`);

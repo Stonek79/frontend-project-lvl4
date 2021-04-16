@@ -20,7 +20,6 @@ const MessageBox = () => {
   const currentChannelId = useSelector(getCurrentChannelId);
   const messages = useSelector(getMessages);
   const { user } = useContext(Context);
-
   const currentMessages = messages
     .filter((message) => message.channelId === currentChannelId);
 

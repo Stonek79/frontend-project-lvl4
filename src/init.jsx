@@ -7,12 +7,14 @@ import axios from 'axios';
 import differenceBy from 'lodash/differenceBy';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
-import {
-  addChannel, removeChannel, renameChannel,
-} from './slices/channelSlice';
-import { addMessage } from './slices/messageSlice';
 import Context from './Context.jsx';
 import routes from './routes.js';
+import {
+  fetchAddMessage,
+  fetchCreateChannel,
+  fetchRemoveChannel,
+  fetchRenameChannel,
+} from './slices/services.jsx';
 
 export default (props, socket) => {
   if (!Cookies.get('username')) {
@@ -28,9 +30,13 @@ export default (props, socket) => {
     channels: {
       channels,
       currentChannelId,
+      loading: 'idle',
+      error: null,
     },
     messages: {
       messages,
+      loading: 'idle',
+      error: null,
     },
   };
 
@@ -48,27 +54,27 @@ export default (props, socket) => {
       .then((req) => {
         const allChannwlMessages = req.data.data.map((m) => m.attributes);
         const missedMessages = differenceBy(allChannwlMessages, currentStateMessages, 'id');
-        missedMessages.forEach((m) => store.dispatch(addMessage({ messageData: m })));
+        missedMessages.forEach((m) => store.dispatch(fetchAddMessage({ messageData: m })));
       })
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e, 'socketConnect'));
   });
 
   socket.on('newChannel', ({ data: { attributes } }) => {
-    store.dispatch(addChannel({ channelData: attributes }));
+    store.dispatch(fetchCreateChannel({ channelData: attributes }));
   });
 
-  socket.on('removeChannel', ({ data: { id } }) => {
-    store.dispatch(removeChannel({ channelId: id }));
+  socket.on('removeChannel', ({ data }) => {
+    store.dispatch(fetchRemoveChannel({ channelId: data.id }));
   });
 
   socket.on('renameChannel', ({ data }) => {
     const { id, attributes } = data;
     const { name } = attributes;
-    store.dispatch(renameChannel({ channelId: id, channelName: name }));
+    store.dispatch(fetchRenameChannel({ channelId: id, channelName: name }));
   });
 
   socket.on('newMessage', ({ data: { attributes } }) => {
-    store.dispatch(addMessage({ messageData: attributes }));
+    store.dispatch(fetchAddMessage({ messageData: attributes }));
   });
 
   return (

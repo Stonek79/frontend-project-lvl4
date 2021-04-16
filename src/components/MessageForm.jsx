@@ -5,34 +5,20 @@ import {
   Button, Form, FormControl, FormGroup, InputGroup,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import charactersLength from '../constants';
-import routes from '../routes';
 import locales from '../locales/locales';
+import { fetchAddMessage } from '../slices/services';
 
 const { messageMax } = charactersLength;
 const { number: { max }, mixed: { netError } } = locales;
 
-const handleSubmit = (name, channelId, t) => async (values, {
-  setSubmitting, setErrors, resetForm,
-}) => {
-  const { channelMessagesPath } = routes;
-  const message = { user: name, text: values.message };
-  try {
-    setSubmitting(true);
-    await axios.post(channelMessagesPath(channelId), {
-      data: {
-        channelId,
-        attributes: message,
-      },
-    });
-    setSubmitting(false);
-    resetForm();
-  } catch (err) {
-    console.log(err);
-    setSubmitting(false);
-    setErrors({ message: t(`errors.${netError}`) });
-  }
+const handleSubmit = ({
+  user, currentChannelId, dispatch, t,
+}) => async (values, { setErrors, resetForm }) => {
+  const message = { user, text: values.message };
+  const res = await dispatch(fetchAddMessage({ channelId: currentChannelId, message }));
+  return res.error ? setErrors({ message: t(`errors.${netError}`) }) : resetForm();
 };
 
 const spinnerComponent = (name, t) => (
@@ -43,6 +29,7 @@ const spinnerComponent = (name, t) => (
 );
 
 const MessageForm = ({ user, currentChannelId }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const validationSchema = Yup.object({
@@ -58,7 +45,9 @@ const MessageForm = ({ user, currentChannelId }) => {
       message: '',
     },
     validationSchema,
-    onSubmit: handleSubmit(user, currentChannelId, t),
+    onSubmit: handleSubmit({
+      user, currentChannelId, dispatch, t,
+    }),
   });
   const isError = formik.errors.message === t(`errors.${netError}`);
 

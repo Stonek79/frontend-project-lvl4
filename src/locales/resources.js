@@ -5,7 +5,7 @@ export default {
         minMessage: (min) => `Must be at least ${min} characters`,
         maxMessage: (max) => `Must be ${max} characters or less`,
         required: 'Required fill out this field',
-        netError: 'Network error',
+        netError: 'Network Error',
         notOneOf: 'Channel name already exist',
       },
       buttons: {

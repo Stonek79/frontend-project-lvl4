@@ -1,30 +1,23 @@
 import React from 'react';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
-import routes from '../routes';
 import { getChannelId } from '../slices/modalSlice';
 import locales from '../locales/locales';
+import { fetchRemoveChannel } from '../slices/services';
 
 const { mixed: { netError } } = locales;
 
 const generateRemove = ({
-  close, currentId, t,
-}) => async (values, { setSubmitting, setErrors }) => {
-  const { channelPath } = routes;
+  close,
+  currentId,
+  dispatch,
+  t,
+}) => async (values, { setErrors }) => {
+  const res = await dispatch(fetchRemoveChannel({ currentId }));
 
-  try {
-    setSubmitting(true);
-    await axios.delete(channelPath(currentId));
-    setSubmitting(false);
-    close();
-  } catch (err) {
-    console.log(err);
-    setSubmitting(false);
-    setErrors({ channelInfo: t(`errors.${netError}`) });
-  }
+  return res.error ? setErrors({ channelInfo: t(`errors.${netError}`) }) : close();
 };
 
 const spinnerComponent = (name, t) => (
@@ -35,6 +28,7 @@ const spinnerComponent = (name, t) => (
 );
 
 const RemoveChannel = ({ close }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const currentId = useSelector(getChannelId);
@@ -42,7 +36,9 @@ const RemoveChannel = ({ close }) => {
     initialValues: {
       channelInfo: '',
     },
-    onSubmit: generateRemove({ close, currentId, t }),
+    onSubmit: generateRemove({
+      close, currentId, dispatch, t,
+    }),
   });
 
   const isError = formik.errors.channelInfo === t(`errors.${netError}`);
