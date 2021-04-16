@@ -11,6 +11,12 @@ const messageSlice = createSlice({
     error: null,
     messages: [],
   },
+  reducers: {
+    addMessage(state, action) {
+      const { messageData } = action.payload;
+      state.messages.push(messageData);
+    },
+  },
 
   extraReducers: {
     [fetchAddMessage.pending]: (state) => {
@@ -19,12 +25,10 @@ const messageSlice = createSlice({
         state.error = null;
       }
     },
-    [fetchAddMessage.fulfilled]: (state, action) => {
+    [fetchAddMessage.fulfilled]: (state) => {
       if (state.loading === 'pending') {
         state.loading = 'idle';
         state.error = null;
-        const { messageData } = action.payload;
-        state.messages.push(messageData);
       }
     },
     [fetchAddMessage.rejected]: (state, action) => {
@@ -59,6 +63,7 @@ const messageSlice = createSlice({
   },
 });
 
+export const { addMessage } = messageSlice.actions;
 export const getMessages = (state) => state.messages.messages;
 
 export default messageSlice.reducer;

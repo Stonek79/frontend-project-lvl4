@@ -9,12 +9,8 @@ import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
 import Context from './Context.jsx';
 import routes from './routes.js';
-import {
-  fetchAddMessage,
-  fetchCreateChannel,
-  fetchRemoveChannel,
-  fetchRenameChannel,
-} from './slices/services.jsx';
+import { addMessage } from './slices/messageSlice.js';
+import { addChannel, removeChannel, renameChannel } from './slices/channelSlice.js';
 
 export default (props, socket) => {
   if (!Cookies.get('username')) {
@@ -54,27 +50,29 @@ export default (props, socket) => {
       .then((req) => {
         const allChannwlMessages = req.data.data.map((m) => m.attributes);
         const missedMessages = differenceBy(allChannwlMessages, currentStateMessages, 'id');
-        missedMessages.forEach((m) => store.dispatch(fetchAddMessage({ messageData: m })));
+        missedMessages.forEach((m) => store.dispatch(addMessage({ messageData: m })));
       })
       .catch((e) => console.log(e, 'socketConnect'));
   });
 
-  socket.on('newChannel', ({ data: { attributes } }) => {
-    store.dispatch(fetchCreateChannel({ channelData: attributes }));
+  socket.on('newChannel', ({ data }) => {
+    const { attributes } = data;
+    store.dispatch(addChannel({ channelData: attributes }));
   });
 
   socket.on('removeChannel', ({ data }) => {
-    store.dispatch(fetchRemoveChannel({ channelId: data.id }));
+    store.dispatch(removeChannel({ channelId: data.id }));
   });
 
   socket.on('renameChannel', ({ data }) => {
     const { id, attributes } = data;
     const { name } = attributes;
-    store.dispatch(fetchRenameChannel({ channelId: id, channelName: name }));
+    store.dispatch(renameChannel({ channelId: id, channelName: name }));
   });
 
-  socket.on('newMessage', ({ data: { attributes } }) => {
-    store.dispatch(fetchAddMessage({ messageData: attributes }));
+  socket.on('newMessage', ({ data }) => {
+    const { attributes } = data;
+    store.dispatch(addMessage({ messageData: attributes }));
   });
 
   return (

@@ -13,11 +13,32 @@ const chSlice = createSlice({
     currentChannelId: '',
   },
   reducers: {
+    addChannel(state, action) {
+      const { channelData } = action.payload;
+      state.channels.push(channelData);
+    },
+
     addChannelId(state, action) {
       const { id } = action.payload;
       state.currentChannelId = id;
     },
+
+    removeChannel(state, action) {
+      const defaultChannel = state.channels.find((ch) => ch.name === 'general');
+      const { channelId } = action.payload;
+      if (state.currentChannelId === channelId) {
+        state.currentChannelId = defaultChannel.id;
+      }
+      remove(state.channels, (ch) => ch.id === channelId);
+    },
+
+    renameChannel(state, action) {
+      const { channelId, channelName } = action.payload;
+      const currentChannel = state.channels.find((channel) => channel.id === channelId);
+      currentChannel.name = channelName;
+    },
   },
+
   extraReducers: {
     [fetchCreateChannel.pending]: (state) => {
       if (state.loading === 'idle') {
@@ -25,12 +46,10 @@ const chSlice = createSlice({
         state.error = null;
       }
     },
-    [fetchCreateChannel.fulfilled]: (state, action) => {
-      const { channelData } = action.payload;
+    [fetchCreateChannel.fulfilled]: (state) => {
       if (state.loading === 'pending') {
         state.loading = 'idle';
         state.error = null;
-        state.channels.push(channelData);
       }
     },
     [fetchCreateChannel.rejected]: (state, action) => {
@@ -47,13 +66,10 @@ const chSlice = createSlice({
         state.error = null;
       }
     },
-    [fetchRenameChannel.fulfilled]: (state, action) => {
+    [fetchRenameChannel.fulfilled]: (state) => {
       if (state.loading === 'pending') {
         state.loading = 'idle';
         state.error = null;
-        const { channelId, channelName } = action.payload;
-        const currentChannel = state.channels.find((channel) => channel.id === channelId);
-        currentChannel.name = channelName;
       }
     },
     [fetchRenameChannel.rejected]: (state, action) => {

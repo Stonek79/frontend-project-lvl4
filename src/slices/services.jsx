@@ -12,9 +12,6 @@ const fetchCreateChannel = createAsyncThunk(
     });
     return { channelData: data.data.attributes };
   },
-  {
-    condition: (name) => ((typeof name !== 'string') ? false : null),
-  },
 );
 
 const fetchRenameChannel = createAsyncThunk(
@@ -27,9 +24,6 @@ const fetchRenameChannel = createAsyncThunk(
     const channelName = attributes.name;
     return { channelId: id, channelName };
   },
-  {
-    condition: ({ name }) => ((typeof name !== 'string') ? false : null),
-  },
 );
 
 const fetchRemoveChannel = createAsyncThunk(
@@ -37,9 +31,6 @@ const fetchRemoveChannel = createAsyncThunk(
   async ({ currentId }) => {
     await axios.delete(channelPath(currentId));
     return { channelId: currentId };
-  },
-  {
-    condition: ({ currentId }) => ((typeof currentId !== 'number') ? false : null),
   },
 );
 
@@ -50,9 +41,6 @@ const fetchAddMessage = createAsyncThunk(
       data: { channelId, attributes: message },
     });
     return { messageData: data.data.attributes };
-  },
-  {
-    condition: ({ message }) => ((!message) ? false : null),
   },
 );
 
