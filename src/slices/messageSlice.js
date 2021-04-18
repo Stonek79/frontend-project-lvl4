@@ -23,7 +23,6 @@ const getMessagesAsync = createAsyncThunk(
     const { channelMessagesPath } = routes;
     const res = await axios.get(channelMessagesPath(channelId));
     const lastMessages = res.data.data.map((m) => m.attributes);
-    console.log(lastMessages, 'getMessagesAsync');
     return { lastMessages };
   },
 );
@@ -50,7 +49,6 @@ const messageSlice = createSlice({
     [getMessagesAsync.fulfilled]: (state, action) => {
       const { lastMessages } = action.payload;
       const missedMessages = differenceBy(lastMessages, state.messages, 'id');
-      console.log(lastMessages, missedMessages, 'fulfilled');
       state.messages.push(...missedMessages);
     },
   },
