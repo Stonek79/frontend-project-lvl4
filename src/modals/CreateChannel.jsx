@@ -6,9 +6,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
-import charactersLength from '../constants';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { charactersLength } from '../constants';
 import locales from '../locales/locales';
-import { fetchCreateChannel } from '../slices/services';
+import { createChannelAsync } from '../slices/channelSlice';
 
 const { minLength, maxLength } = charactersLength;
 const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
@@ -18,12 +19,16 @@ const generateSubmit = ({
   dispatch,
   t,
 }) => async (value, { setErrors }) => {
-  const res = await dispatch(fetchCreateChannel(value.channelName.trim()));
-
-  return res.error ? setErrors({ channelName: t(`errors.${netError}`) }) : close();
+  try {
+    await dispatch(createChannelAsync(value.channelName.trim()))
+      .then(unwrapResult);
+    close();
+  } catch (err) {
+    setErrors({ channelName: t(`errors.${netError}`) });
+  }
 };
 
-const spinnerComponent = (name, t) => (
+const Spinner = (name, t) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
     { t(name) }
@@ -100,7 +105,7 @@ const CreateChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? spinnerComponent('buttons.process.creating', t) : t('buttons.create')}
+          {formik.isSubmitting ? Spinner('buttons.process.creating', t) : t('buttons.create')}
         </Button>
       </Modal.Footer>
     </>

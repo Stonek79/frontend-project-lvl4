@@ -1,15 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
 import Cookies from 'js-cookie';
 import faker from 'faker';
-import axios from 'axios';
-import differenceBy from 'lodash/differenceBy';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
 import Context from './Context.jsx';
-import routes from './routes.js';
-import { addMessage } from './slices/messageSlice.js';
+import { addMessage, addMissedMessages, getMessagesAsync } from './slices/messageSlice.js';
 import { addChannel, removeChannel, renameChannel } from './slices/channelSlice.js';
 
 export default (props, socket) => {
@@ -26,13 +23,9 @@ export default (props, socket) => {
     channels: {
       channels,
       currentChannelId,
-      loading: 'idle',
-      error: null,
     },
     messages: {
       messages,
-      loading: 'idle',
-      error: null,
     },
   };
 
@@ -42,17 +35,14 @@ export default (props, socket) => {
   });
 
   socket.io.on('reconnect', () => {
-    const currentChenId = store.getState().channels.currentChannelId;
-    const currentStateMessages = store.getState().messages.messages
-      .filter((m) => m.channelId === currentChenId);
-
-    axios.get(routes.channelMessagesPath(currentChenId))
-      .then((req) => {
-        const allChannwlMessages = req.data.data.map((m) => m.attributes);
-        const missedMessages = differenceBy(allChannwlMessages, currentStateMessages, 'id');
-        missedMessages.forEach((m) => store.dispatch(addMessage({ messageData: m })));
+    const channelId = store.getState().channels.currentChannelId;
+    store.dispatch(getMessagesAsync(channelId))
+      .then(unwrapResult)
+      .then((data) => {
+        const { attributes } = data;
+        store.dispatch(addMissedMessages({ lastMessages: attributes }));
       })
-      .catch((e) => console.log(e, 'socketConnect'));
+      .catch((err) => console.log(err.message));
   });
 
   socket.on('newChannel', ({ data }) => {

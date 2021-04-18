@@ -1,8 +1,29 @@
 /* eslint-disable no-param-reassign */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import differenceBy from 'lodash/differenceBy';
 import remove from 'lodash/remove';
-import { fetchAddMessage, fetchRemoveChannel } from './services';
+import routes from '../routes';
+import { removeChannel } from './channelSlice';
+
+const addMessageAsync = createAsyncThunk(
+  'messageData/addMessageAsync',
+  async ({ channelId, message }) => {
+    const { channelMessagesPath } = routes;
+    await axios.post(channelMessagesPath(channelId), {
+      data: { channelId, attributes: message },
+    });
+  },
+);
+
+const getMessagesAsync = createAsyncThunk(
+  'messageData/getMessagesAsync',
+  async ({ channelId }) => {
+    const { channelMessagesPath } = routes;
+    await axios.get(channelMessagesPath(channelId));
+  },
+);
 
 const messageSlice = createSlice({
   name: 'messageData',
@@ -16,54 +37,23 @@ const messageSlice = createSlice({
       const { messageData } = action.payload;
       state.messages.push(messageData);
     },
+    addMissedMessages(state, action) {
+      const { lastMessages } = action.payload;
+      const missedMessages = differenceBy(state.messages, lastMessages, 'id');
+      state.messages.push(...missedMessages);
+    },
   },
 
   extraReducers: {
-    [fetchAddMessage.pending]: (state) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending';
-        state.error = null;
-      }
-    },
-    [fetchAddMessage.fulfilled]: (state) => {
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = null;
-      }
-    },
-    [fetchAddMessage.rejected]: (state, action) => {
-      const { message } = action.error;
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = message;
-      }
-    },
-
-    [fetchRemoveChannel.pending]: (state) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending';
-        state.error = null;
-      }
-    },
-    [fetchRemoveChannel.fulfilled]: (state, action) => {
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = null;
-        const { channelId } = action.payload;
-        remove(state.messages, (m) => m.channelId === channelId);
-      }
-    },
-    [fetchRemoveChannel.rejected]: (state, action) => {
-      const { message } = action.error;
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = message;
-      }
+    [removeChannel]: (state, action) => {
+      const { channelId } = action.payload;
+      remove(state.messages, (m) => m.channelId === channelId);
     },
   },
 });
 
-export const { addMessage } = messageSlice.actions;
+export { addMessageAsync, getMessagesAsync };
+export const { addMessage, addMissedMessages } = messageSlice.actions;
 export const getMessages = (state) => state.messages.messages;
 
 export default messageSlice.reducer;

@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { getChannelId } from '../slices/modalSlice';
 import locales from '../locales/locales';
-import { fetchRemoveChannel } from '../slices/services';
+import { removeChannelAsync } from '../slices/channelSlice';
 
 const { mixed: { netError } } = locales;
 
@@ -15,12 +16,16 @@ const generateRemove = ({
   dispatch,
   t,
 }) => async (values, { setErrors }) => {
-  const res = await dispatch(fetchRemoveChannel({ currentId }));
-
-  return res.error ? setErrors({ channelInfo: t(`errors.${netError}`) }) : close();
+  try {
+    await dispatch(removeChannelAsync({ currentId }))
+      .then(unwrapResult);
+    close();
+  } catch (err) {
+    setErrors({ channelInfo: t(`errors.${netError}`) });
+  }
 };
 
-const spinnerComponent = (name, t) => (
+const Spinner = (name, t) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
     { t(name) }
@@ -71,7 +76,7 @@ const RemoveChannel = ({ close }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? spinnerComponent('buttons.process.removing', t) : t('buttons.remove')}
+          {formik.isSubmitting ? Spinner('buttons.process.removing', t) : t('buttons.remove')}
         </Button>
       </Modal.Footer>
     </>

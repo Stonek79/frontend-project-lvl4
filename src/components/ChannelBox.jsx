@@ -7,10 +7,13 @@ import {
 import { openModal } from '../slices/modalSlice.js';
 import { addChannelId, getChannels, getCurrentChannelId } from '../slices/channelSlice.js';
 import ChannelItem from './ChannelItem';
+import { modalTypes } from '../constants.js';
 
-const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: 'adding' }));
-const handleRemoveChannel = (dispatch, id) => () => dispatch(openModal({ type: 'removing', id }));
-const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({ type: 'renaming', id }));
+const { add, remove, rename } = modalTypes;
+
+const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: add }));
+const handleRemoveChannel = (dispatch, id) => () => dispatch(openModal({ type: remove, id }));
+const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({ type: rename, id }));
 const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }));
 
 const ChannelBox = () => {

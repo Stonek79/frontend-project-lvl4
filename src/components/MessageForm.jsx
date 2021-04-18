@@ -6,9 +6,10 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import charactersLength from '../constants';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { charactersLength } from '../constants';
 import locales from '../locales/locales';
-import { fetchAddMessage } from '../slices/services';
+import { addMessageAsync } from '../slices/messageSlice';
 
 const { messageMax } = charactersLength;
 const { number: { max }, mixed: { netError } } = locales;
@@ -17,11 +18,16 @@ const handleSubmit = ({
   user, currentChannelId, dispatch, t,
 }) => async (values, { setErrors, resetForm }) => {
   const message = { user, text: values.message };
-  const res = await dispatch(fetchAddMessage({ channelId: currentChannelId, message }));
-  return res.error ? setErrors({ message: t(`errors.${netError}`) }) : resetForm();
+  try {
+    await dispatch(addMessageAsync({ channelId: currentChannelId, message }))
+      .then(unwrapResult);
+    resetForm();
+  } catch (err) {
+    setErrors({ message: t(`errors.${netError}`) });
+  }
 };
 
-const spinnerComponent = (name, t) => (
+const Spinner = (name, t) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
     { t(name) }
@@ -76,7 +82,7 @@ const MessageForm = ({ user, currentChannelId }) => {
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? spinnerComponent('buttons.process.sending', t) : t('buttons.send')}
+            {formik.isSubmitting ? Spinner('buttons.process.sending', t) : t('buttons.send')}
           </Button>
         </InputGroup>
         <FormGroup

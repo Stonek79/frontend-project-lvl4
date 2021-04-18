@@ -1,10 +1,38 @@
 /* eslint-disable no-param-reassign */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 import remove from 'lodash/remove';
-import { fetchCreateChannel, fetchRemoveChannel, fetchRenameChannel } from './services';
+import routes from '../routes';
 
-const chSlice = createSlice({
+const { channelsPath, channelPath } = routes;
+
+const createChannelAsync = createAsyncThunk(
+  'channelData/createChannelAsync',
+  async (name) => {
+    await axios.post(channelsPath(), {
+      data: { attributes: { name } },
+    });
+  },
+);
+
+const renameChannelAsync = createAsyncThunk(
+  'channelData/renameChannelAsync',
+  async ({ currentChannalId, name }) => {
+    await axios.patch(channelPath(currentChannalId), {
+      data: { attributes: { name } },
+    });
+  },
+);
+
+const removeChannelAsync = createAsyncThunk(
+  'channelData/removeChannelAsync',
+  async ({ currentId }) => {
+    await axios.delete(channelPath(currentId));
+  },
+);
+
+const channelSlice = createSlice({
   name: 'channelData',
   initialState: {
     loading: 'idle',
@@ -38,83 +66,21 @@ const chSlice = createSlice({
       currentChannel.name = channelName;
     },
   },
-
-  extraReducers: {
-    [fetchCreateChannel.pending]: (state) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending';
-        state.error = null;
-      }
-    },
-    [fetchCreateChannel.fulfilled]: (state) => {
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = null;
-      }
-    },
-    [fetchCreateChannel.rejected]: (state, action) => {
-      const { message } = action.error;
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = message;
-      }
-    },
-
-    [fetchRenameChannel.pending]: (state) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending';
-        state.error = null;
-      }
-    },
-    [fetchRenameChannel.fulfilled]: (state) => {
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = null;
-      }
-    },
-    [fetchRenameChannel.rejected]: (state, action) => {
-      const { message } = action.error;
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = message;
-      }
-    },
-
-    [fetchRemoveChannel.pending]: (state) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending';
-        state.error = null;
-      }
-    },
-    [fetchRemoveChannel.fulfilled]: (state, action) => {
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = null;
-        const defaultChannel = state.channels.find((ch) => ch.name === 'general');
-        const { channelId } = action.payload;
-        if (state.currentChannelId === channelId) {
-          state.currentChannelId = defaultChannel.id;
-        }
-        remove(state.channels, (ch) => ch.id === channelId);
-      }
-    },
-    [fetchRemoveChannel.rejected]: (state, action) => {
-      const { message } = action.error;
-      if (state.loading === 'pending') {
-        state.loading = 'idle';
-        state.error = message;
-      }
-    },
-  },
 });
+
+export {
+  createChannelAsync,
+  removeChannelAsync,
+  renameChannelAsync,
+};
 
 export const {
   addChannel,
   addChannelId,
   removeChannel,
   renameChannel,
-} = chSlice.actions;
+} = channelSlice.actions;
 
-export default chSlice.reducer;
+export default channelSlice.reducer;
 export const getChannels = (state) => state.channels.channels;
 export const getCurrentChannelId = (state) => state.channels.currentChannelId;

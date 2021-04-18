@@ -6,10 +6,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import charactersLength from '../constants';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { charactersLength } from '../constants';
 import { getChannelId } from '../slices/modalSlice';
 import locales from '../locales/locales';
-import { fetchRenameChannel } from '../slices/services';
+import { renameChannelAsync } from '../slices/channelSlice';
 
 const { minLength, maxLength } = charactersLength;
 const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
@@ -21,13 +22,16 @@ const generateRename = ({
   t,
 }) => async (value, { setErrors }) => {
   const name = value.channelName.trim();
-
-  const res = await dispatch(fetchRenameChannel({ currentChannalId, name }));
-
-  return res.error ? setErrors({ channelName: t(`errors.${netError}`) }) : close();
+  try {
+    await dispatch(renameChannelAsync({ currentChannalId, name }))
+      .then(unwrapResult);
+    close();
+  } catch (err) {
+    setErrors({ channelName: t(`errors.${netError}`) });
+  }
 };
 
-const spinnerComponent = (name, t) => (
+const Spinner = (name, t) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
     { t(name) }
@@ -113,7 +117,7 @@ const RenameChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? spinnerComponent('buttons.process.renaming', t) : t('buttons.rename')}
+          {formik.isSubmitting ? Spinner('buttons.process.renaming', t) : t('buttons.rename')}
         </Button>
       </Modal.Footer>
     </>
