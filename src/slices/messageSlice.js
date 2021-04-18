@@ -23,6 +23,7 @@ const getMessagesAsync = createAsyncThunk(
     const { channelMessagesPath } = routes;
     const res = await axios.get(channelMessagesPath(channelId));
     const lastMessages = res.data.data.map((m) => m.attributes);
+    console.log(lastMessages, 'getMessagesAsync');
     return { lastMessages };
   },
 );

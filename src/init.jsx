@@ -34,11 +34,11 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.io.on('reconnect', () => {
+  socket.io.on('reconnect', async () => {
     console.log(socket.connected);
     const channelId = store.getState().channels.currentChannelId;
     try {
-      store.dispatch(getMessagesAsync(channelId))
+      await store.dispatch(getMessagesAsync(channelId))
         .then(unwrapResult);
       console.log('reconnect');
     } catch (err) {
