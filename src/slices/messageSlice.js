@@ -49,6 +49,7 @@ const messageSlice = createSlice({
     [getMessagesAsync.fulfilled]: (state, action) => {
       const { lastMessages } = action.payload;
       const missedMessages = differenceBy(state.messages, lastMessages, 'id');
+      console.log(missedMessages, 'fulfilled');
       state.messages.push(...missedMessages);
     },
   },

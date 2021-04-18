@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
 import Cookies from 'js-cookie';
@@ -34,12 +34,15 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.on('reconnect', async () => {
+  socket.on('reconnect', () => {
+    console.log(socket.connected);
     const channelId = store.getState().channels.currentChannelId;
     try {
-      await store.dispatch(getMessagesAsync(channelId));
+      store.dispatch(getMessagesAsync(channelId))
+        .then(unwrapResult);
+      console.log('reconnect');
     } catch (err) {
-      console.log(err.message);
+      console.log(err.message, 'err reconnect');
     }
   });
 
