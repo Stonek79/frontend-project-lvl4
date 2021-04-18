@@ -1,4 +1,4 @@
-import { configureStore, unwrapResult } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
 import Cookies from 'js-cookie';
@@ -6,7 +6,7 @@ import faker from 'faker';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
 import Context from './Context.jsx';
-import { addMessage, addMissedMessages, getMessagesAsync } from './slices/messageSlice.js';
+import { addMessage, getMessagesAsync } from './slices/messageSlice.js';
 import { addChannel, removeChannel, renameChannel } from './slices/channelSlice.js';
 
 export default (props, socket) => {
@@ -34,15 +34,13 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.io.on('reconnect', () => {
+  socket.on('reconnect', async () => {
     const channelId = store.getState().channels.currentChannelId;
-    store.dispatch(getMessagesAsync(channelId))
-      .then(unwrapResult)
-      .then((data) => {
-        const { attributes } = data;
-        store.dispatch(addMissedMessages({ lastMessages: attributes }));
-      })
-      .catch((err) => console.log(err.message));
+    try {
+      await store.dispatch(getMessagesAsync(channelId));
+    } catch (err) {
+      console.log(err.message);
+    }
   });
 
   socket.on('newChannel', ({ data }) => {

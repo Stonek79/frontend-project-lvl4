@@ -19,9 +19,11 @@ const addMessageAsync = createAsyncThunk(
 
 const getMessagesAsync = createAsyncThunk(
   'messageData/getMessagesAsync',
-  async ({ channelId }) => {
+  async (channelId) => {
     const { channelMessagesPath } = routes;
-    await axios.get(channelMessagesPath(channelId));
+    const res = await axios.get(channelMessagesPath(channelId));
+    const lastMessages = res.data.data.map((m) => m.attributes);
+    return { lastMessages };
   },
 );
 
@@ -37,17 +39,17 @@ const messageSlice = createSlice({
       const { messageData } = action.payload;
       state.messages.push(messageData);
     },
-    addMissedMessages(state, action) {
-      const { lastMessages } = action.payload;
-      const missedMessages = differenceBy(state.messages, lastMessages, 'id');
-      state.messages.push(...missedMessages);
-    },
   },
 
   extraReducers: {
     [removeChannel]: (state, action) => {
       const { channelId } = action.payload;
       remove(state.messages, (m) => m.channelId === channelId);
+    },
+    [getMessagesAsync.fulfilled]: (state, action) => {
+      const { lastMessages } = action.payload;
+      const missedMessages = differenceBy(state.messages, lastMessages, 'id');
+      state.messages.push(...missedMessages);
     },
   },
 });
