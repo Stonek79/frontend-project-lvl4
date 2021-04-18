@@ -34,7 +34,7 @@ export default (props, socket) => {
     preloadedState,
   });
 
-  socket.on('reconnect', () => {
+  socket.io.on('reconnect', () => {
     console.log(socket.connected);
     const channelId = store.getState().channels.currentChannelId;
     try {
