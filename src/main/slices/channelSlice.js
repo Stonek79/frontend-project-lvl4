@@ -1,36 +1,7 @@
 /* eslint-disable no-param-reassign */
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import remove from 'lodash/remove';
-import routes from '../routes';
-
-const { channelsPath, channelPath } = routes;
-
-const createChannelAsync = createAsyncThunk(
-  'channelData/createChannelAsync',
-  async (name) => {
-    await axios.post(channelsPath(), {
-      data: { attributes: { name } },
-    });
-  },
-);
-
-const renameChannelAsync = createAsyncThunk(
-  'channelData/renameChannelAsync',
-  async ({ currentChannalId, name }) => {
-    await axios.patch(channelPath(currentChannalId), {
-      data: { attributes: { name } },
-    });
-  },
-);
-
-const removeChannelAsync = createAsyncThunk(
-  'channelData/removeChannelAsync',
-  async ({ currentId }) => {
-    await axios.delete(channelPath(currentId));
-  },
-);
+import { createSlice } from '@reduxjs/toolkit';
+import { remove } from 'lodash-es';
 
 const channelSlice = createSlice({
   name: 'channelData',
@@ -43,6 +14,7 @@ const channelSlice = createSlice({
   reducers: {
     addChannel(state, action) {
       const { channelData } = action.payload;
+      state.currentChannelId = channelData.id;
       state.channels.push(channelData);
     },
 
@@ -67,12 +39,6 @@ const channelSlice = createSlice({
     },
   },
 });
-
-export {
-  createChannelAsync,
-  removeChannelAsync,
-  renameChannelAsync,
-};
 
 export const {
   addChannel,

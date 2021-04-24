@@ -2,11 +2,11 @@
 
 import React from 'react';
 import ModalComponent from './Modal.jsx';
-import ChannelBox from './ChannelBox';
-import MessageBox from './MessageBox';
+import ChannelBox from './ChannelBox.jsx';
+import MessageBox from './MessageBox.jsx';
 
 const App = () => (
-  <div className="row h-100 pb-3">
+  <div className="row flex-grow-1 h-75 pb-3">
     <ChannelBox />
     <MessageBox />
     <ModalComponent />

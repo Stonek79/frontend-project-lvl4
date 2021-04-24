@@ -6,8 +6,8 @@ import {
 } from 'react-bootstrap';
 import { openModal } from '../slices/modalSlice.js';
 import { addChannelId, getChannels, getCurrentChannelId } from '../slices/channelSlice.js';
-import ChannelItem from './ChannelItem';
-import { modalTypes } from '../constants.js';
+import { modalTypes } from '../../constants.js';
+import ChannelItem from './ChannelItem.jsx';
 
 const { add, remove, rename } = modalTypes;
 
@@ -26,7 +26,7 @@ const ChannelBox = () => {
     <>
       <Form className="col-3 h-100">
         <FormGroup className="d-flex mb-2">
-          <FormLabel><b>{t('labels.channels')}</b></FormLabel>
+          <FormLabel><b>{t('channels.channels')}</b></FormLabel>
           <Button
             type="button"
             variant="outline-primary"

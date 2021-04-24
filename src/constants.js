@@ -1,6 +1,7 @@
 const charactersLength = {
   minLength: 3,
-  maxLength: 17,
+  minPassLength: 6,
+  maxLength: 20,
   messageMax: 400,
 };
 

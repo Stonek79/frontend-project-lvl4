@@ -5,30 +5,29 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { charactersLength } from '../constants';
-import { getChannelId } from '../slices/modalSlice';
-import locales from '../locales/locales';
-import { renameChannelAsync } from '../slices/channelSlice';
+import { useSelector } from 'react-redux';
+import { getChannelId } from '../slices/modalSlice.js';
+import { charactersLength } from '../../constants.js';
 
 const { minLength, maxLength } = charactersLength;
-const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
 
 const generateRename = ({
+  auth,
   close,
-  dispatch,
   currentChannalId,
   t,
-}) => async (value, { setErrors }) => {
+}) => async (value, { setSubmitting, setErrors }) => {
   const name = value.channelName.trim();
-  try {
-    await dispatch(renameChannelAsync({ currentChannalId, name }))
-      .then(unwrapResult);
-    close();
-  } catch (err) {
-    setErrors({ channelName: t(`errors.${netError}`) });
-  }
+  const id = currentChannalId;
+  setTimeout(() => {
+    setSubmitting(true);
+  }, 1);
+  auth.socket.emit('renameChannel', { id, name }, (r) => {
+    if (r.status === 'ok') {
+      return close();
+    }
+    return setErrors({ message: t('errors.netError') });
+  });
 };
 
 const Spinner = (name, t) => (
@@ -38,16 +37,15 @@ const Spinner = (name, t) => (
   </>
 );
 
-const RenameChannel = ({ close, channels }) => {
-  const dispatch = useDispatch();
+const RenameChannel = ({ auth, close, channels }) => {
   const { t } = useTranslation();
 
   const validationSchema = (channelsNames) => Yup.object({
     channelName: Yup.string().trim()
-      .min(minLength, t(`errors.${min}`)(minLength))
-      .max(maxLength, t(`errors.${max}`)(maxLength))
-      .notOneOf(channelsNames, t(`errors.${notOneOf}`))
-      .required(required),
+      .min(minLength, t('errors.length'))
+      .max(maxLength, t('errors.length'))
+      .notOneOf(channelsNames, t('errors.uniq'))
+      .required(t('errors.required')),
   });
 
   const channelsNames = channels.map((ch) => ch.name);
@@ -65,11 +63,11 @@ const RenameChannel = ({ close, channels }) => {
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
     onSubmit: generateRename({
-      close, currentChannalId, dispatch, t,
+      auth, close, currentChannalId, t,
     }),
   });
 
-  const isError = formik.errors.channelName === t(`errors.${netError}`);
+  const isError = formik.errors.channelName === t('errors.netError');
   const textInput = useRef();
   useEffect(() => {
     textInput.current.select();
@@ -78,7 +76,7 @@ const RenameChannel = ({ close, channels }) => {
   return (
     <>
       <Modal.Header closeButton>
-        <Modal.Title>{t('titles.renameChannel')}</Modal.Title>
+        <Modal.Title>{t('modals.renChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -92,7 +90,7 @@ const RenameChannel = ({ close, channels }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              maxLength={17}
+              maxLength={20}
             />
           </InputGroup>
         </Form>
@@ -109,7 +107,7 @@ const RenameChannel = ({ close, channels }) => {
           onClick={close}
           disabled={formik.isSubmitting}
         >
-          Cancel
+          {t('modals.cancel')}
         </Button>
         <Button
           variant="primary"
@@ -117,7 +115,7 @@ const RenameChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('buttons.process.renaming', t) : t('buttons.rename')}
+          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

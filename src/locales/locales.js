@@ -1,11 +1,11 @@
 export default {
   mixed: {
     required: 'required',
-    notOneOf: 'notOneOf',
+    notOneOf: 'uniq',
     netError: 'netError',
   },
   number: {
-    min: 'minMessage',
-    max: 'maxMessage',
+    min: 'lengthMessage',
+    max: 'lengthMessage',
   },
 };

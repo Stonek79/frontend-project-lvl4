@@ -1,28 +1,25 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { getChannelId } from '../slices/modalSlice';
-import locales from '../locales/locales';
-import { removeChannelAsync } from '../slices/channelSlice';
-
-const { mixed: { netError } } = locales;
+import { getChannelId } from '../slices/modalSlice.js';
 
 const generateRemove = ({
+  auth,
   close,
   currentId,
-  dispatch,
   t,
-}) => async (values, { setErrors }) => {
-  try {
-    await dispatch(removeChannelAsync({ currentId }))
-      .then(unwrapResult);
-    close();
-  } catch (err) {
-    setErrors({ channelInfo: t(`errors.${netError}`) });
-  }
+}) => async (values, { setSubmitting, setErrors }) => {
+  setTimeout(() => {
+    setSubmitting(true);
+  }, 1);
+  auth.socket.emit('removeChannel', { id: currentId }, (r) => {
+    if (r.status === 'ok') {
+      return close();
+    }
+    return setErrors({ message: t('errors.netError') });
+  });
 };
 
 const Spinner = (name, t) => (
@@ -32,8 +29,7 @@ const Spinner = (name, t) => (
   </>
 );
 
-const RemoveChannel = ({ close }) => {
-  const dispatch = useDispatch();
+const RemoveChannel = ({ auth, close }) => {
   const { t } = useTranslation();
 
   const currentId = useSelector(getChannelId);
@@ -42,19 +38,19 @@ const RemoveChannel = ({ close }) => {
       channelInfo: '',
     },
     onSubmit: generateRemove({
-      close, currentId, dispatch, t,
+      auth, close, currentId, t,
     }),
   });
 
-  const isError = formik.errors.channelInfo === t(`errors.${netError}`);
+  const isError = formik.errors.channelInfo === t('errors.netError');
 
   return (
     <>
       <Modal.Header closeButton>
-        <Modal.Title>{t('titles.removeChannel')}</Modal.Title>
+        <Modal.Title>{t('modals.remChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body className="text-danger">
-        <p><b>Are you really want to remove this channel?</b></p>
+        <p><b>{t('modals.confirm')}</b></p>
         <FormGroup
           className={isError ? 'text-danger' : 'text-info'}
         >
@@ -68,7 +64,7 @@ const RemoveChannel = ({ close }) => {
           onClick={close}
           disabled={formik.isSubmitting}
         >
-          Cancel
+          {t('modals.cancel')}
         </Button>
         <Button
           variant="danger"
@@ -76,7 +72,7 @@ const RemoveChannel = ({ close }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('buttons.process.removing', t) : t('buttons.remove')}
+          {formik.isSubmitting ? Spinner('process.removing', t) : t('modals.remove')}
         </Button>
       </Modal.Footer>
     </>

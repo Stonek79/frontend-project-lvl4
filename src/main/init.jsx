@@ -1,23 +1,12 @@
 import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import Cookies from 'js-cookie';
-import faker from 'faker';
 import App from './components/App.jsx';
 import rootReducer from './slices/index.js';
-import Context from './Context.jsx';
 import { addMessage, getMessagesAsync } from './slices/messageSlice.js';
 import { addChannel, removeChannel, renameChannel } from './slices/channelSlice.js';
 
-export default (props, socket) => {
-  if (!Cookies.get('username')) {
-    Cookies.set('username', faker.name.findName());
-  }
-  const user = Cookies.get('username');
-  const contextValues = {
-    user,
-  };
-
+const ChatRender = (props, socket) => {
   const { channels, messages, currentChannelId } = props;
   const preloadedState = {
     channels: {
@@ -34,6 +23,7 @@ export default (props, socket) => {
     preloadedState,
   });
 
+  // TODO реализовать новый реконнект
   socket.io.on('reconnect', async () => {
     const channelId = store.getState().channels.currentChannelId;
     try {
@@ -44,31 +34,28 @@ export default (props, socket) => {
     }
   });
 
-  socket.on('newChannel', ({ data }) => {
-    const { attributes } = data;
-    store.dispatch(addChannel({ channelData: attributes }));
+  socket.on('newChannel', (data) => {
+    store.dispatch(addChannel({ channelData: data }));
   });
 
-  socket.on('removeChannel', ({ data }) => {
+  socket.on('removeChannel', (data) => {
     store.dispatch(removeChannel({ channelId: data.id }));
   });
 
-  socket.on('renameChannel', ({ data }) => {
-    const { id, attributes } = data;
-    const { name } = attributes;
+  socket.on('renameChannel', (data) => {
+    const { id, name } = data;
     store.dispatch(renameChannel({ channelId: id, channelName: name }));
   });
 
-  socket.on('newMessage', ({ data }) => {
-    const { attributes } = data;
-    store.dispatch(addMessage({ messageData: attributes }));
+  socket.on('newMessage', (data) => {
+    store.dispatch(addMessage({ messageData: data }));
   });
 
   return (
     <Provider store={store}>
-      <Context.Provider value={contextValues}>
-        <App />
-      </Context.Provider>
+      <App />
     </Provider>
   );
 };
+
+export default ChatRender;

@@ -2,20 +2,9 @@
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import differenceBy from 'lodash/differenceBy';
-import remove from 'lodash/remove';
-import routes from '../routes';
-import { removeChannel } from './channelSlice';
-
-const addMessageAsync = createAsyncThunk(
-  'messageData/addMessageAsync',
-  async ({ channelId, message }) => {
-    const { channelMessagesPath } = routes;
-    await axios.post(channelMessagesPath(channelId), {
-      data: { channelId, attributes: message },
-    });
-  },
-);
+import { differenceBy, remove } from 'lodash-es';
+import routes from '../../routes.js';
+import { removeChannel } from './channelSlice.js';
 
 const getMessagesAsync = createAsyncThunk(
   'messageData/getMessagesAsync',
@@ -54,7 +43,7 @@ const messageSlice = createSlice({
   },
 });
 
-export { addMessageAsync, getMessagesAsync };
+export { getMessagesAsync };
 export const { addMessage, addMissedMessages } = messageSlice.actions;
 export const getMessages = (state) => state.messages.messages;
 

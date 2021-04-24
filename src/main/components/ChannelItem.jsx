@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Button, ButtonGroup, Dropdown,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const ChannelItem = ({
   name,
@@ -12,6 +13,7 @@ const ChannelItem = ({
   handleRenameChannel,
   handleChangeChannel,
 }) => {
+  const { t } = useTranslation();
   const variant = isPrimary ? 'primary' : 'light';
   return (!removable
     ? (
@@ -37,8 +39,8 @@ const ChannelItem = ({
           </Button>
           <Dropdown.Toggle split variant={variant} className="flex-grow-0 text-left nav-link" />
           <Dropdown.Menu variant={variant} title="">
-            <Dropdown.Item onClick={handleRemoveChannel}>Remove</Dropdown.Item>
-            <Dropdown.Item onClick={handleRenameChannel}>Rename</Dropdown.Item>
+            <Dropdown.Item onClick={handleRemoveChannel}>{t('channels.remove')}</Dropdown.Item>
+            <Dropdown.Item onClick={handleRenameChannel}>{t('channels.rename')}</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </li>

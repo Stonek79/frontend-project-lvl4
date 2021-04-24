@@ -5,27 +5,22 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { charactersLength } from '../constants';
-import locales from '../locales/locales';
-import { createChannelAsync } from '../slices/channelSlice';
+import { charactersLength } from '../../constants.js';
 
 const { minLength, maxLength } = charactersLength;
-const { number: { max, min }, mixed: { netError, notOneOf, required } } = locales;
 
 const generateSubmit = ({
-  close,
-  dispatch,
-  t,
-}) => async (value, { setErrors }) => {
-  try {
-    await dispatch(createChannelAsync(value.channelName.trim()))
-      .then(unwrapResult);
-    close();
-  } catch (err) {
-    setErrors({ channelName: t(`errors.${netError}`) });
-  }
+  auth, close, t,
+}) => async (value, { setSubmitting, setErrors }) => {
+  setTimeout(() => {
+    setSubmitting(true);
+  }, 1);
+  auth.socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
+    if (r.status === 'ok') {
+      return close();
+    }
+    return setErrors({ message: t('errors.netError') });
+  });
 };
 
 const Spinner = (name, t) => (
@@ -34,16 +29,15 @@ const Spinner = (name, t) => (
     { t(name) }
   </>
 );
-const CreateChannel = ({ close, channels }) => {
-  const dispatch = useDispatch();
+const CreateChannel = ({ auth, close, channels }) => {
   const { t } = useTranslation();
 
   const validationSchema = (channelsNames) => Yup.object({
     channelName: Yup.string().trim()
-      .min(minLength, t(`errors.${min}`)(minLength))
-      .max(maxLength, t(`errors.${max}`)(maxLength))
-      .notOneOf(channelsNames, t(`errors.${notOneOf}`))
-      .required(required),
+      .min(minLength, t('errors.length'))
+      .max(maxLength, t('errors.length'))
+      .notOneOf(channelsNames, t('errors.uniq'))
+      .required(t('errors.required')),
   });
   const channelsNames = channels.map((ch) => ch.name);
 
@@ -54,10 +48,10 @@ const CreateChannel = ({ close, channels }) => {
     validateOnChange: false,
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
-    onSubmit: generateSubmit({ close, dispatch, t }),
+    onSubmit: generateSubmit({ auth, close, t }),
   });
 
-  const isError = formik.errors.channelName === t(`errors.${netError}`);
+  const isError = formik.errors.channelName === t('errors.netError');
   const textInput = useRef();
   useEffect(() => {
     textInput.current.select();
@@ -66,7 +60,7 @@ const CreateChannel = ({ close, channels }) => {
   return (
     <>
       <Modal.Header closeButton>
-        <Modal.Title>{t('titles.createChannel')}</Modal.Title>
+        <Modal.Title>{t('modals.addChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -80,7 +74,7 @@ const CreateChannel = ({ close, channels }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              maxLength={17}
+              maxLength={20}
             />
           </InputGroup>
         </Form>
@@ -97,7 +91,7 @@ const CreateChannel = ({ close, channels }) => {
           onClick={close}
           disabled={formik.isSubmitting}
         >
-          Cancel
+          {t('modals.cancel')}
         </Button>
         <Button
           variant="primary"
@@ -105,7 +99,7 @@ const CreateChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('buttons.process.creating', t) : t('buttons.create')}
+          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

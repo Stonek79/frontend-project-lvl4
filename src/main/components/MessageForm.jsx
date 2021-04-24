@@ -5,26 +5,26 @@ import {
   Button, Form, FormControl, FormGroup, InputGroup,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { charactersLength } from '../constants';
-import locales from '../locales/locales';
-import { addMessageAsync } from '../slices/messageSlice';
+import locales from '../../locales/locales.js';
+import { charactersLength } from '../../constants.js';
+import useAuth from '../../validation/context/Auth.jsx';
 
 const { messageMax } = charactersLength;
-const { number: { max }, mixed: { netError } } = locales;
 
 const handleSubmit = ({
-  user, currentChannelId, dispatch, t,
-}) => async (values, { setErrors, resetForm }) => {
-  const message = { user, text: values.message };
-  try {
-    await dispatch(addMessageAsync({ channelId: currentChannelId, message }))
-      .then(unwrapResult);
-    resetForm();
-  } catch (err) {
-    setErrors({ message: t(`errors.${netError}`) });
-  }
+  auth, currentChannelId, t,
+}) => async (values, { setSubmitting, setErrors, resetForm }) => {
+  const { socket, loggedIn: { user } } = auth;
+  const message = { user, channelId: currentChannelId, text: values.message };
+  setTimeout(() => {
+    setSubmitting(true);
+  }, 1);
+  await socket.emit('newMessage', message, (r) => {
+    if (r.status === 'ok') {
+      return resetForm();
+    }
+    return setErrors({ message: t('errors.netError') });
+  });
 };
 
 const Spinner = (name, t) => (
@@ -34,13 +34,13 @@ const Spinner = (name, t) => (
   </>
 );
 
-const MessageForm = ({ user, currentChannelId }) => {
-  const dispatch = useDispatch();
+const MessageForm = ({ currentChannelId }) => {
+  const auth = useAuth();
   const { t } = useTranslation();
 
   const validationSchema = Yup.object({
     message: Yup.string().trim()
-      .max(messageMax, t(`errors.${max}`)(messageMax))
+      .max(messageMax)
       .required(''),
   });
 
@@ -52,10 +52,11 @@ const MessageForm = ({ user, currentChannelId }) => {
     },
     validationSchema,
     onSubmit: handleSubmit({
-      user, currentChannelId, dispatch, t,
+      auth, currentChannelId, t,
     }),
   });
-  const isError = formik.errors.message === t(`errors.${netError}`);
+
+  const isError = formik.errors.message === t('errors.netError');
 
   const textInput = useRef(null);
   useEffect(() => {
@@ -65,7 +66,7 @@ const MessageForm = ({ user, currentChannelId }) => {
   return (
     <FormGroup className="mt-auto">
       <Form onSubmit={formik.handleSubmit}>
-        <InputGroup noValidate>
+        <InputGroup>
           <FormControl
             isInvalid={isError}
             ref={textInput}
@@ -82,7 +83,7 @@ const MessageForm = ({ user, currentChannelId }) => {
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? Spinner('buttons.process.sending', t) : t('buttons.send')}
+            {formik.isSubmitting ? Spinner('process.sending', t) : t('mainPage.send')}
           </Button>
         </InputGroup>
         <FormGroup
