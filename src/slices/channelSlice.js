@@ -11,7 +11,8 @@ const getStoreAsync = createAsyncThunk(
     const { currentData } = routes;
     const { authorization } = getAuthHeader();
     const res = await axios.get(currentData(), { headers: authorization });
-    const currentStore = res.data.data;
+    console.log(res, 'Thunk');
+    const currentStore = res.data;
     return { currentStore, channelId };
   },
 );
