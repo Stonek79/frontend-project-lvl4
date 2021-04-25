@@ -1,12 +1,14 @@
 // @ts-check
 
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
   mode,
+  externals: {
+    gon: 'gon',
+  },
   resolve: {
     extensions: ['.js', '.jsx'],
   },
@@ -15,15 +17,12 @@ module.exports = {
     publicPath: '/assets/',
   },
   devServer: {
-    compress: true,
+    host: 'localhost',
     port: 8080,
-    host: '0.0.0.0',
     publicPath: '/assets/',
-    historyApiFallback: true,
+    compress: true,
   },
-  plugins: [
-    new MiniCssExtractPlugin(),
-  ],
+
   module: {
     rules: [
       {
@@ -34,7 +33,7 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          { loader: MiniCssExtractPlugin.loader },
+          { loader: 'style-loader' },
           { loader: 'css-loader' },
           { loader: 'postcss-loader' },
           { loader: 'sass-loader' },
