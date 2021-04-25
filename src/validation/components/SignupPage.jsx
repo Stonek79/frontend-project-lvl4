@@ -21,7 +21,8 @@ const SignupPage = () => {
   const generateSignup = () => async (value, { setErrors }) => {
     const { signupPath } = routes;
     try {
-      const { token, username } = await axios.post(signupPath(), value);
+      const { data } = await axios.post(signupPath(), value);
+      const { token, username } = data;
       localStorage.setItem('userId', JSON.stringify({ token, username }));
       auth.logIn(true, username);
       history.push('/');

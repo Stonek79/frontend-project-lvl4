@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
@@ -6,15 +6,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { charactersLength } from '../../constants.js';
+import useAuth from '../../validation/context/Auth.jsx';
 
 const { minLength, maxLength } = charactersLength;
 
 const generateSubmit = ({
-  auth, close, t,
-}) => async (value, { setSubmitting, setErrors }) => {
-  setTimeout(() => {
-    setSubmitting(true);
-  }, 1);
+  auth, close, setLoading, t,
+}) => (value, { setErrors }) => {
+  setLoading(true);
   auth.socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
     if (r.status === 'ok') {
       return close();
@@ -29,7 +28,9 @@ const Spinner = (name, t) => (
     { t(name) }
   </>
 );
-const CreateChannel = ({ auth, close, channels }) => {
+const CreateChannel = ({ close, channels }) => {
+  const [loading, setLoading] = useState(false);
+  const auth = useAuth();
   const { t } = useTranslation();
 
   const validationSchema = (channelsNames) => Yup.object({
@@ -48,14 +49,16 @@ const CreateChannel = ({ auth, close, channels }) => {
     validateOnChange: false,
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
-    onSubmit: generateSubmit({ auth, close, t }),
+    onSubmit: generateSubmit({
+      auth, close, setLoading, t,
+    }),
   });
 
   const isError = formik.errors.channelName === t('errors.netError');
-  const textInput = useRef();
+  const textInput = useRef(null);
   useEffect(() => {
     textInput.current.select();
-  }, []);
+  }, [textInput]);
 
   return (
     <>
@@ -99,7 +102,7 @@ const CreateChannel = ({ auth, close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
+          {loading ? Spinner('process.sending', t) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

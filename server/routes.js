@@ -49,11 +49,9 @@ export default (app, defaultState = {}) => {
         ...message,
         id: getNextId(),
       };
-      setTimeout(() => {
-        state.messages.push(messageWithId);
-        acknowledge({ status: 'ok' });
-        app.io.emit('newMessage', messageWithId);
-      }, 3000);
+      state.messages.push(messageWithId);
+      acknowledge({ status: 'ok' });
+      app.io.emit('newMessage', messageWithId);
     });
 
     socket.on('newChannel', (channel, acknowledge) => {
@@ -62,11 +60,9 @@ export default (app, defaultState = {}) => {
         removable: true,
         id: getNextId(),
       };
-      setTimeout(() => {
-        state.channels.push(channelWithId);
-        acknowledge({ status: 'ok', data: channelWithId });
-        app.io.emit('newChannel', channelWithId);
-      }, 3000);
+      state.channels.push(channelWithId);
+      acknowledge({ status: 'ok', data: channelWithId });
+      app.io.emit('newChannel', channelWithId);
     });
 
     socket.on('removeChannel', ({ id }, acknowledge) => {
@@ -74,10 +70,8 @@ export default (app, defaultState = {}) => {
       state.channels = state.channels.filter((c) => c.id !== channelId);
       state.messages = state.messages.filter((m) => m.channelId !== channelId);
       const data = { id: channelId };
-      setTimeout(() => {
-        acknowledge({ status: 'ok' });
-        app.io.emit('removeChannel', data);
-      }, 3000);
+      acknowledge({ status: 'ok' });
+      app.io.emit('removeChannel', data);
     });
 
     socket.on('renameChannel', ({ id, name }, acknowledge) => {
@@ -85,10 +79,8 @@ export default (app, defaultState = {}) => {
       const channel = state.channels.find((c) => c.id === channelId);
       if (!channel) return;
       channel.name = name;
-      setTimeout(() => {
-        acknowledge({ status: 'ok' });
-        app.io.emit('renameChannel', channel);
-      }, 3000);
+      acknowledge({ status: 'ok' });
+      app.io.emit('renameChannel', channel);
     });
   });
 

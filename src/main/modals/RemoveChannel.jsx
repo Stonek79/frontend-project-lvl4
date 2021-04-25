@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { getChannelId } from '../slices/modalSlice.js';
+import useAuth from '../../validation/context/Auth.jsx';
 
 const generateRemove = ({
   auth,
   close,
   currentId,
+  setLoading,
   t,
-}) => async (values, { setSubmitting, setErrors }) => {
-  setTimeout(() => {
-    setSubmitting(true);
-  }, 1);
+}) => (values, { setErrors }) => {
+  setLoading(true);
   auth.socket.emit('removeChannel', { id: currentId }, (r) => {
     if (r.status === 'ok') {
       return close();
@@ -29,7 +29,9 @@ const Spinner = (name, t) => (
   </>
 );
 
-const RemoveChannel = ({ auth, close }) => {
+const RemoveChannel = ({ close }) => {
+  const [loading, setLoading] = useState(false);
+  const auth = useAuth();
   const { t } = useTranslation();
 
   const currentId = useSelector(getChannelId);
@@ -38,7 +40,7 @@ const RemoveChannel = ({ auth, close }) => {
       channelInfo: '',
     },
     onSubmit: generateRemove({
-      auth, close, currentId, t,
+      auth, close, currentId, setLoading, t,
     }),
   });
 
@@ -72,7 +74,7 @@ const RemoveChannel = ({ auth, close }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('process.removing', t) : t('modals.remove')}
+          {loading ? Spinner('process.removing', t) : t('modals.remove')}
         </Button>
       </Modal.Footer>
     </>

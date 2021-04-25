@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { getChannelId } from '../slices/modalSlice.js';
 import { charactersLength } from '../../constants.js';
+import useAuth from '../../validation/context/Auth.jsx';
 
 const { minLength, maxLength } = charactersLength;
 
@@ -15,8 +16,10 @@ const generateRename = ({
   auth,
   close,
   currentChannalId,
+  setLoading,
   t,
-}) => async (value, { setSubmitting, setErrors }) => {
+}) => (value, { setSubmitting, setErrors }) => {
+  setLoading(true);
   const name = value.channelName.trim();
   const id = currentChannalId;
   setTimeout(() => {
@@ -26,6 +29,7 @@ const generateRename = ({
     if (r.status === 'ok') {
       return close();
     }
+    setSubmitting(false);
     return setErrors({ message: t('errors.netError') });
   });
 };
@@ -37,7 +41,9 @@ const Spinner = (name, t) => (
   </>
 );
 
-const RenameChannel = ({ auth, close, channels }) => {
+const RenameChannel = ({ close, channels }) => {
+  const [loading, setLoading] = useState(false);
+  const auth = useAuth();
   const { t } = useTranslation();
 
   const validationSchema = (channelsNames) => Yup.object({
@@ -63,7 +69,7 @@ const RenameChannel = ({ auth, close, channels }) => {
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
     onSubmit: generateRename({
-      auth, close, currentChannalId, t,
+      auth, close, currentChannalId, setLoading, t,
     }),
   });
 
@@ -71,7 +77,7 @@ const RenameChannel = ({ auth, close, channels }) => {
   const textInput = useRef();
   useEffect(() => {
     textInput.current.select();
-  }, []);
+  }, [textInput]);
 
   return (
     <>
@@ -115,7 +121,7 @@ const RenameChannel = ({ auth, close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
+          {loading ? Spinner('process.sending', t) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

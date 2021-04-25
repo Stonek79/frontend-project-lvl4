@@ -22,10 +22,10 @@ const LoginPage = () => {
   const generateSubmit = () => async (value, { setErrors }) => {
     const { loginPath } = routes;
     try {
-      const { token, username } = await axios.post(loginPath(), value);
+      const { data } = await axios.post(loginPath(), value);
+      const { token, username } = data;
       localStorage.setItem('userId', JSON.stringify({ token, username }));
       auth.logIn(true, username);
-      console.log(auth, 'login');
       history.push('/');
     } catch (err) {
       console.log(err);

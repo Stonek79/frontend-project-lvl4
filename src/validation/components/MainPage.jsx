@@ -34,7 +34,7 @@ const MainPage = () => {
   const { authorization, username } = getAuthHeader();
 
   useEffect(() => {
-    if (localStorage.getItem('userId')) {
+    if (authorization) {
       logIn(true, username);
       const getData = async () => {
         const { data } = await axios.get(currentData(), { headers: authorization });
