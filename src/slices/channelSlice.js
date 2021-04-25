@@ -10,10 +10,8 @@ const getStoreAsync = createAsyncThunk(
   async ({ channelId, getAuthHeader }) => {
     const { currentData } = routes;
     const { authorization } = getAuthHeader();
-    const res = await axios.get(currentData(), { headers: authorization });
-    console.log(res, 'Thunk');
-    const currentStore = res.data;
-    return { currentStore, channelId };
+    const { data } = await axios.get(currentData(), { headers: authorization });
+    return { currentStore: data, channelId };
   },
 );
 
@@ -53,7 +51,8 @@ const channelSlice = createSlice({
   extraReducers: {
     [getStoreAsync.fulfilled]: (state, action) => {
       const { currentStore, channelId } = action.payload;
-      const isCurrentChannel = state.channels.find((channel) => channel.id === channelId);
+      const isCurrentChannel = currentStore.channels
+        .map((channel) => channel.id).includes(channelId);
       state.channels = currentStore.channels;
       state.currentChannelId = isCurrentChannel ? channelId : 1;
     },

@@ -38,7 +38,6 @@ const MainPage = () => {
       logIn(true, username);
       const getData = async () => {
         const { data } = await axios.get(currentData(), { headers: authorization });
-        console.log(data, 'main');
         setData(data);
       };
       getData();

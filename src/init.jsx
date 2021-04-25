@@ -26,12 +26,10 @@ const ChatRender = (props, socket, getAuthHeader) => {
   });
 
   socket.io.on('reconnect', async () => {
-    console.log(socket.connected, 'reconnected');
     const channelId = store.getState().channels.currentChannelId;
 
     try {
       const result = await store.dispatch(getStoreAsync({ channelId, getAuthHeader }));
-      console.log(result, 'new store');
       unwrapResult(result);
     } catch (err) {
       console.log(err.message);

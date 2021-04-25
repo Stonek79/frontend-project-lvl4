@@ -23,8 +23,8 @@ const messageSlice = createSlice({
     },
     [getStoreAsync.fulfilled]: (state, action) => {
       const { currentStore } = action.payload;
-      const messages = currentStore;
-      state.messages.push(...messages);
+      const { messages } = currentStore;
+      state.messages = messages;
     },
   },
 });
