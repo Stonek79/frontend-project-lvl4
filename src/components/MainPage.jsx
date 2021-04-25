@@ -2,8 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import ChatRender from '../../main/init.jsx';
-import routes from '../../routes.js';
+import ChatRender from '../init.jsx';
+import routes from '../routes.js';
 import useAuth from '../context/Auth.jsx';
 
 const getAuthHeader = () => {
@@ -46,7 +46,7 @@ const MainPage = () => {
     }
   }, []);
 
-  return <>{chatData ? ChatRender(chatData, socket) : Spinner(t)}</>;
+  return <>{chatData ? ChatRender(chatData, socket, getAuthHeader) : Spinner(t)}</>;
 };
 
 export default MainPage;

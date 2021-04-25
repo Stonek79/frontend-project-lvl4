@@ -1,31 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import locales from '../../locales/locales.js';
-import { charactersLength } from '../../constants.js';
-import useAuth from '../../validation/context/Auth.jsx';
+import locales from '../locales/locales.js';
+import { charactersLength } from '../constants.js';
+import useAuth from '../context/Auth.jsx';
 
 const { messageMax } = charactersLength;
 
 const handleSubmit = ({
   auth,
   currentChannelId,
-  setLoading,
   t,
 }) => (values, { setErrors, resetForm }) => {
-  setLoading(true);
   const { socket, loggedIn: { user } } = auth;
   const message = { user, channelId: currentChannelId, text: values.message };
   socket.emit('newMessage', message, (r) => {
     if (r.status === 'ok') {
-      setLoading(false);
       return resetForm();
     }
-    setLoading(false);
     return setErrors({ message: t('errors.netError') });
   });
 };
@@ -38,7 +34,6 @@ const Spinner = (name, t) => (
 );
 
 const MessageForm = ({ currentChannelId }) => {
-  const [loading, setLoading] = useState(false);
   const auth = useAuth();
   const { t } = useTranslation();
 
@@ -57,7 +52,7 @@ const MessageForm = ({ currentChannelId }) => {
     status: false,
     validationSchema,
     onSubmit: handleSubmit({
-      auth, currentChannelId, setLoading, t,
+      auth, currentChannelId, t,
     }),
   });
 
@@ -88,7 +83,7 @@ const MessageForm = ({ currentChannelId }) => {
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {loading ? Spinner('process.sending', t) : t('mainPage.send')}
+            {formik.isSubmitting ? Spinner('process.sending', t) : t('mainPage.send')}
           </Button>
         </InputGroup>
         <FormGroup

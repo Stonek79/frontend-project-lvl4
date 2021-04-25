@@ -6,7 +6,7 @@ import {
 } from 'react-bootstrap';
 import { openModal } from '../slices/modalSlice.js';
 import { addChannelId, getChannels, getCurrentChannelId } from '../slices/channelSlice.js';
-import { modalTypes } from '../../constants.js';
+import { modalTypes } from '../constants.js';
 import ChannelItem from './ChannelItem.jsx';
 
 const { add, remove, rename } = modalTypes;

@@ -14,10 +14,9 @@ import LoginPage from './LoginPage.jsx';
 import SignupPage from './SignupPage.jsx';
 import authContext from '../context/index.jsx';
 
-const url = window.location.origin;
-const socket = io(url);
-
 const AuthProvider = ({ children }) => {
+  const url = window.location.origin;
+  const socket = io(url);
   const [loggedIn, setLoggedIn] = useState({ isLogged: false, user: '' });
 
   const logIn = (status, name) => setLoggedIn({ isLogged: status, user: name });

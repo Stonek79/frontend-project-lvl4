@@ -7,9 +7,9 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import routes from '../../routes.js';
+import routes from '../routes.js';
 import useAuth from '../context/Auth.jsx';
-import { charactersLength } from '../../constants';
+import { charactersLength } from '../constants';
 
 const { minLength, minPassLength, maxLength } = charactersLength;
 

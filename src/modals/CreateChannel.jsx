@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { charactersLength } from '../../constants.js';
-import useAuth from '../../validation/context/Auth.jsx';
+import { charactersLength } from '../constants.js';
+import useAuth from '../context/Auth.jsx';
 
 const { minLength, maxLength } = charactersLength;
 
 const generateSubmit = ({
-  auth, close, setLoading, t,
+  auth, close, t,
 }) => (value, { setErrors }) => {
-  setLoading(true);
   auth.socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
     if (r.status === 'ok') {
       return close();
@@ -29,7 +28,6 @@ const Spinner = (name, t) => (
   </>
 );
 const CreateChannel = ({ close, channels }) => {
-  const [loading, setLoading] = useState(false);
   const auth = useAuth();
   const { t } = useTranslation();
 
@@ -50,7 +48,7 @@ const CreateChannel = ({ close, channels }) => {
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
     onSubmit: generateSubmit({
-      auth, close, setLoading, t,
+      auth, close, t,
     }),
   });
 
@@ -102,7 +100,7 @@ const CreateChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {loading ? Spinner('process.sending', t) : t('modals.send')}
+          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

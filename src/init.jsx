@@ -1,12 +1,14 @@
 import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import App from './components/App.jsx';
+import ChatBox from './components/ChatBox.jsx';
 import rootReducer from './slices/index.js';
-import { addMessage, getMessagesAsync } from './slices/messageSlice.js';
-import { addChannel, removeChannel, renameChannel } from './slices/channelSlice.js';
+import { addMessage } from './slices/messageSlice.js';
+import {
+  addChannel, getStoreAsync, removeChannel, renameChannel,
+} from './slices/channelSlice.js';
 
-const ChatRender = (props, socket) => {
+const ChatRender = (props, socket, getAuthHeader) => {
   const { channels, messages, currentChannelId } = props;
   const preloadedState = {
     channels: {
@@ -23,12 +25,14 @@ const ChatRender = (props, socket) => {
     preloadedState,
   });
 
-  // TODO реализовать новый реконнект
   socket.io.on('reconnect', async () => {
+    console.log(socket.connected, 'reconnected');
     const channelId = store.getState().channels.currentChannelId;
+
     try {
-      await store.dispatch(getMessagesAsync(channelId))
-        .then(unwrapResult);
+      const result = await store.dispatch(getStoreAsync({ channelId, getAuthHeader }));
+      console.log(result, 'new store');
+      unwrapResult(result);
     } catch (err) {
       console.log(err.message);
     }
@@ -53,7 +57,7 @@ const ChatRender = (props, socket) => {
 
   return (
     <Provider store={store}>
-      <App />
+      <ChatBox />
     </Provider>
   );
 };

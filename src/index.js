@@ -6,7 +6,7 @@ import 'regenerator-runtime/runtime.js';
 import './i18n.js';
 
 import '../assets/application.scss';
-import App from './validation/components/App.jsx';
+import App from './components/App.jsx';
 
 if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';

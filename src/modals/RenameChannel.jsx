@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { getChannelId } from '../slices/modalSlice.js';
-import { charactersLength } from '../../constants.js';
-import useAuth from '../../validation/context/Auth.jsx';
+import { charactersLength } from '../constants.js';
+import useAuth from '../context/Auth.jsx';
 
 const { minLength, maxLength } = charactersLength;
 
@@ -16,20 +16,14 @@ const generateRename = ({
   auth,
   close,
   currentChannalId,
-  setLoading,
   t,
-}) => (value, { setSubmitting, setErrors }) => {
-  setLoading(true);
+}) => (value, { setErrors }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
-  setTimeout(() => {
-    setSubmitting(true);
-  }, 1);
   auth.socket.emit('renameChannel', { id, name }, (r) => {
     if (r.status === 'ok') {
       return close();
     }
-    setSubmitting(false);
     return setErrors({ message: t('errors.netError') });
   });
 };
@@ -42,7 +36,6 @@ const Spinner = (name, t) => (
 );
 
 const RenameChannel = ({ close, channels }) => {
-  const [loading, setLoading] = useState(false);
   const auth = useAuth();
   const { t } = useTranslation();
 
@@ -69,7 +62,7 @@ const RenameChannel = ({ close, channels }) => {
     validateOnBlur: false,
     validationSchema: validationSchema(channelsNames),
     onSubmit: generateRename({
-      auth, close, currentChannalId, setLoading, t,
+      auth, close, currentChannalId, t,
     }),
   });
 
@@ -121,7 +114,7 @@ const RenameChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {loading ? Spinner('process.sending', t) : t('modals.send')}
+          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>
