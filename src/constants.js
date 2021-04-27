@@ -1,4 +1,4 @@
-const charactersLength = {
+const itemsLength = {
   minLength: 3,
   minPassLength: 6,
   maxLength: 20,
@@ -11,4 +11,4 @@ const modalTypes = {
   remove: 'removing',
 };
 
-export { charactersLength, modalTypes };
+export { itemsLength, modalTypes };

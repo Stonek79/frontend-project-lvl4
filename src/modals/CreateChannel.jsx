@@ -1,19 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
-import { charactersLength } from '../constants.js';
-import useAuth from '../context/Auth.jsx';
 
-const { minLength, maxLength } = charactersLength;
+import { itemsLength } from '../constants.js';
+import AppContext from '../context/AppContext.jsx';
+
+const { minLength, maxLength } = itemsLength;
 
 const generateSubmit = ({
-  auth, close, t,
+  socket, close, t,
 }) => (value, { setErrors }) => {
-  auth.socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
+  socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
     if (r.status === 'ok') {
       return close();
     }
@@ -27,17 +28,19 @@ const Spinner = (name, t) => (
     { t(name) }
   </>
 );
+
+const validationSchema = ({ channelsNames, t }) => Yup.object({
+  channelName: Yup.string().trim()
+    .min(minLength, t('errors.length'))
+    .max(maxLength, t('errors.length'))
+    .notOneOf(channelsNames, t('errors.uniq'))
+    .required(t('errors.required')),
+});
+
 const CreateChannel = ({ close, channels }) => {
-  const auth = useAuth();
+  const { socket } = useContext(AppContext);
   const { t } = useTranslation();
 
-  const validationSchema = (channelsNames) => Yup.object({
-    channelName: Yup.string().trim()
-      .min(minLength, t('errors.length'))
-      .max(maxLength, t('errors.length'))
-      .notOneOf(channelsNames, t('errors.uniq'))
-      .required(t('errors.required')),
-  });
   const channelsNames = channels.map((ch) => ch.name);
 
   const formik = useFormik({
@@ -46,9 +49,9 @@ const CreateChannel = ({ close, channels }) => {
     },
     validateOnChange: false,
     validateOnBlur: false,
-    validationSchema: validationSchema(channelsNames),
+    validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateSubmit({
-      auth, close, t,
+      socket, close, t,
     }),
   });
 

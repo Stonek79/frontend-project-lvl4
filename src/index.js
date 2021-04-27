@@ -6,13 +6,13 @@ import 'regenerator-runtime/runtime.js';
 import './i18n.js';
 
 import '../assets/application.scss';
-import App from './components/App.jsx';
+import run from './init.jsx';
 
 if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
 
 const element = document.getElementById('chat');
-const virtualDom = App();
+const virtualDom = run();
 
 render(virtualDom, element);

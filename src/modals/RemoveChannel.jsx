@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
+
 import { getChannelId } from '../slices/modalSlice.js';
-import useAuth from '../context/Auth.jsx';
+import AppContext from '../context/AppContext.jsx';
 
 const generateRemove = ({
-  auth,
+  socket,
   close,
   currentId,
   t,
 }) => (values, { setErrors }) => {
-  auth.socket.emit('removeChannel', { id: currentId }, (r) => {
+  socket.emit('removeChannel', { id: currentId }, (r) => {
     if (r.status === 'ok') {
       return close();
     }
@@ -28,7 +29,7 @@ const Spinner = (name, t) => (
 );
 
 const RemoveChannel = ({ close }) => {
-  const auth = useAuth();
+  const { socket } = useContext(AppContext);
   const { t } = useTranslation();
 
   const currentId = useSelector(getChannelId);
@@ -37,7 +38,7 @@ const RemoveChannel = ({ close }) => {
       channelInfo: '',
     },
     onSubmit: generateRemove({
-      auth, close, currentId, t,
+      socket, close, currentId, t,
     }),
   });
 

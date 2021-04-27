@@ -1,36 +1,46 @@
-import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import React from 'react';
+import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import ChatBox from './components/ChatBox.jsx';
+import { io } from 'socket.io-client';
+
+import App from './components/App.jsx';
+import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, getStoreAsync, removeChannel, renameChannel,
 } from './slices/channelSlice.js';
 
-const ChatRender = (props, socket, getAuthHeader) => {
-  const { channels, messages, currentChannelId } = props;
-  const preloadedState = {
-    channels: {
-      channels,
-      currentChannelId,
-    },
-    messages: {
-      messages,
-    },
-  };
+const getAuthHeader = () => {
+  const userId = JSON.parse(localStorage.getItem('userId'));
+  if (userId && userId.token) {
+    return {
+      username: userId.username,
+      authorization: { Authorization: `Bearer ${userId.token}` },
+    };
+  }
+
+  return {};
+};
+
+export default () => {
+  const url = window.location.origin;
+  const socket = io(url);
 
   const store = configureStore({
     reducer: rootReducer,
-    preloadedState,
   });
+
+  const getCurrentStore = (id) => {
+    const result = store.dispatch(getStoreAsync({ id, getAuthHeader }));
+    unwrapResult(result);
+    return result;
+  };
 
   socket.io.on('reconnect', async () => {
     const channelId = store.getState().channels.currentChannelId;
-
     try {
-      const result = await store.dispatch(getStoreAsync({ channelId, getAuthHeader }));
-      unwrapResult(result);
+      getCurrentStore(channelId);
     } catch (err) {
       console.log(err.message);
     }
@@ -53,11 +63,17 @@ const ChatRender = (props, socket, getAuthHeader) => {
     store.dispatch(addMessage({ messageData: data }));
   });
 
+  const contextValues = {
+    socket,
+    getAuthHeader,
+    getCurrentStore,
+  };
+
   return (
     <Provider store={store}>
-      <ChatBox />
+      <AppContext.Provider value={contextValues}>
+        <App />
+      </AppContext.Provider>
     </Provider>
   );
 };
-
-export default ChatRender;

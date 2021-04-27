@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { remove } from 'lodash-es';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import routes from '../routes.js';
 
 const getStoreAsync = createAsyncThunk(
@@ -66,7 +67,9 @@ export const {
   renameChannel,
 } = channelSlice.actions;
 
+const getChannels = (state) => state.channels.channels;
+const getCurrentChannelId = (state) => state.channels.currentChannelId;
+
+export { getChannels, getCurrentChannelId, getStoreAsync };
+
 export default channelSlice.reducer;
-export { getStoreAsync };
-export const getChannels = (state) => state.channels.channels;
-export const getCurrentChannelId = (state) => state.channels.currentChannelId;

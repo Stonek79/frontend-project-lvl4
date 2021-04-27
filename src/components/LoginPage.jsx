@@ -1,44 +1,45 @@
+import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
-import React, { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
+import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button, Form, FormGroup, FormControl, FormLabel,
 } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import useAuth from '../context/Auth.jsx';
+
 import routes from '../routes.js';
+import AuthContext from '../context/AuthContext.jsx';
+
+const generateSubmit = ({ history, logIn, t }) => async (value, { setErrors }) => {
+  const { loginPath } = routes;
+  try {
+    const { data } = await axios.post(loginPath(), value);
+    const { token, username } = data;
+    localStorage.setItem('userId', JSON.stringify({ token, username }));
+    logIn();
+    history.push('/');
+  } catch (err) {
+    console.log(err);
+    setErrors({ password: t('errors.logError') });
+  }
+};
 
 const LoginPage = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const auth = useAuth();
+  const { logIn } = useContext(AuthContext);
   const nameInput = useRef(null);
 
   useEffect(() => {
     nameInput.current.focus();
   }, [nameInput]);
 
-  const generateSubmit = () => async (value, { setErrors }) => {
-    const { loginPath } = routes;
-    try {
-      const { data } = await axios.post(loginPath(), value);
-      const { token, username } = data;
-      localStorage.setItem('userId', JSON.stringify({ token, username }));
-      auth.logIn(true, username);
-      history.push('/');
-    } catch (err) {
-      console.log(err);
-      setErrors({ password: t('errors.logError') });
-    }
-  };
-
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
-    onSubmit: generateSubmit(),
+    onSubmit: generateSubmit({ history, logIn, t }),
   });
 
   return (

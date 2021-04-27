@@ -1,6 +1,7 @@
 // @ts-check
 
 import React from 'react';
+
 import ModalComponent from './Modal.jsx';
 import ChannelBox from './ChannelBox.jsx';
 import MessageBox from './MessageBox.jsx';

@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Button, Form, FormGroup, FormLabel, ListGroup,
 } from 'react-bootstrap';
+
 import { openModal } from '../slices/modalSlice.js';
-import { addChannelId, getChannels, getCurrentChannelId } from '../slices/channelSlice.js';
 import { modalTypes } from '../constants.js';
+import {
+  addChannelId, getChannels, getCurrentChannelId,
+} from '../slices/channelSlice.js';
 import ChannelItem from './ChannelItem.jsx';
 
 const { add, remove, rename } = modalTypes;

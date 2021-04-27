@@ -1,26 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import {
-  Button, Form, FormControl, FormGroup, InputGroup, Modal,
-} from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
-import { getChannelId } from '../slices/modalSlice.js';
-import { charactersLength } from '../constants.js';
-import useAuth from '../context/Auth.jsx';
+import {
+  Button, Form, FormControl, FormGroup, InputGroup, Modal,
+} from 'react-bootstrap';
 
-const { minLength, maxLength } = charactersLength;
+import { getChannelId } from '../slices/modalSlice.js';
+import { itemsLength } from '../constants.js';
+import AppContext from '../context/AppContext.jsx';
+
+const { minLength, maxLength } = itemsLength;
 
 const generateRename = ({
-  auth,
+  socket,
   close,
   currentChannalId,
   t,
 }) => (value, { setErrors }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
-  auth.socket.emit('renameChannel', { id, name }, (r) => {
+  socket.emit('renameChannel', { id, name }, (r) => {
     if (r.status === 'ok') {
       return close();
     }
@@ -35,24 +36,24 @@ const Spinner = (name, t) => (
   </>
 );
 
-const RenameChannel = ({ close, channels }) => {
-  const auth = useAuth();
-  const { t } = useTranslation();
+const validationSchema = ({ channelsNames, t }) => Yup.object({
+  channelName: Yup.string().trim()
+    .min(minLength, t('errors.length'))
+    .max(maxLength, t('errors.length'))
+    .notOneOf(channelsNames, t('errors.uniq'))
+    .required(t('errors.required')),
+});
 
-  const validationSchema = (channelsNames) => Yup.object({
-    channelName: Yup.string().trim()
-      .min(minLength, t('errors.length'))
-      .max(maxLength, t('errors.length'))
-      .notOneOf(channelsNames, t('errors.uniq'))
-      .required(t('errors.required')),
-  });
+const RenameChannel = ({ close, channels }) => {
+  const { socket } = useContext(AppContext);
+  const { t } = useTranslation();
 
   const channelsNames = channels.map((ch) => ch.name);
 
   const channelId = useSelector(getChannelId);
-  const currentChannal = channels.find((channel) => channel.id === channelId);
-  const currentChannalId = currentChannal.id;
-  const { name } = currentChannal;
+  const currentChannel = channels.find((channel) => channel.id === channelId);
+  const currentChannalId = currentChannel.id;
+  const { name } = currentChannel;
 
   const formik = useFormik({
     initialValues: {
@@ -60,9 +61,9 @@ const RenameChannel = ({ close, channels }) => {
     },
     validateOnChange: false,
     validateOnBlur: false,
-    validationSchema: validationSchema(channelsNames),
+    validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateRename({
-      auth, close, currentChannalId, t,
+      socket, close, currentChannalId, t,
     }),
   });
 

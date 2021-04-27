@@ -1,22 +1,10 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ChatRender from '../init.jsx';
-import routes from '../routes.js';
-import useAuth from '../context/Auth.jsx';
+import { useTranslation } from 'react-i18next';
 
-const getAuthHeader = () => {
-  const userId = JSON.parse(localStorage.getItem('userId'));
-  if (userId && userId.token) {
-    return {
-      username: userId.username,
-      authorization: { Authorization: `Bearer ${userId.token}` },
-    };
-  }
-
-  return {};
-};
+import AuthContext from '../context/AuthContext.jsx';
+import AppContext from '../context/AppContext.jsx';
+import ChatBox from './ChatBox.jsx';
 
 const Spinner = (t) => (
   <>
@@ -26,27 +14,24 @@ const Spinner = (t) => (
 );
 
 const MainPage = () => {
-  const { t } = useTranslation();
-  const { currentData } = routes;
-  const [chatData, setData] = useState('');
+  const [isFulfilled, setFulfilledStatus] = useState(false);
+  const { getCurrentStore, getAuthHeader } = useContext(AppContext);
   const history = useHistory();
-  const { socket, logIn } = useAuth();
-  const { authorization, username } = getAuthHeader();
+  const { logIn } = useContext(AuthContext);
+  const { authorization } = getAuthHeader();
+  const { t } = useTranslation();
 
-  useEffect(() => {
+  useEffect(async () => {
     if (authorization) {
-      logIn(true, username);
-      const getData = async () => {
-        const { data } = await axios.get(currentData(), { headers: authorization });
-        setData(data);
-      };
-      getData();
+      const res = await getCurrentStore(1);
+      setFulfilledStatus(res.meta.requestStatus);
+      logIn();
     } else {
       history.push('/login');
     }
   }, []);
 
-  return <>{chatData ? ChatRender(chatData, socket, getAuthHeader) : Spinner(t)}</>;
+  return <>{isFulfilled ? ChatBox() : Spinner(t)}</>;
 };
 
 export default MainPage;

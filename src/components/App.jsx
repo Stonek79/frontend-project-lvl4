@@ -6,41 +6,38 @@ import {
   Link,
 } from 'react-router-dom';
 import { Button, Navbar } from 'react-bootstrap';
-import { io } from 'socket.io-client';
 import { useTranslation } from 'react-i18next';
 
 import MainPage from './MainPage.jsx';
 import LoginPage from './LoginPage.jsx';
 import SignupPage from './SignupPage.jsx';
-import authContext from '../context/index.jsx';
+import AuthContext from '../context/AuthContext.jsx';
 
 const AuthProvider = ({ children }) => {
-  const url = window.location.origin;
-  const socket = io(url);
-  const [loggedIn, setLoggedIn] = useState({ isLogged: false, user: '' });
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const logIn = (status, name) => setLoggedIn({ isLogged: status, user: name });
+  const logIn = () => setLoggedIn(true);
   const logOut = () => {
     localStorage.removeItem('userId');
-    setLoggedIn({ isLogged: false, user: '' });
+    setLoggedIn(false);
   };
 
   return (
-    <authContext.Provider value={{
-      loggedIn, logIn, logOut, socket,
+    <AuthContext.Provider value={{
+      loggedIn, logIn, logOut,
     }}
     >
       {children}
-    </authContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
-const OutButton = () => {
-  const auth = useContext(authContext);
+const LogOutButton = () => {
+  const auth = useContext(AuthContext);
   const { t } = useTranslation();
 
   return (
-    auth.loggedIn.isLogged
+    auth.loggedIn
       ? (
         <Button
           onClick={auth.logOut}
@@ -72,7 +69,7 @@ const App = () => (
       <div className="d-flex flex-column h-100">
         <Navbar className="mb-3 bg-light expand-lg">
           <HexletButton />
-          <OutButton />
+          <LogOutButton />
         </Navbar>
 
         <Switch>

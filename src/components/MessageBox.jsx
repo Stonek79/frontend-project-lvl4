@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { animateScroll as scroll } from 'react-scroll';
 import { FormGroup, FormText } from 'react-bootstrap';
+
 import MessageForm from './MessageForm.jsx';
 import { getCurrentChannelId } from '../slices/channelSlice.js';
 import { getMessages } from '../slices/messageSlice.js';

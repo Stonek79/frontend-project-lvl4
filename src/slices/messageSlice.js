@@ -2,6 +2,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import { remove } from 'lodash-es';
+
 import { getStoreAsync, removeChannel } from './channelSlice.js';
 
 const messageSlice = createSlice({
@@ -29,7 +30,8 @@ const messageSlice = createSlice({
   },
 });
 
-export const { addMessage, addMissedMessages } = messageSlice.actions;
 export const getMessages = (state) => state.messages.messages;
+
+export const { addMessage, addMissedMessages } = messageSlice.actions;
 
 export default messageSlice.reducer;

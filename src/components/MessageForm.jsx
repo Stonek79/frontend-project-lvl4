@@ -1,23 +1,24 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import {
   Button, Form, FormControl, FormGroup, InputGroup,
 } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import locales from '../locales/locales.js';
-import { charactersLength } from '../constants.js';
-import useAuth from '../context/Auth.jsx';
 
-const { messageMax } = charactersLength;
+import { itemsLength } from '../constants.js';
+import AppContext from '../context/AppContext.jsx';
+
+const { messageMax } = itemsLength;
 
 const handleSubmit = ({
-  auth,
+  getAuthHeader,
+  socket,
   currentChannelId,
   t,
 }) => (values, { setErrors, resetForm }) => {
-  const { socket, loggedIn: { user } } = auth;
-  const message = { user, channelId: currentChannelId, text: values.message };
+  const { username } = getAuthHeader();
+  const message = { user: username, channelId: currentChannelId, text: values.message };
   socket.emit('newMessage', message, (r) => {
     if (r.status === 'ok') {
       return resetForm();
@@ -25,6 +26,12 @@ const handleSubmit = ({
     return setErrors({ message: t('errors.netError') });
   });
 };
+
+const validationSchema = Yup.object({
+  message: Yup.string().trim()
+    .max(messageMax)
+    .required(''),
+});
 
 const Spinner = (name, t) => (
   <>
@@ -34,16 +41,8 @@ const Spinner = (name, t) => (
 );
 
 const MessageForm = ({ currentChannelId }) => {
-  const auth = useAuth();
+  const { getAuthHeader, socket } = useContext(AppContext);
   const { t } = useTranslation();
-
-  const validationSchema = Yup.object({
-    message: Yup.string().trim()
-      .max(messageMax)
-      .required(''),
-  });
-
-  Yup.setLocale(locales);
 
   const formik = useFormik({
     initialValues: {
@@ -52,7 +51,7 @@ const MessageForm = ({ currentChannelId }) => {
     status: false,
     validationSchema,
     onSubmit: handleSubmit({
-      auth, currentChannelId, t,
+      getAuthHeader, socket, currentChannelId, t,
     }),
   });
 

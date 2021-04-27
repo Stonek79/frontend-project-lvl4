@@ -1,49 +1,48 @@
+import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import {
   Button, Form, FormControl, FormGroup, FormLabel,
 } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
-import routes from '../routes.js';
-import useAuth from '../context/Auth.jsx';
-import { charactersLength } from '../constants';
 
-const { minLength, minPassLength, maxLength } = charactersLength;
+import routes from '../routes.js';
+import AuthContext from '../context/AuthContext.jsx';
+import { itemsLength } from '../constants';
+
+const { minLength, minPassLength, maxLength } = itemsLength;
+const generateSignup = ({ history, logIn, t }) => async (value, { setErrors }) => {
+  const { signupPath } = routes;
+  try {
+    const { data } = await axios.post(signupPath(), value);
+    const { token, username } = data;
+    localStorage.setItem('userId', JSON.stringify({ token, username }));
+    logIn();
+    history.push('/');
+  } catch (err) {
+    setErrors({ passwordConfirm: t('errors.exist') });
+  }
+};
+const validationSchema = (t) => Yup.object({
+  username: Yup.string().trim()
+    .min(minLength, t('errors.length'))
+    .max(maxLength, t('errors.length'))
+    .required(t('errors.required')),
+  password: Yup.string().trim()
+    .min(minPassLength, t('errors.passMin'))
+    .max(maxLength, t('errors.passMax'))
+    .required(t('errors.required')),
+  passwordConfirm: Yup.string().trim()
+    .oneOf([Yup.ref('password'), null], t('errors.confirm'))
+    .required(t('errors.required')),
+});
 
 const SignupPage = () => {
   const { t } = useTranslation();
-  const auth = useAuth();
+  const { logIn } = useContext(AuthContext);
   const history = useHistory();
-
-  const generateSignup = () => async (value, { setErrors }) => {
-    const { signupPath } = routes;
-    try {
-      const { data } = await axios.post(signupPath(), value);
-      const { token, username } = data;
-      localStorage.setItem('userId', JSON.stringify({ token, username }));
-      auth.logIn(true, username);
-      history.push('/');
-    } catch (err) {
-      setErrors({ passwordConfirm: t('errors.exist') });
-    }
-  };
-
-  const validationSchema = () => Yup.object({
-    username: Yup.string().trim()
-      .min(minLength, t('errors.length'))
-      .max(maxLength, t('errors.length'))
-      .required(t('errors.required')),
-    password: Yup.string().trim()
-      .min(minPassLength, t('errors.passMin'))
-      .max(maxLength, t('errors.passMax'))
-      .required(t('errors.required')),
-    passwordConfirm: Yup.string().trim()
-      .oneOf([Yup.ref('password'), null], t('errors.confirm'))
-      .required(t('errors.required')),
-  });
 
   const nameInput = useRef();
   useEffect(() => {
@@ -59,8 +58,8 @@ const SignupPage = () => {
     // validateOnMount: true,
     validateOnChange: true,
     validateOnBlur: true,
-    validationSchema: validationSchema(),
-    onSubmit: generateSignup(),
+    validationSchema: validationSchema(t),
+    onSubmit: generateSignup({ history, logIn, t }),
   });
 
   return (
