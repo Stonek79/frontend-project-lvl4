@@ -15,10 +15,11 @@ const generateSubmit = ({
   socket, close, t,
 }) => (value, { setErrors }) => {
   socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
+    const timerId = setTimeout(() => setErrors({ message: t('errors.netError') }), 3000);
     if (r.status === 'ok') {
-      return close();
+      clearTimeout(timerId);
+      close();
     }
-    return setErrors({ message: t('errors.netError') });
   });
 };
 
