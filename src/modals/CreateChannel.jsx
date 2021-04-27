@@ -13,9 +13,12 @@ const { minLength, maxLength } = itemsLength;
 
 const generateSubmit = ({
   socket, close, t,
-}) => (value, { setErrors }) => {
+}) => (value, { setErrors, setSubmitting }) => {
+  const timerId = setTimeout(() => {
+    setSubmitting(false);
+    setErrors({ channelName: t('errors.netError') });
+  }, 3000);
   socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
-    const timerId = setTimeout(() => setErrors({ message: t('errors.netError') }), 3000);
     if (r.status === 'ok') {
       clearTimeout(timerId);
       close();
@@ -56,6 +59,7 @@ const CreateChannel = ({ close, channels }) => {
     }),
   });
 
+  console.log(formik.errors);
   const isError = formik.errors.channelName === t('errors.netError');
   const textInput = useRef(null);
   useEffect(() => {

@@ -16,11 +16,14 @@ const handleSubmit = ({
   socket,
   currentChannelId,
   t,
-}) => (values, { setErrors, resetForm }) => {
+}) => (values, { setErrors, setSubmitting, resetForm }) => {
   const { username } = getAuthHeader();
   const message = { user: username, channelId: currentChannelId, text: values.message };
+  const timerId = setTimeout(() => {
+    setSubmitting(false);
+    setErrors({ message: t('errors.netError') });
+  }, 3000);
   socket.emit('newMessage', message, (r) => {
-    const timerId = setTimeout(() => setErrors({ message: t('errors.netError') }), 3000);
     if (r.status === 'ok') {
       clearTimeout(timerId);
       resetForm();

@@ -12,9 +12,12 @@ const generateRemove = ({
   close,
   currentId,
   t,
-}) => (values, { setErrors }) => {
+}) => (values, { setErrors, setSubmitting }) => {
   socket.emit('removeChannel', { id: currentId }, (r) => {
-    const timerId = setTimeout(() => setErrors({ message: t('errors.netError') }), 3000);
+    const timerId = setTimeout(() => {
+      setSubmitting(false);
+      setErrors({ channelInfo: t('errors.netError') });
+    }, 3000);
     if (r.status === 'ok') {
       clearTimeout(timerId);
       close();
