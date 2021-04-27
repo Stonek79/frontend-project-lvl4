@@ -25,7 +25,7 @@ const getAuthHeader = () => {
 
 export default () => {
   const url = window.location.origin;
-  const socket = io(url, { reconnectionAttempts: 5 });
+  const socket = io(url);
 
   const store = configureStore({
     reducer: rootReducer,
