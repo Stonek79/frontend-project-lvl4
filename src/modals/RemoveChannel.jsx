@@ -12,17 +12,20 @@ const generateRemove = ({
   close,
   currentId,
   t,
-}) => (values, { setErrors, setSubmitting }) => {
-  socket.emit('removeChannel', { id: currentId }, (r) => {
-    const timerId = setTimeout(() => {
-      setSubmitting(false);
-      setErrors({ channelInfo: t('errors.netError') });
-    }, 3000);
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      close();
-    }
-  });
+}) => (values, { setErrors }) => {
+  // const timerId = setTimeout(() => {
+  //   setSubmitting(false);
+  //   setErrors({ channelInfo: t('errors.netError') });
+  // }, 3000); комментарий в MessageForm
+  if (socket.connected) {
+    socket.emit('removeChannel', { id: currentId }, (r) => {
+      if (r.status === 'ok') {
+        close();
+      }
+    });
+  } else {
+    setErrors({ channelInfo: t('errors.netError') });
+  }
 };
 
 const Spinner = (name, t) => (

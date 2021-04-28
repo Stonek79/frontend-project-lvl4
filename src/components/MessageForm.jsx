@@ -16,19 +16,24 @@ const handleSubmit = ({
   socket,
   currentChannelId,
   t,
-}) => (values, { setErrors, setSubmitting, resetForm }) => {
+}) => (values, { setErrors, resetForm }) => {
   const { username } = getAuthHeader();
   const message = { user: username, channelId: currentChannelId, text: values.message };
-  const timerId = setTimeout(() => {
-    setSubmitting(false);
+  // const timerId = setTimeout(() => {
+  //   setSubmitting(false);
+  //   setErrors({ message: t('errors.netError') });
+  // }, 3000);
+  // clearTimeout(timerId); альтернативный вариант, позволяет отправлять данные при отсутствии сети
+  // на мой взгляд менее предпочитительный
+  if (socket.connected) {
+    socket.emit('newMessage', message, (r) => {
+      if (r.status === 'ok') {
+        resetForm();
+      }
+    });
+  } else {
     setErrors({ message: t('errors.netError') });
-  }, 3000);
-  socket.emit('newMessage', message, (r) => {
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      resetForm();
-    }
-  });
+  }
 };
 
 const validationSchema = Yup.object({

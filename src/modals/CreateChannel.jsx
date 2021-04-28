@@ -13,17 +13,20 @@ const { minLength, maxLength } = itemsLength;
 
 const generateSubmit = ({
   socket, close, t,
-}) => (value, { setErrors, setSubmitting }) => {
-  const timerId = setTimeout(() => {
-    setSubmitting(false);
+}) => (value, { setErrors }) => {
+  // const timerId = setTimeout(() => {
+  //   setSubmitting(false);
+  //   setErrors({ channelName: t('errors.netError') });
+  // }, 3000); комментарий в MessageForm
+  if (socket.connected) {
+    socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
+      if (r.status === 'ok') {
+        close();
+      }
+    });
+  } else {
     setErrors({ channelName: t('errors.netError') });
-  }, 3000);
-  socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      close();
-    }
-  });
+  }
 };
 
 const Spinner = (name, t) => (
@@ -59,7 +62,6 @@ const CreateChannel = ({ close, channels }) => {
     }),
   });
 
-  console.log(formik.errors);
   const isError = formik.errors.channelName === t('errors.netError');
   const textInput = useRef(null);
   useEffect(() => {

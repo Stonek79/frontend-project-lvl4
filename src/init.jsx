@@ -32,7 +32,7 @@ export default () => {
   });
 
   const getCurrentStore = (id) => {
-    const result = store.dispatch(getStoreAsync({ id, getAuthHeader }));
+    const result = store.dispatch(getStoreAsync({ channelId: id, getAuthHeader }));
     unwrapResult(result);
     return result;
   };

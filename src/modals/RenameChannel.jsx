@@ -18,19 +18,22 @@ const generateRename = ({
   close,
   currentChannalId,
   t,
-}) => (value, { setErrors, setSubmitting }) => {
+}) => (value, { setErrors }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
-  socket.emit('renameChannel', { id, name }, (r) => {
-    const timerId = setTimeout(() => {
-      setSubmitting(false);
-      setErrors({ channelName: t('errors.netError') });
-    }, 3000);
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      close();
-    }
-  });
+  // const timerId = setTimeout(() => {
+  //   setSubmitting(false);
+  //   setErrors({ channelName: t('errors.netError') });
+  // }, 3000); комментарий в MessageForm
+  if (socket.connected) {
+    socket.emit('renameChannel', { id, name }, (r) => {
+      if (r.status === 'ok') {
+        close();
+      }
+    });
+  } else {
+    setErrors({ channelName: t('errors.netError') });
+  }
 };
 
 const Spinner = (name, t) => (
