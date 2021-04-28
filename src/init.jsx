@@ -2,7 +2,9 @@ import React from 'react';
 import { configureStore, unwrapResult } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { io } from 'socket.io-client';
+import { I18nextProvider } from 'react-i18next';
 
+import i18n from './i18n';
 import App from './components/App.jsx';
 import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
@@ -71,9 +73,11 @@ export default () => {
 
   return (
     <Provider store={store}>
-      <AppContext.Provider value={contextValues}>
-        <App />
-      </AppContext.Provider>
+      <I18nextProvider i18n={i18n}>
+        <AppContext.Provider value={contextValues}>
+          <App />
+        </AppContext.Provider>
+      </I18nextProvider>
     </Provider>
   );
 };
