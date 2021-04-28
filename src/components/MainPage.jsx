@@ -21,15 +21,18 @@ const MainPage = () => {
   const { authorization } = getAuthHeader();
   const { t } = useTranslation();
 
-  useEffect(async () => {
-    if (authorization) {
-      const res = await getCurrentStore(1);
-      setFulfilledStatus(res.meta.requestStatus);
-      logIn();
-    } else {
-      history.push('/login');
-    }
-  }, []);
+  useEffect(() => {
+    const fetch = async () => {
+      if (authorization) {
+        const res = await getCurrentStore(1);
+        setFulfilledStatus(res.meta.requestStatus);
+        logIn();
+      } else {
+        history.push('/login');
+      }
+    };
+    fetch();
+  });
 
   return <>{isFulfilled ? ChatBox() : Spinner(t)}</>;
 };
