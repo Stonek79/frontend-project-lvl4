@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import { createSlice } from '@reduxjs/toolkit';
-import { remove } from 'lodash-es';
+import _ from 'lodash';
 
 import { getStoreAsync, removeChannel } from './channelSlice.js';
 
@@ -20,7 +20,7 @@ const messageSlice = createSlice({
   extraReducers: {
     [removeChannel]: (state, action) => {
       const { channelId } = action.payload;
-      remove(state.messages, (m) => m.channelId === channelId);
+      _.remove(state.messages, (m) => m.channelId === channelId);
     },
     [getStoreAsync.fulfilled]: (state, action) => {
       const { currentStore } = action.payload;

@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import axios from 'axios';
-import { remove } from 'lodash-es';
+import _ from 'lodash';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import routes from '../routes.js';
@@ -40,7 +40,7 @@ const channelSlice = createSlice({
       if (state.currentChannelId === channelId) {
         state.currentChannelId = defaultChannel.id;
       }
-      remove(state.channels, (ch) => ch.id === channelId);
+      _.remove(state.channels, (ch) => ch.id === channelId);
     },
 
     renameChannel(state, action) {
