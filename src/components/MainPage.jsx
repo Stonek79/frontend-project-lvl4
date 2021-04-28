@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import axios from 'axios';
 import AuthContext from '../context/AuthContext.jsx';
 import AppContext from '../context/AppContext.jsx';
 import ChatBox from './ChatBox.jsx';
+import routes from '../routes.js';
 
 const Spinner = (t) => (
   <>
@@ -14,27 +16,30 @@ const Spinner = (t) => (
 );
 
 const MainPage = () => {
-  const [isFulfilled, setFulfilledStatus] = useState(false);
-  const { getCurrentStore, getAuthHeader } = useContext(AppContext);
+  const { currentData } = routes;
+  const [userData, setData] = useState('');
+  const { updateCurrentStore, getAuthHeader } = useContext(AppContext);
   const history = useHistory();
   const { logIn } = useContext(AuthContext);
   const { authorization } = getAuthHeader();
   const { t } = useTranslation();
 
   useEffect(() => {
-    const fetch = async () => {
-      if (authorization) {
-        const res = await getCurrentStore(1);
-        setFulfilledStatus(res.meta.requestStatus);
+    if (!authorization) {
+      history.push('/login');
+    } else {
+      const fetch = async () => {
+        const { data } = await axios.get(currentData(), { headers: authorization });
         logIn();
-      } else {
-        history.push('/login');
-      }
-    };
-    fetch();
-  });
+        setData(data);
+        return updateCurrentStore(data);
+      };
+      fetch();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return <>{isFulfilled ? ChatBox() : Spinner(t)}</>;
+  return <>{userData ? ChatBox() : Spinner(t)}</>;
 };
 
 export default MainPage;

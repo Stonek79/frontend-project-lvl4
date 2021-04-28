@@ -1,8 +1,9 @@
 import React from 'react';
-import { configureStore, unwrapResult } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { io } from 'socket.io-client';
 import { I18nextProvider } from 'react-i18next';
+import axios from 'axios';
 
 import i18n from './i18n';
 import App from './components/App.jsx';
@@ -10,8 +11,9 @@ import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, getStoreAsync, removeChannel, renameChannel,
+  addChannel, addChannelId, removeChannel, renameChannel,
 } from './slices/channelSlice.js';
+import routes from './routes';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -33,23 +35,26 @@ export default () => {
     reducer: rootReducer,
   });
 
-  const getCurrentStore = (id) => {
-    const result = store.dispatch(getStoreAsync({ channelId: id, getAuthHeader }));
-    unwrapResult(result);
-    return result;
+  const updateCurrentStore = (data) => {
+    const { channels, currentChannelId, messages } = data;
+    store.dispatch(addChannel({ channelData: channels }));
+    store.dispatch(addMessage({ messageData: messages }));
+    store.dispatch(addChannelId({ id: currentChannelId }));
   };
 
   socket.io.on('reconnect', async () => {
-    const channelId = store.getState().channels.currentChannelId;
+    const { authorization } = getAuthHeader();
+    const { data } = await axios.get(routes.currentData(), { headers: authorization });
+
     try {
-      getCurrentStore(channelId);
+      updateCurrentStore(data);
     } catch (err) {
       console.log(err.message);
     }
   });
 
   socket.on('newChannel', (data) => {
-    store.dispatch(addChannel({ channelData: data }));
+    store.dispatch(addChannel({ channelData: [data] }));
   });
 
   socket.on('removeChannel', (data) => {
@@ -62,13 +67,13 @@ export default () => {
   });
 
   socket.on('newMessage', (data) => {
-    store.dispatch(addMessage({ messageData: data }));
+    store.dispatch(addMessage({ messageData: [data] }));
   });
 
   const contextValues = {
     socket,
     getAuthHeader,
-    getCurrentStore,
+    updateCurrentStore,
   };
 
   return (

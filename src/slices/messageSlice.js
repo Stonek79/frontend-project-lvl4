@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
-import { getStoreAsync, removeChannel } from './channelSlice.js';
+import { removeChannel } from './channelSlice.js';
 
 const messageSlice = createSlice({
   name: 'messageData',
@@ -13,7 +13,7 @@ const messageSlice = createSlice({
   reducers: {
     addMessage(state, action) {
       const { messageData } = action.payload;
-      state.messages.push(messageData);
+      state.messages.push(...messageData);
     },
   },
 
@@ -21,11 +21,6 @@ const messageSlice = createSlice({
     [removeChannel]: (state, action) => {
       const { channelId } = action.payload;
       _.remove(state.messages, (m) => m.channelId === channelId);
-    },
-    [getStoreAsync.fulfilled]: (state, action) => {
-      const { currentStore } = action.payload;
-      const { messages } = currentStore;
-      state.messages = messages;
     },
   },
 });
