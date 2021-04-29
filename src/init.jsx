@@ -27,10 +27,10 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default () => {
-  const url = window.location.origin;
-  const socket = io(url);
+const url = window.location.origin;
+const socket = io(url);
 
+export default () => {
   const store = configureStore({
     reducer: rootReducer,
   });

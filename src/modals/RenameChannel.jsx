@@ -89,6 +89,7 @@ const RenameChannel = ({ close, channels }) => {
         <Form onSubmit={formik.handleSubmit}>
           <InputGroup noValidate className="mt-auto">
             <FormControl
+              data-testid="rename-channel"
               isInvalid={isError}
               ref={textInput}
               name="channelName"

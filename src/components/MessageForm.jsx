@@ -76,6 +76,7 @@ const MessageForm = ({ currentChannelId }) => {
       <Form onSubmit={formik.handleSubmit}>
         <InputGroup>
           <FormControl
+            data-testid="new-message"
             isInvalid={isError}
             ref={textInput}
             name="message"

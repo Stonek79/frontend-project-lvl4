@@ -77,6 +77,7 @@ const CreateChannel = ({ close, channels }) => {
         <Form onSubmit={formik.handleSubmit}>
           <InputGroup noValidate className="mt-auto">
             <FormControl
+              data-testid="add-channel"
               isInvalid={isError}
               ref={textInput}
               name="channelName"

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button, Form, FormGroup, FormControl, FormLabel,
@@ -10,14 +10,17 @@ import {
 import routes from '../routes.js';
 import AuthContext from '../context/AuthContext.jsx';
 
-const generateSubmit = ({ history, logIn, t }) => async (value, { setErrors }) => {
+const generateSubmit = ({
+  history, location, logIn, t,
+}) => async (value, { setErrors }) => {
   const { loginPath } = routes;
   try {
     const { data } = await axios.post(loginPath(), value);
     const { token, username } = data;
     localStorage.setItem('userId', JSON.stringify({ token, username }));
     logIn();
-    history.push('/');
+    const { from } = location.state || { from: { pathname: '/' } };
+    history.replace(from);
   } catch (err) {
     console.log(err);
     setErrors({ password: t('errors.logError') });
@@ -27,6 +30,7 @@ const generateSubmit = ({ history, logIn, t }) => async (value, { setErrors }) =
 const LoginPage = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const location = useLocation();
   const { logIn } = useContext(AuthContext);
   const nameInput = useRef(null);
 
@@ -39,7 +43,9 @@ const LoginPage = () => {
       username: '',
       password: '',
     },
-    onSubmit: generateSubmit({ history, logIn, t }),
+    onSubmit: generateSubmit({
+      history, location, logIn, t,
+    }),
   });
 
   return (

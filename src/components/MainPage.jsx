@@ -16,30 +16,41 @@ const Spinner = (t) => (
 );
 
 const MainPage = () => {
-  const { currentData } = routes;
-  const [userData, setData] = useState('');
-  const { updateCurrentStore, getAuthHeader } = useContext(AppContext);
   const history = useHistory();
-  const { logIn } = useContext(AuthContext);
-  const { authorization } = getAuthHeader();
+  const { currentData } = routes;
   const { t } = useTranslation();
+  const { logIn } = useContext(AuthContext);
+  const {
+    updateCurrentStore,
+    getAuthHeader,
+  } = useContext(AppContext);
+  const [userData, setData] = useState('');
+  const [mounted, setMounted] = useState(true);
+  const { authorization } = getAuthHeader();
 
+  console.log('MAIN');
   useEffect(() => {
-    if (!authorization) {
-      history.push('/login');
-    } else {
-      const fetch = async () => {
-        const { data } = await axios.get(currentData(), { headers: authorization });
+    const fetch = async () => {
+      const { data } = await axios.get(currentData(), { headers: authorization });
+      if (mounted) {
         logIn();
         setData(data);
-        return updateCurrentStore(data);
-      };
-      fetch();
-    }
+      }
+    };
+    if (!authorization) {
+      history.push('/login');
+      return;
+    } fetch();
+    setMounted(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <>{userData ? ChatBox() : Spinner(t)}</>;
+  if (userData) {
+    updateCurrentStore(userData);
+    return <>{ChatBox()}</>;
+  }
+
+  return <>{Spinner(t)}</>;
 };
 
 export default MainPage;
