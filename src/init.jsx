@@ -35,17 +35,19 @@ export default () => {
     reducer: rootReducer,
   });
 
-  const updateCurrentStore = (data) => {
+  const updateCurrentStore = (data, id) => {
     const { channels, currentChannelId, messages } = data;
-    store.dispatch(updateChannels({ channels, currentChannelId, messages }));
+    const currentId = id ?? currentChannelId;
+    store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
 
   socket.io.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
     const { data } = await axios.get(routes.currentData(), { headers: authorization });
+    const { channels: { currentChannelId } } = store.getState();
 
     try {
-      updateCurrentStore(data);
+      updateCurrentStore(data, currentChannelId);
     } catch (err) {
       console.log(err.message);
     }
