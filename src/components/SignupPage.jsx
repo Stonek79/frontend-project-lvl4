@@ -99,7 +99,7 @@ const SignupPage = () => {
             <FormGroup className="text-danger small">{formik.errors.password}</FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
-            <FormLabel className="form-label" htmlFor="password">{t('register.confirm')}</FormLabel>
+            <FormLabel className="form-label" htmlFor="passwordConfirm">{t('register.confirm')}</FormLabel>
             <FormControl
               isInvalid={formik.errors.passwordConfirm}
               placeholder={t('placeholders.passConfirm')}
