@@ -10,18 +10,21 @@ import AppContext from '../context/AppContext.jsx';
 const generateRemove = ({
   socket,
   close,
-  currentId,
+  currentChannalId,
   t,
-}) => (values, { setErrors }) => {
-  if (socket.connected) {
-    socket.emit('removeChannel', { id: currentId }, (r) => {
-      if (r.status === 'ok') {
-        close();
-      }
-    });
-  } else {
-    setErrors({ channelInfo: t('errors.netError') });
-  }
+}) => (values, { setErrors, setSubmitting }) => {
+  const name = values.channelName.trim();
+  const id = currentChannalId;
+  socket.emit('renameChannel', { id, name }, (r) => {
+    const timerId = setTimeout(() => {
+      setSubmitting(false);
+      setErrors({ channelName: t('errors.netError') });
+    }, 3000);
+    if (r.status === 'ok') {
+      clearTimeout(timerId);
+      close();
+    }
+  });
 };
 
 const Spinner = (name, t) => (
@@ -35,13 +38,13 @@ const RemoveChannel = ({ close }) => {
   const { socket } = useContext(AppContext);
   const { t } = useTranslation();
 
-  const currentId = useSelector(getChannelId);
+  const currentChannalId = useSelector(getChannelId);
   const formik = useFormik({
     initialValues: {
       channelInfo: '',
     },
     onSubmit: generateRemove({
-      socket, close, currentId, t,
+      socket, close, currentChannalId, t,
     }),
   });
 

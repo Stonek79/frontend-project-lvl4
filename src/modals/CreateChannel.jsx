@@ -13,16 +13,17 @@ const { minLength, maxLength } = itemsLength;
 
 const generateSubmit = ({
   socket, close, t,
-}) => (value, { setErrors }) => {
-  if (socket.connected) {
-    socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
-      if (r.status === 'ok') {
-        close();
-      }
-    });
-  } else {
+}) => (value, { setErrors, setSubmitting }) => {
+  const timerId = setTimeout(() => {
+    setSubmitting(false);
     setErrors({ channelName: t('errors.netError') });
-  }
+  }, 3000);
+  socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
+    if (r.status === 'ok') {
+      clearTimeout(timerId);
+      close();
+    }
+  });
 };
 
 const Spinner = (name, t) => (

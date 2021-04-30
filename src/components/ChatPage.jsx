@@ -38,17 +38,18 @@ const MainPage = () => {
   const { currentData } = routes;
   const { authorization } = getAuthHeader();
 
-  const getChatData = async (mounted) => {
-    const { data } = await axios.get(currentData(), { headers: authorization });
-    if (!mounted) {
-      setData(true);
-      return updateCurrentStore(data);
-    }
-  };
-
   useEffect(() => {
     let mounted = false;
-    getChatData(mounted);
+    const getChatData = async () => {
+      const { data } = await axios.get(currentData(), { headers: authorization });
+      if (!mounted) {
+        setData(true);
+        return updateCurrentStore(data);
+      }
+    };
+
+    getChatData();
+
     return () => {
       return mounted = true;
     };
