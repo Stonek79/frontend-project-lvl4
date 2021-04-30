@@ -21,10 +21,6 @@ const generateRename = ({
 }) => (value, { setErrors }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
-  // const timerId = setTimeout(() => {
-  //   setSubmitting(false);
-  //   setErrors({ channelName: t('errors.netError') });
-  // }, 3000); комментарий в MessageForm
   if (socket.connected) {
     socket.emit('renameChannel', { id, name }, (r) => {
       if (r.status === 'ok') {

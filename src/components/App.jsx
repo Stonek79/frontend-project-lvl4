@@ -1,20 +1,22 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link,
+  Redirect,
 } from 'react-router-dom';
 import { Button, Navbar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import MainPage from './MainPage.jsx';
+import ChatPage from './ChatPage.jsx';
 import LoginPage from './LoginPage.jsx';
 import SignupPage from './SignupPage.jsx';
 import AuthContext from '../context/AuthContext.jsx';
 
 const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('userId'));
 
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
@@ -63,6 +65,19 @@ const HexletButton = () => {
   );
 };
 
+const MainPage = ({ children, ...rest }) => {
+  const { loggedIn } = useContext(AuthContext);
+
+  return (
+    <Route
+      {...rest}
+      render={() => (
+        loggedIn ? (children) : (<Redirect to="/login" />)
+      )}
+    />
+  );
+};
+
 const App = () => (
   <AuthProvider>
     <Router>
@@ -79,9 +94,9 @@ const App = () => (
           <Route path="/signup">
             <SignupPage />
           </Route>
-          <Route path="/">
-            <MainPage />
-          </Route>
+          <MainPage path="/">
+            <ChatPage />
+          </MainPage>
         </Switch>
       </div>
     </Router>

@@ -14,10 +14,6 @@ const { minLength, maxLength } = itemsLength;
 const generateSubmit = ({
   socket, close, t,
 }) => (value, { setErrors }) => {
-  // const timerId = setTimeout(() => {
-  //   setSubmitting(false);
-  //   setErrors({ channelName: t('errors.netError') });
-  // }, 3000); комментарий в MessageForm
   if (socket.connected) {
     socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
       if (r.status === 'ok') {

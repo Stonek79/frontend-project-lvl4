@@ -13,10 +13,6 @@ const generateRemove = ({
   currentId,
   t,
 }) => (values, { setErrors }) => {
-  // const timerId = setTimeout(() => {
-  //   setSubmitting(false);
-  //   setErrors({ channelInfo: t('errors.netError') });
-  // }, 3000); комментарий в MessageForm
   if (socket.connected) {
     socket.emit('removeChannel', { id: currentId }, (r) => {
       if (r.status === 'ok') {

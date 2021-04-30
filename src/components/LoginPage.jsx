@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { useHistory, useLocation } from 'react-router-dom';
+import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button, Form, FormGroup, FormControl, FormLabel,
@@ -82,7 +82,7 @@ const LoginPage = () => {
           <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('login.logIn')}</Button>
           <div className="d-flex flex-column align-items-center">
             <span className="small mb-2">{t('login.noAccount')}</span>
-            <a href="/signup">{t('login.signup')}</a>
+            <NavLink to="/signup">{t('login.signup')}</NavLink>
           </div>
         </Form>
       </div>

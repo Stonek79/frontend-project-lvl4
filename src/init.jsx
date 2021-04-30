@@ -11,7 +11,7 @@ import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, addChannelId, removeChannel, renameChannel,
+  addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
 import routes from './routes';
 
@@ -37,9 +37,7 @@ export default () => {
 
   const updateCurrentStore = (data) => {
     const { channels, currentChannelId, messages } = data;
-    store.dispatch(addChannel({ channelData: channels }));
-    store.dispatch(addMessage({ messageData: messages }));
-    store.dispatch(addChannelId({ id: currentChannelId }));
+    store.dispatch(updateChannels({ channels, currentChannelId, messages }));
   };
 
   socket.io.on('reconnect', async () => {
@@ -54,7 +52,7 @@ export default () => {
   });
 
   socket.on('newChannel', (data) => {
-    store.dispatch(addChannel({ channelData: [data] }));
+    store.dispatch(addChannel({ channelData: data }));
   });
 
   socket.on('removeChannel', (data) => {
@@ -67,7 +65,7 @@ export default () => {
   });
 
   socket.on('newMessage', (data) => {
-    store.dispatch(addMessage({ messageData: [data] }));
+    store.dispatch(addMessage({ messageData: data }));
   });
 
   const contextValues = {
