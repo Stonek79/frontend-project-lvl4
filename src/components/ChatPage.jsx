@@ -1,7 +1,4 @@
-/* eslint-disable functional/no-let */
-/* eslint-disable arrow-body-style */
 /* eslint-disable no-return-assign */
-/* eslint-disable consistent-return */
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -39,20 +36,20 @@ const MainPage = () => {
   const { authorization } = getAuthHeader();
 
   useEffect(() => {
-    let mounted = false;
+    const mounted = { state: false };
+
     const getChatData = async () => {
       const { data } = await axios.get(currentData(), { headers: authorization });
-      if (!mounted) {
+      if (!mounted.state) {
         setData(true);
         return updateCurrentStore(data);
       }
+      return data;
     };
 
     getChatData();
 
-    return () => {
-      return mounted = true;
-    };
+    return () => mounted.state = true;
   });
 
   return <>{(hasData && ChatBox()) || Spinner(t)}</>;

@@ -19,6 +19,14 @@ const handleSubmit = ({
 }) => (values, { setErrors, setSubmitting, resetForm }) => {
   const { username } = getAuthHeader();
   const message = { user: username, channelId: currentChannelId, text: values.message };
+
+  console.log(socket.connected, 'connect');
+  if (socket.connected === false) {
+    setSubmitting(false);
+    setErrors({ message: t('errors.netError') });
+    return;
+  }
+
   const timerId = setTimeout(() => {
     setSubmitting(false);
     setErrors({ message: t('errors.netError') });
