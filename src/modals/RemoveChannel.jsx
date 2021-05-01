@@ -17,13 +17,13 @@ const generateRemove = ({
 
   if (socket.connected === false) {
     setSubmitting(false);
-    setErrors({ message: t('errors.netError') });
+    setErrors({ channelInfo: t('errors.netError') });
     return;
   }
 
   const timerId = setTimeout(() => {
     setSubmitting(false);
-    setErrors({ channelName: t('errors.netError') });
+    setErrors({ channelInfo: t('errors.netError') });
   }, 3000);
   socket.emit('removeChannel', { id }, (r) => {
     if (r.status === 'ok') {

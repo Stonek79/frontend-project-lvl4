@@ -16,7 +16,7 @@ const generateSubmit = ({
 }) => (value, { setErrors, setSubmitting }) => {
   if (socket.connected === false) {
     setSubmitting(false);
-    setErrors({ message: t('errors.netError') });
+    setErrors({ channelName: t('errors.netError') });
     return;
   }
 
