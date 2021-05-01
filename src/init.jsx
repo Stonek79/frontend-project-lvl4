@@ -1,7 +1,6 @@
 import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import { io } from 'socket.io-client';
 import { I18nextProvider } from 'react-i18next';
 import axios from 'axios';
 
@@ -27,10 +26,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-const url = window.location.origin;
-const socket = io(url);
-
-export default () => {
+export default (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
