@@ -13,9 +13,8 @@ const generateRemove = ({
   currentChannalId,
   t,
 }) => (values, { setErrors, setSubmitting }) => {
-  const name = values.channelName.trim();
   const id = currentChannalId;
-  socket.emit('renameChannel', { id, name }, (r) => {
+  socket.emit('removeChannel', { id }, (r) => {
     const timerId = setTimeout(() => {
       setSubmitting(false);
       setErrors({ channelName: t('errors.netError') });
