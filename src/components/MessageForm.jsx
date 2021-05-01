@@ -20,7 +20,6 @@ const handleSubmit = ({
   const { username } = getAuthHeader();
   const message = { user: username, channelId: currentChannelId, text: values.message };
 
-  console.log(socket.connected, 'connect');
   if (socket.connected === false) {
     setSubmitting(false);
     setErrors({ message: t('errors.netError') });

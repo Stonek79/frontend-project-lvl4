@@ -21,11 +21,18 @@ const generateRename = ({
 }) => (value, { setErrors, setSubmitting }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
+
+  if (socket.connected === false) {
+    setSubmitting(false);
+    setErrors({ message: t('errors.netError') });
+    return;
+  }
+
+  const timerId = setTimeout(() => {
+    setSubmitting(false);
+    setErrors({ channelName: t('errors.netError') });
+  }, 3000);
   socket.emit('renameChannel', { id, name }, (r) => {
-    const timerId = setTimeout(() => {
-      setSubmitting(false);
-      setErrors({ channelName: t('errors.netError') });
-    }, 3000);
     if (r.status === 'ok') {
       clearTimeout(timerId);
       close();

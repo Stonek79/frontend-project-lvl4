@@ -14,6 +14,12 @@ const { minLength, maxLength } = itemsLength;
 const generateSubmit = ({
   socket, close, t,
 }) => (value, { setErrors, setSubmitting }) => {
+  if (socket.connected === false) {
+    setSubmitting(false);
+    setErrors({ message: t('errors.netError') });
+    return;
+  }
+
   const timerId = setTimeout(() => {
     setSubmitting(false);
     setErrors({ channelName: t('errors.netError') });
