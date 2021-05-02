@@ -27,7 +27,7 @@ const getAuthHeader = () => {
 };
 
 export default (prop) => {
-  const { socket } = prop;
+  const socket = prop;
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -40,19 +40,19 @@ export default (prop) => {
 
   console.log(socket, 'init');
   // eslint-disable-next-line react/destructuring-assignment
-  console.log(prop, 'init');
+  console.log(prop, 'initprop');
 
-  socket.io.on('reconnect', async () => {
-    const { authorization } = getAuthHeader();
-    const { data } = await axios.get(routes.currentData(), { headers: authorization });
-    const { channels: { currentChannelId } } = store.getState();
+  // socket.io.on('reconnect', async () => {
+  //   const { authorization } = getAuthHeader();
+  //   const { data } = await axios.get(routes.currentData(), { headers: authorization });
+  //   const { channels: { currentChannelId } } = store.getState();
 
-    try {
-      updateCurrentStore(data, currentChannelId);
-    } catch (err) {
-      console.log(err.message);
-    }
-  });
+  //   try {
+  //     updateCurrentStore(data, currentChannelId);
+  //   } catch (err) {
+  //     console.log(err.message);
+  //   }
+  // });
 
   socket.on('newChannel', (data) => {
     store.dispatch(addChannel({ channelData: data }));
