@@ -3,7 +3,7 @@ import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
-// import axios from 'axios';
+import axios from 'axios';
 
 import i18n from './i18n';
 import App from './components/App.jsx';
@@ -13,7 +13,7 @@ import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
-// import routes from './routes';
+import routes from './routes';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -27,7 +27,8 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (socket) => {
+export default (prop) => {
+  const { socket } = prop;
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -38,19 +39,20 @@ export default (socket) => {
     store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
 
-  console.log(socket, 'init');
+  console.log(socket, 'socket');
+  console.log(prop, 'prop');
 
-  // socket.on('reconnect', async () => {
-  //   const { authorization } = getAuthHeader();
-  //   const { data } = await axios.get(routes.currentData(), { headers: authorization });
-  //   const { channels: { currentChannelId } } = store.getState();
+  socket.on('reconnect', async () => {
+    const { authorization } = getAuthHeader();
+    const { data } = await axios.get(routes.currentData(), { headers: authorization });
+    const { channels: { currentChannelId } } = store.getState();
 
-  //   try {
-  //     updateCurrentStore(data, currentChannelId);
-  //   } catch (err) {
-  //     console.log(err.message);
-  //   }
-  // });
+    try {
+      updateCurrentStore(data, currentChannelId);
+    } catch (err) {
+      console.log(err.message);
+    }
+  });
 
   socket.on('newChannel', (data) => {
     store.dispatch(addChannel({ channelData: data }));
