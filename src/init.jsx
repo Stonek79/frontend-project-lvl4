@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
@@ -27,7 +28,6 @@ const getAuthHeader = () => {
 };
 
 export default (socket) => {
-  const { on } = socket;
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -38,9 +38,9 @@ export default (socket) => {
     store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
 
-  console.log(socket, on, 'init');
+  console.log(socket, 'init');
 
-  on('reconnect', async () => {
+  socket.io.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
     const { data } = await axios.get(routes.currentData(), { headers: authorization });
     const { channels: { currentChannelId } } = store.getState();
@@ -52,20 +52,20 @@ export default (socket) => {
     }
   });
 
-  on('newChannel', (data) => {
+  socket.on('newChannel', (data) => {
     store.dispatch(addChannel({ channelData: data }));
   });
 
-  on('removeChannel', (data) => {
+  socket.on('removeChannel', (data) => {
     store.dispatch(removeChannel({ channelId: data.id }));
   });
 
-  on('renameChannel', (data) => {
+  socket.on('renameChannel', (data) => {
     const { id, name } = data;
     store.dispatch(renameChannel({ channelId: id, channelName: name }));
   });
 
-  on('newMessage', (data) => {
+  socket.on('newMessage', (data) => {
     store.dispatch(addMessage({ messageData: data }));
   });
 
