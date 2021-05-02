@@ -28,7 +28,7 @@ const getAuthHeader = () => {
 };
 
 export default (prop) => {
-  const { socket } = prop;
+  const socket = prop;
   const store = configureStore({
     reducer: rootReducer,
   });
