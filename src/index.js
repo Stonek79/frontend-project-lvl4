@@ -9,13 +9,17 @@ import 'regenerator-runtime/runtime.js';
 import '../assets/application.scss';
 import run from './init.jsx';
 
-if (process.env.NODE_ENV !== 'production') {
-  localStorage.debug = 'chat:*';
-}
+const start = async () => {
+  if (process.env.NODE_ENV !== 'production') {
+    localStorage.debug = 'chat:*';
+  }
 
-const socket = io();
+  const socket = io();
 
-const element = document.getElementById('chat');
-const virtualDom = run(socket);
+  const virtualDom = await run(socket);
+  const element = document.getElementById('chat');
 
-render(virtualDom, element);
+  render(virtualDom, element);
+};
+
+start();
