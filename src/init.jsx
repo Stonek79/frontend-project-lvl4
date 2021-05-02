@@ -27,7 +27,7 @@ const getAuthHeader = () => {
 };
 
 export default (socket) => {
-  const { io, on } = socket;
+  const { on } = socket;
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -39,8 +39,9 @@ export default (socket) => {
   };
 
   console.log(socket, 'init');
+  console.log(on, 'init');
 
-  io.on('reconnect', async () => {
+  on('reconnect', async () => {
     const { authorization } = getAuthHeader();
     const { data } = await axios.get(routes.currentData(), { headers: authorization });
     const { channels: { currentChannelId } } = store.getState();
