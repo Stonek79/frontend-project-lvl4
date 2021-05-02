@@ -40,7 +40,7 @@ export default (socket) => {
 
   console.log(socket, 'init');
 
-  socket.io.on('reconnect', async () => {
+  socket.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
     const { data } = await axios.get(routes.currentData(), { headers: authorization });
     const { channels: { currentChannelId } } = store.getState();
