@@ -40,7 +40,7 @@ export default (prop) => {
 
   console.log(socket, 'init');
   // eslint-disable-next-line react/destructuring-assignment
-  console.log(socket.on, 'init');
+  console.log(prop, 'init');
 
   socket.io.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
