@@ -41,6 +41,7 @@ export default (prop) => {
 
   console.log(socket, 'socket');
   console.log(prop, 'prop');
+  console.log(prop.on, 'propOn');
 
   socket.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
