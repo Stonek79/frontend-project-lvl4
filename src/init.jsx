@@ -37,7 +37,7 @@ export default ({ socket }) => {
     store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
 
-  console.log(socket.io.on);
+  console.log(socket);
 
   socket.io.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
