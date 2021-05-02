@@ -2,7 +2,7 @@
 // @ts-check
 
 import ReactDOM from 'react-dom';
-import { io } from 'socket.io-client';
+import { Manager } from 'socket.io-client';
 
 import 'core-js/stable/index.js';
 import 'regenerator-runtime/runtime.js';
@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const url = window.location.origin;
-const socket = io(url);
+const socket = new Manager(url);
 
 const virtualDom = run(socket);
 const element = document.getElementById('chat');
