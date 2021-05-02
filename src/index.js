@@ -1,6 +1,6 @@
 // @ts-check
 
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { io } from 'socket.io-client';
 
 import 'core-js/stable/index.js';
@@ -19,7 +19,8 @@ const start = async () => {
   const virtualDom = await run(socket);
   const element = document.getElementById('chat');
 
-  render(virtualDom, element);
+  console.log(socket, 'index');
+  ReactDOM.render(virtualDom, element);
 };
 
 start();
