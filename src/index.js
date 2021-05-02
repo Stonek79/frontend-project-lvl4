@@ -16,7 +16,7 @@ if (env !== 'production') {
 
 const socket = io();
 
-const virtualDom = run({ socket });
+const virtualDom = run(socket);
 const element = document.getElementById('chat');
 
 const { render } = ReactDOM;
