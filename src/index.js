@@ -17,7 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
 const url = window.location.origin;
 const socket = io(url);
 
-const virtualDom = run(socket);
+const virtualDom = run({ socket });
 const element = document.getElementById('chat');
 
 ReactDOM.render(virtualDom, element);

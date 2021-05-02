@@ -27,8 +27,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (prop) => {
-  const socket = prop;
+export default (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -40,9 +39,6 @@ export default (prop) => {
   };
 
   console.log(socket, 'init');
-  // eslint-disable-next-line react/destructuring-assignment
-  console.log(typeof prop, prop, 'initprop');
-  console.log(Object.keys(prop));
 
   // socket.on('reconnect', async () => {
   //   const { authorization } = getAuthHeader();
