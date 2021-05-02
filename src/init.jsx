@@ -1,8 +1,9 @@
+/* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
-import axios from 'axios';
+// import axios from 'axios';
 
 import i18n from './i18n';
 import App from './components/App.jsx';
@@ -12,7 +13,7 @@ import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
-import routes from './routes';
+// import routes from './routes';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -26,8 +27,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (prop) => {
-  const socket = prop;
+export default (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -40,7 +40,7 @@ export default (prop) => {
 
   console.log(socket, 'init');
   // eslint-disable-next-line react/destructuring-assignment
-  console.log(typeof prop, 'initprop');
+  console.log(typeof socket, 'initprop');
 
   // socket.io.on('reconnect', async () => {
   //   const { authorization } = getAuthHeader();
