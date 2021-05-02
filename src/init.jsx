@@ -26,7 +26,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (socket) => {
+export default ({ socket }) => {
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -36,6 +36,8 @@ export default (socket) => {
     const currentId = id ?? currentChannelId;
     store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
+
+  console.log(socket.io.on);
 
   socket.io.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
