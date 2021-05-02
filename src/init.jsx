@@ -27,7 +27,8 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (socket) => {
+export default (prop) => {
+  const { socket } = prop;
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -40,9 +41,9 @@ export default (socket) => {
 
   console.log(socket, 'init');
   // eslint-disable-next-line react/destructuring-assignment
-  console.log(typeof socket, 'initprop');
+  console.log(typeof prop, prop, 'initprop');
 
-  // socket.io.on('reconnect', async () => {
+  // socket.on('reconnect', async () => {
   //   const { authorization } = getAuthHeader();
   //   const { data } = await axios.get(routes.currentData(), { headers: authorization });
   //   const { channels: { currentChannelId } } = store.getState();
