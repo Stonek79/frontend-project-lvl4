@@ -6,9 +6,6 @@ const mode = process.env.NODE_ENV || 'development';
 
 module.exports = {
   mode,
-  externals: {
-    gon: 'gon',
-  },
   resolve: {
     extensions: ['.js', '.jsx'],
   },
