@@ -27,7 +27,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default async (socket) => {
+export default ({ socket }) => {
   const store = configureStore({
     reducer: rootReducer,
   });
