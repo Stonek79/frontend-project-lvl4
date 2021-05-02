@@ -2,7 +2,6 @@
 // @ts-check
 
 import ReactDOM from 'react-dom';
-import Rollbar from 'rollbar';
 import { io } from 'socket.io-client';
 
 import 'core-js/stable/index.js';
@@ -11,16 +10,7 @@ import 'regenerator-runtime/runtime.js';
 import '../assets/application.scss';
 import run from './init.jsx';
 
-const envy = process.env.NODE_ENV;
-
-new Rollbar({
-  accessToken: process.env.ROLLBAR_TOKEN,
-  captureUncaught: true,
-  captureUnhandledRejections: true,
-  enabled: envy === 'production',
-});
-
-if (envy !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
 
