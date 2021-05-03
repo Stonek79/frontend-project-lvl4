@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState } from 'react';
 import { Button, Navbar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -71,7 +70,7 @@ const MainPage = ({ children, path }) => {
 
   return (
     <Route
-      {...path}
+      path={path}
       render={() => (
         loggedIn ? (children) : (<Redirect to="/login" />)
       )}

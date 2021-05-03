@@ -19,6 +19,7 @@ const buildState = (defaultState) => {
     currentChannelId: generalChannelId,
     users: [
       { id: 1, username: 'admin', password: 'admin' },
+      { id: 1, username: 'Stonek79', password: '123456' },
     ],
   };
 
@@ -60,6 +61,7 @@ export default (app, defaultState = {}) => {
         removable: true,
         id: getNextId(),
       };
+
       state.channels.push(channelWithId);
       acknowledge({ status: 'ok', data: channelWithId });
       app.io.emit('newChannel', channelWithId);
@@ -70,6 +72,7 @@ export default (app, defaultState = {}) => {
       state.channels = state.channels.filter((c) => c.id !== channelId);
       state.messages = state.messages.filter((m) => m.channelId !== channelId);
       const data = { id: channelId };
+
       acknowledge({ status: 'ok' });
       app.io.emit('removeChannel', data);
     });
@@ -79,6 +82,7 @@ export default (app, defaultState = {}) => {
       const channel = state.channels.find((c) => c.id === channelId);
       if (!channel) return;
       channel.name = name;
+
       acknowledge({ status: 'ok' });
       app.io.emit('renameChannel', channel);
     });
@@ -117,21 +121,24 @@ export default (app, defaultState = {}) => {
       .send({ token, username });
   });
 
-  app.get('/api/v1/data', { preValidation: [app.authenticate] }, (req, reply) => {
-    const user = state.users.find(({ id }) => id === req.user.userId);
+  app.get(
+    '/api/v1/data',
+    { preValidation: [app.authenticate] },
+    (req, reply) => {
+      const user = state.users.find(({ id }) => id === req.user.userId);
 
-    if (!user) {
-      reply.send(new Unauthorized());
-      return;
-    }
+      if (!user) {
+        reply.send(new Unauthorized());
+        return;
+      }
 
-    reply
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send(_.omit(state, 'users'));
+      reply
+        .header('Content-Type', 'application/json; charset=utf-8')
+        .send(_.omit(state, 'users'));
+    },
+  );
+
+  app.get('*', (_req, reply) => {
+    reply.view('index.pug');
   });
-
-  app
-    .get('*', (_req, reply) => {
-      reply.view('index.pug');
-    });
 };
