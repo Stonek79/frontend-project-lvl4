@@ -40,7 +40,7 @@ export default (socket) => {
 
   console.log(socket, 'socket');
 
-  socket.on('reconnect', async () => {
+  socket.io.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
     const { channels: { currentChannelId } } = store.getState();
 

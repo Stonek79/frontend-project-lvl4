@@ -82,6 +82,7 @@ const SignupPage = () => {
               autoComplete="username"
               placeholder={t('placeholders.nickMin')}
               required
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.username}
               isInvalid={formik.errors.username}
@@ -98,6 +99,7 @@ const SignupPage = () => {
               autoComplete="current-password"
               placeholder={t('placeholders.passMin')}
               required
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.password}
               isInvalid={formik.errors.password}
@@ -114,6 +116,7 @@ const SignupPage = () => {
               autoComplete="password-confirm"
               placeholder={t('placeholders.passConfirm')}
               required
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.passwordConfirm}
               isInvalid={formik.errors.passwordConfirm}
