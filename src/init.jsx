@@ -27,8 +27,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (prop) => {
-  const { socket } = prop;
+export default (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -40,8 +39,6 @@ export default (prop) => {
   };
 
   console.log(socket, 'socket');
-  console.log(prop, 'prop');
-  console.log(prop.on, 'propOn');
 
   socket.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
