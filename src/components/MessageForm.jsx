@@ -12,13 +12,20 @@ import AppContext from '../context/AppContext.jsx';
 const { messageMax } = itemsLength;
 
 const handleSubmit = ({
+  currentChannelId,
   getAuthHeader,
   socket,
-  currentChannelId,
   t,
-}) => (values, { setErrors, setSubmitting, resetForm }) => {
+}) => (
+  values,
+  { setErrors, setSubmitting, resetForm },
+) => {
   const { username } = getAuthHeader();
-  const message = { user: username, channelId: currentChannelId, text: values.message };
+  const message = {
+    user: username,
+    channelId: currentChannelId,
+    text: values.message,
+  };
 
   if (socket.connected === false) {
     setSubmitting(false);
@@ -52,8 +59,8 @@ const Spinner = (name, t) => (
 );
 
 const MessageForm = ({ currentChannelId }) => {
-  const { getAuthHeader, socket } = useContext(AppContext);
   const { t } = useTranslation();
+  const { getAuthHeader, socket } = useContext(AppContext);
 
   const formik = useFormik({
     initialValues: {
@@ -62,7 +69,7 @@ const MessageForm = ({ currentChannelId }) => {
     status: false,
     validationSchema,
     onSubmit: handleSubmit({
-      getAuthHeader, socket, currentChannelId, t,
+      getAuthHeader, currentChannelId, socket, t,
     }),
   });
 
@@ -78,19 +85,19 @@ const MessageForm = ({ currentChannelId }) => {
       <Form onSubmit={formik.handleSubmit}>
         <InputGroup>
           <FormControl
-            data-testid="new-message"
-            isInvalid={isError}
             ref={textInput}
             name="message"
+            data-testid="new-message"
             required
+            maxLength={400}
             value={formik.values.message}
             onChange={formik.handleChange}
             disabled={formik.isSubmitting}
-            maxLength={400}
+            isInvalid={isError}
           />
           <Button
-            variant="primary"
             type="submit"
+            variant="primary"
             className="ml-2"
             disabled={formik.isSubmitting}
           >

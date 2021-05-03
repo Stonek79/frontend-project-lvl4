@@ -1,16 +1,16 @@
 import React, { useContext } from 'react';
+import { useFormik } from 'formik';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import { useFormik } from 'formik';
 
 import { getChannelId } from '../slices/modalSlice.js';
 import AppContext from '../context/AppContext.jsx';
 
 const generateRemove = ({
-  socket,
   close,
   currentChannalId,
+  socket,
   t,
 }) => (values, { setErrors, setSubmitting }) => {
   const id = currentChannalId;
@@ -41,8 +41,8 @@ const Spinner = (name, t) => (
 );
 
 const RemoveChannel = ({ close }) => {
-  const { socket } = useContext(AppContext);
   const { t } = useTranslation();
+  const { socket } = useContext(AppContext);
 
   const currentChannalId = useSelector(getChannelId);
   const formik = useFormik({
@@ -50,7 +50,7 @@ const RemoveChannel = ({ close }) => {
       channelInfo: '',
     },
     onSubmit: generateRemove({
-      socket, close, currentChannalId, t,
+      close, currentChannalId, socket, t,
     }),
   });
 
@@ -71,16 +71,16 @@ const RemoveChannel = ({ close }) => {
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
-          variant="secondary"
           type="cancel"
+          variant="secondary"
           onClick={close}
           disabled={formik.isSubmitting}
         >
           {t('modals.cancel')}
         </Button>
         <Button
-          variant="danger"
           type="submit"
+          variant="danger"
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >

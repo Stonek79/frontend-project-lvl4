@@ -1,17 +1,20 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useFormik } from 'formik';
-import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import {
   Button, Form, FormGroup, FormControl, FormLabel,
 } from 'react-bootstrap';
 
-import routes from '../routes.js';
 import AuthContext from '../context/AuthContext.jsx';
+import routes from '../routes.js';
 
 const generateSubmit = ({
-  history, location, logIn, t,
+  history,
+  location,
+  logIn,
+  t,
 }) => async (value, { setErrors }) => {
   const { loginPath } = routes;
   try {
@@ -29,9 +32,9 @@ const generateSubmit = ({
 
 const LoginPage = () => {
   const { t } = useTranslation();
+  const { logIn } = useContext(AuthContext);
   const history = useHistory();
   const location = useLocation();
-  const { logIn } = useContext(AuthContext);
   const nameInput = useRef(null);
 
   useEffect(() => {
@@ -56,11 +59,12 @@ const LoginPage = () => {
             <FormLabel className="form-label" htmlFor="username">{t('login.nickname')}</FormLabel>
             <FormControl
               ref={nameInput}
+              type="text"
+              id="username"
               name="username"
+              className="form-control"
               autoComplete="username"
               required
-              id="username"
-              className="form-control"
               onChange={formik.handleChange}
               value={formik.values.username}
             />
@@ -68,12 +72,12 @@ const LoginPage = () => {
           <FormGroup className="form-group">
             <FormLabel className="form-label" htmlFor="password">{t('login.password')}</FormLabel>
             <FormControl
+              type="password"
+              id="password"
               name="password"
+              className="form-control"
               autoComplete="current-password"
               required
-              id="password"
-              className="form-control"
-              type="password"
               onChange={formik.handleChange}
               value={formik.values.password}
             />

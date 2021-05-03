@@ -5,12 +5,12 @@ import {
   Button, Form, FormGroup, FormLabel, ListGroup,
 } from 'react-bootstrap';
 
+import ChannelItem from './ChannelItem.jsx';
 import { openModal } from '../slices/modalSlice.js';
 import { modalTypes } from '../constants.js';
 import {
   addChannelId, getChannels, getCurrentChannelId,
 } from '../slices/channelSlice.js';
-import ChannelItem from './ChannelItem.jsx';
 
 const { add, remove, rename } = modalTypes;
 
@@ -21,8 +21,8 @@ const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }
 
 const ChannelBox = () => {
   const { t } = useTranslation();
-  const currentChannelId = useSelector(getCurrentChannelId);
   const channels = useSelector(getChannels);
+  const currentChannelId = useSelector(getCurrentChannelId);
   const dispatch = useDispatch();
 
   return (

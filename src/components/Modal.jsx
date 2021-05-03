@@ -1,6 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Modal } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { getChannels } from '../slices/channelSlice.js';
 import { closeModal, getModalInfo } from '../slices/modalSlice.js';
@@ -15,17 +15,19 @@ const modals = {
 };
 
 const ModalComponent = () => {
-  const modalInfo = useSelector(getModalInfo);
-  const channels = useSelector(getChannels);
   const dispatch = useDispatch();
+  const channels = useSelector(getChannels);
+  const modalInfo = useSelector(getModalInfo);
+
   const { type, isOpen } = modalInfo;
+  const close = () => dispatch(closeModal());
+
   if (!type) {
     return null;
   }
 
-  const close = () => dispatch(closeModal());
-
   const Component = modals[type];
+
   return (
     <Modal show={isOpen} onHide={close}>
       <Component

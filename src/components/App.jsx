@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState } from 'react';
+import { Button, Navbar } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import {
   BrowserRouter as Router,
   Switch,
@@ -7,13 +9,11 @@ import {
   Link,
   Redirect,
 } from 'react-router-dom';
-import { Button, Navbar } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 
+import AuthContext from '../context/AuthContext.jsx';
 import ChatPage from './ChatPage.jsx';
 import LoginPage from './LoginPage.jsx';
 import SignupPage from './SignupPage.jsx';
-import AuthContext from '../context/AuthContext.jsx';
 
 const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('userId'));
@@ -35,8 +35,8 @@ const AuthProvider = ({ children }) => {
 };
 
 const LogOutButton = () => {
-  const auth = useContext(AuthContext);
   const { t } = useTranslation();
+  const auth = useContext(AuthContext);
 
   return (
     auth.loggedIn
@@ -54,6 +54,7 @@ const LogOutButton = () => {
 
 const HexletButton = () => {
   const { t } = useTranslation();
+
   return (
     <Navbar.Brand
       className="mr-auto"
@@ -65,12 +66,12 @@ const HexletButton = () => {
   );
 };
 
-const MainPage = ({ children, ...rest }) => {
+const MainPage = ({ children, path }) => {
   const { loggedIn } = useContext(AuthContext);
 
   return (
     <Route
-      {...rest}
+      {...path}
       render={() => (
         loggedIn ? (children) : (<Redirect to="/login" />)
       )}

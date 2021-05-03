@@ -1,19 +1,19 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-import { configureStore } from '@reduxjs/toolkit';
-import { Provider } from 'react-redux';
-import { I18nextProvider } from 'react-i18next';
 import axios from 'axios';
+import { configureStore } from '@reduxjs/toolkit';
+import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
 
 import i18n from './i18n';
 import App from './components/App.jsx';
 import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
+import routes from './routes';
 import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
-import routes from './routes';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -42,8 +42,9 @@ export default (socket) => {
 
   socket.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
-    const { data } = await axios.get(routes.currentData(), { headers: authorization });
     const { channels: { currentChannelId } } = store.getState();
+
+    const { data } = await axios.get(routes.currentData(), { headers: authorization });
 
     try {
       updateCurrentStore(data, currentChannelId);
@@ -70,8 +71,8 @@ export default (socket) => {
   });
 
   const contextValues = {
-    socket,
     getAuthHeader,
+    socket,
     updateCurrentStore,
   };
 

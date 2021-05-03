@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
-import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { removeChannel, updateChannels } from './channelSlice.js';
 

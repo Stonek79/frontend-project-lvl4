@@ -13,7 +13,12 @@ import AuthContext from '../context/AuthContext.jsx';
 import { itemsLength } from '../constants';
 
 const { minLength, minPassLength, maxLength } = itemsLength;
-const generateSignup = ({ history, logIn, t }) => async (value, { setErrors }) => {
+
+const generateSignup = ({
+  history,
+  logIn,
+  t,
+}) => async (value, { setErrors }) => {
   const { signupPath } = routes;
   try {
     const { data } = await axios.post(signupPath(), value);
@@ -25,6 +30,7 @@ const generateSignup = ({ history, logIn, t }) => async (value, { setErrors }) =
     setErrors({ passwordConfirm: t('errors.exist') });
   }
 };
+
 const validationSchema = (t) => Yup.object({
   username: Yup.string().trim()
     .min(minLength, t('errors.length'))
@@ -55,9 +61,8 @@ const SignupPage = () => {
       password: '',
       passwordConfirm: '',
     },
-    // validateOnMount: true,
-    validateOnChange: true,
     validateOnBlur: true,
+    validateOnChange: true,
     validationSchema: validationSchema(t),
     onSubmit: generateSignup({ history, logIn, t }),
   });
@@ -69,48 +74,49 @@ const SignupPage = () => {
           <FormGroup className="form-group">
             <FormLabel className="form-label" htmlFor="username">{t('register.username')}</FormLabel>
             <FormControl
-              isInvalid={formik.errors.username}
               ref={nameInput}
-              placeholder={t('placeholders.nickMin')}
-              name="username"
-              required
-              id="username"
-              className="form-control"
               type="text"
+              id="username"
+              name="username"
+              className="form-control"
+              autoComplete="username"
+              placeholder={t('placeholders.nickMin')}
+              required
               onChange={formik.handleChange}
               value={formik.values.username}
+              isInvalid={formik.errors.username}
             />
             <FormGroup className="text-danger small">{formik.errors.username}</FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
             <FormLabel className="form-label" htmlFor="password">{t('register.password')}</FormLabel>
             <FormControl
-              isInvalid={formik.errors.password}
-              placeholder={t('placeholders.passMin')}
-              name="password"
-              autoComplete="current-password"
-              required
-              id="password"
-              className="form-control"
               type="password"
+              id="password"
+              name="password"
+              className="form-control"
+              autoComplete="current-password"
+              placeholder={t('placeholders.passMin')}
+              required
               onChange={formik.handleChange}
               value={formik.values.password}
+              isInvalid={formik.errors.password}
             />
             <FormGroup className="text-danger small">{formik.errors.password}</FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
             <FormLabel className="form-label" htmlFor="passwordConfirm">{t('register.confirm')}</FormLabel>
             <FormControl
-              isInvalid={formik.errors.passwordConfirm}
-              placeholder={t('placeholders.passConfirm')}
-              name="passwordConfirm"
-              autoComplete="password-confirm"
-              required
-              id="passwordConfirm"
-              className="form-control"
               type="password"
+              id="passwordConfirm"
+              name="passwordConfirm"
+              className="form-control"
+              autoComplete="password-confirm"
+              placeholder={t('placeholders.passConfirm')}
+              required
               onChange={formik.handleChange}
               value={formik.values.passwordConfirm}
+              isInvalid={formik.errors.passwordConfirm}
             />
             <FormGroup className="text-danger small">{formik.errors.passwordConfirm}</FormGroup>
           </FormGroup>

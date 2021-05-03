@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { useFormik } from 'formik';
-import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+import { useFormik } from 'formik';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
@@ -14,9 +14,9 @@ import AppContext from '../context/AppContext.jsx';
 const { minLength, maxLength } = itemsLength;
 
 const generateRename = ({
-  socket,
   close,
   currentChannalId,
+  socket,
   t,
 }) => (value, { setErrors, setSubmitting }) => {
   const name = value.channelName.trim();
@@ -56,29 +56,31 @@ const validationSchema = ({ channelsNames, t }) => Yup.object({
 });
 
 const RenameChannel = ({ close, channels }) => {
-  const { socket } = useContext(AppContext);
   const { t } = useTranslation();
-
-  const channelsNames = channels.map((ch) => ch.name);
-
+  const { socket } = useContext(AppContext);
   const channelId = useSelector(getChannelId);
-  const currentChannel = channels.find((channel) => channel.id === channelId);
-  const currentChannalId = currentChannel.id;
+
+  const channelsNames = channels
+    .map((ch) => ch.name);
+  const currentChannel = channels
+    .find((channel) => channel.id === channelId);
   const { name } = currentChannel;
+  const currentChannalId = currentChannel.id;
 
   const formik = useFormik({
     initialValues: {
       channelName: name,
     },
-    validateOnChange: false,
     validateOnBlur: false,
+    validateOnChange: false,
     validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateRename({
-      socket, close, currentChannalId, t,
+      close, currentChannalId, socket, t,
     }),
   });
 
   const isError = formik.errors.channelName === t('errors.netError');
+
   const textInput = useRef();
   useEffect(() => {
     textInput.current.select();
@@ -93,16 +95,16 @@ const RenameChannel = ({ close, channels }) => {
         <Form onSubmit={formik.handleSubmit}>
           <InputGroup noValidate className="mt-auto">
             <FormControl
-              data-testid="rename-channel"
-              isInvalid={isError}
               ref={textInput}
+              data-testid="rename-channel"
               name="channelName"
               required
+              maxLength={20}
               value={formik.values.channelName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              maxLength={20}
+              isInvalid={isError}
             />
           </InputGroup>
         </Form>
@@ -114,16 +116,16 @@ const RenameChannel = ({ close, channels }) => {
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
-          variant="secondary"
           type="cancel"
+          variant="secondary"
           onClick={close}
           disabled={formik.isSubmitting}
         >
           {t('modals.cancel')}
         </Button>
         <Button
-          variant="primary"
           type="submit"
+          variant="primary"
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >

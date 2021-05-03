@@ -1,14 +1,14 @@
 const itemsLength = {
-  minLength: 3,
-  minPassLength: 6,
   maxLength: 20,
   messageMax: 400,
+  minLength: 3,
+  minPassLength: 6,
 };
 
 const modalTypes = {
   add: 'adding',
-  rename: 'renaming',
   remove: 'removing',
+  rename: 'renaming',
 };
 
 export { itemsLength, modalTypes };

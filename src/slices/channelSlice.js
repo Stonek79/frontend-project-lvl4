@@ -44,6 +44,9 @@ const channelSlice = createSlice({
   },
 });
 
+const getChannels = (state) => state.channels.channels;
+const getCurrentChannelId = (state) => state.channels.currentChannelId;
+
 export const {
   addChannel,
   addChannelId,
@@ -51,9 +54,6 @@ export const {
   renameChannel,
   updateChannels,
 } = channelSlice.actions;
-
-const getChannels = (state) => state.channels.channels;
-const getCurrentChannelId = (state) => state.channels.currentChannelId;
 
 export { getChannels, getCurrentChannelId };
 

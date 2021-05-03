@@ -1,4 +1,3 @@
-/* eslint-disable no-new */
 // @ts-check
 
 import ReactDOM from 'react-dom';

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
+import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
@@ -12,7 +12,9 @@ import AppContext from '../context/AppContext.jsx';
 const { minLength, maxLength } = itemsLength;
 
 const generateSubmit = ({
-  socket, close, t,
+  close,
+  socket,
+  t,
 }) => (value, { setErrors, setSubmitting }) => {
   if (socket.connected === false) {
     setSubmitting(false);
@@ -48,8 +50,8 @@ const validationSchema = ({ channelsNames, t }) => Yup.object({
 });
 
 const CreateChannel = ({ close, channels }) => {
-  const { socket } = useContext(AppContext);
   const { t } = useTranslation();
+  const { socket } = useContext(AppContext);
 
   const channelsNames = channels.map((ch) => ch.name);
 
@@ -57,15 +59,16 @@ const CreateChannel = ({ close, channels }) => {
     initialValues: {
       channelName: '',
     },
-    validateOnChange: false,
     validateOnBlur: false,
+    validateOnChange: false,
     validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateSubmit({
-      socket, close, t,
+      close, socket, t,
     }),
   });
 
   const isError = formik.errors.channelName === t('errors.netError');
+
   const textInput = useRef(null);
   useEffect(() => {
     textInput.current.select();
@@ -80,16 +83,16 @@ const CreateChannel = ({ close, channels }) => {
         <Form onSubmit={formik.handleSubmit}>
           <InputGroup noValidate className="mt-auto">
             <FormControl
-              data-testid="add-channel"
-              isInvalid={isError}
               ref={textInput}
               name="channelName"
+              data-testid="add-channel"
               required
+              maxLength={20}
               value={formik.values.channelName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              maxLength={20}
+              isInvalid={isError}
             />
           </InputGroup>
         </Form>
@@ -101,16 +104,16 @@ const CreateChannel = ({ close, channels }) => {
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
-          variant="secondary"
           type="cancel"
+          variant="secondary"
           onClick={close}
           disabled={formik.isSubmitting}
         >
           {t('modals.cancel')}
         </Button>
         <Button
-          variant="primary"
           type="submit"
+          variant="primary"
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
