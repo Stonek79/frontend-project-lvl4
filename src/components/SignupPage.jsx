@@ -20,6 +20,7 @@ const generateSignup = ({
   t,
 }) => async (value, { setErrors }) => {
   const { signupPath } = routes;
+  console.log('signup');
   try {
     const { data } = await axios.post(signupPath(), value);
     const { token, username } = data;
