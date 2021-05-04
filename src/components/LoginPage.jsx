@@ -23,8 +23,6 @@ const generateSubmit = ({
     localStorage.setItem('userId', JSON.stringify({ token, username }));
     logIn();
     const { from } = location.state || { from: { pathname: '/' } };
-    console.log(data, location.state, 'login');
-    console.log(value.on);
     history.replace(from);
   } catch (err) {
     console.log(err);
