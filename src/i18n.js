@@ -7,6 +7,10 @@ i18n
     lng: 'ru',
     debug: false,
     resources,
+    react: {
+      useSuspense: false,
+      wait: false,
+    },
   });
 
 export default i18n;
