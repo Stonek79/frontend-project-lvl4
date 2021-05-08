@@ -28,13 +28,13 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default async (socket) => {
+export default (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
 
   const i18n = i18next.createInstance();
-  await i18n
+  i18n
     .init({
       lng: 'ru',
       debug: false,

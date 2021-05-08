@@ -22,14 +22,10 @@ if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
 
-const start = async () => {
-  const url = window.location.origin;
-  const socket = io(url);
+const url = window.location.origin;
+const socket = io(url);
 
-  const virtualDom = await run(socket);
-  const element = document.getElementById('chat');
+const virtualDom = run(socket);
+const element = document.getElementById('chat');
 
-  ReactDOM.render(virtualDom, element);
-};
-
-start();
+ReactDOM.render(virtualDom, element);
