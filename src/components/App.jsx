@@ -78,7 +78,7 @@ const MainPage = ({ children, path }) => {
   );
 };
 
-const App = () => (
+export default () => (
   <AuthProvider>
     <Router>
       <div className="d-flex flex-column h-100">
@@ -102,5 +102,3 @@ const App = () => (
     </Router>
   </AuthProvider>
 );
-
-export default App;

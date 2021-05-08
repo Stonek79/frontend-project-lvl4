@@ -4,9 +4,9 @@ import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
-
-// import i18n from './i18n';
 import i18next from 'i18next';
+
+import resources from './resources/resources.js';
 import App from './components/App.jsx';
 import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
@@ -33,7 +33,13 @@ export default async (socket) => {
     reducer: rootReducer,
   });
 
-  const i18n = await i18next.createInstance();
+  const i18n = i18next.createInstance();
+  await i18n
+    .init({
+      lng: 'ru',
+      debug: false,
+      resources,
+    });
 
   const updateCurrentStore = (data, id) => {
     const { channels, currentChannelId, messages } = data;

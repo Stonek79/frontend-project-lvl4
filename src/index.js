@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const start = async () => {
   const url = window.location.origin;
-  const socket = await io(url);
+  const socket = io(url);
 
   const virtualDom = await run(socket);
   const element = document.getElementById('chat');
