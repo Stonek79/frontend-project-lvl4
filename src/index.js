@@ -28,6 +28,8 @@ const start = async () => {
 
   const virtualDom = await run(socket);
   const element = document.getElementById('chat');
+  console.log(virtualDom, 'virtualDom');
+  console.log(element, 'element');
 
   ReactDOM.render(virtualDom, element);
 };

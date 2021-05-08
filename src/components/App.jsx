@@ -118,5 +118,4 @@ const App = () => {
   );
 };
 
-console.log('App exit');
 export default App;
