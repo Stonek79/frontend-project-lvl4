@@ -39,10 +39,6 @@ export default async (socket) => {
       lng: 'ru',
       debug: false,
       resources,
-      react: {
-        useSuspense: false,
-        wait: false,
-      },
     });
 
   const updateCurrentStore = (data, id) => {

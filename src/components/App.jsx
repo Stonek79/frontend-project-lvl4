@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { Suspense, useContext, useState } from 'react';
 import { Button, Navbar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import {
@@ -80,25 +80,27 @@ const MainPage = ({ children, path }) => {
 
 export default () => (
   <AuthProvider>
-    <Router>
-      <div className="d-flex flex-column h-100">
-        <Navbar className="mb-3 bg-light expand-lg">
-          <HexletButton />
-          <LogOutButton />
-        </Navbar>
+    <Suspense fallback="loading...">
+      <Router>
+        <div className="d-flex flex-column h-100">
+          <Navbar className="mb-3 bg-light expand-lg">
+            <HexletButton />
+            <LogOutButton />
+          </Navbar>
 
-        <Switch>
-          <Route path="/login">
-            <LoginPage />
-          </Route>
-          <Route path="/signup">
-            <SignupPage />
-          </Route>
-          <MainPage path="/">
-            <ChatPage />
-          </MainPage>
-        </Switch>
-      </div>
-    </Router>
+          <Switch>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <Route path="/signup">
+              <SignupPage />
+            </Route>
+            <MainPage path="/">
+              <ChatPage />
+            </MainPage>
+          </Switch>
+        </div>
+      </Router>
+    </Suspense>
   </AuthProvider>
 );
