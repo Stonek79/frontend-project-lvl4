@@ -28,13 +28,13 @@ const getAuthHeader = () => {
   return {};
 };
 
-export default (socket) => {
+export default async (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
 
   const i18n = i18next.createInstance();
-  i18n
+  await i18n
     .init({
       lng: 'ru',
       debug: false,
@@ -49,7 +49,7 @@ export default (socket) => {
 
   console.log(socket, 'socket');
 
-  socket.io.on('reconnect', async () => {
+  socket.on('reconnect', async () => {
     const { authorization } = getAuthHeader();
     const { channels: { currentChannelId } } = store.getState();
 
