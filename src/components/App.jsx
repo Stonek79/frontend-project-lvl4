@@ -87,7 +87,8 @@ const MainPage = ({ children, path }) => {
   );
 };
 
-export default () => {
+console.log('App preApp');
+const App = () => {
   console.log('App return');
   return (
     <AuthProvider>
@@ -116,3 +117,6 @@ export default () => {
     </AuthProvider>
   );
 };
+
+console.log('App exit');
+export default App;
