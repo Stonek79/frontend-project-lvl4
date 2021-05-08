@@ -10,6 +10,7 @@ import {
 import AuthContext from '../context/AuthContext.jsx';
 import routes from '../routes.js';
 
+console.log('LoginPage enter');
 const generateSubmit = ({
   history,
   location,
@@ -51,6 +52,7 @@ const LoginPage = () => {
     }),
   });
 
+  console.log('LoginPage return');
   return (
     <div className="row justify-content-center pt-5">
       <div className="col-sm-4">

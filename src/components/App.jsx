@@ -14,7 +14,9 @@ import ChatPage from './ChatPage.jsx';
 import LoginPage from './LoginPage.jsx';
 import SignupPage from './SignupPage.jsx';
 
+console.log('App 1');
 const AuthProvider = ({ children }) => {
+  console.log('App AuthProvider 1');
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('userId'));
 
   const logIn = () => setLoggedIn(true);
@@ -23,6 +25,7 @@ const AuthProvider = ({ children }) => {
     setLoggedIn(false);
   };
 
+  console.log('App AuthProvider 2');
   return (
     <AuthContext.Provider value={{
       loggedIn, logIn, logOut,
@@ -34,9 +37,11 @@ const AuthProvider = ({ children }) => {
 };
 
 const LogOutButton = () => {
+  console.log('App LogOutButton 1');
   const { t } = useTranslation();
   const auth = useContext(AuthContext);
 
+  console.log('App LogOutButton 2');
   return (
     auth.loggedIn
       ? (
@@ -52,8 +57,10 @@ const LogOutButton = () => {
 };
 
 const HexletButton = () => {
+  console.log('App HexletButton 1');
   const { t } = useTranslation();
 
+  console.log('App HexletButton 2');
   return (
     <Navbar.Brand
       className="mr-auto"
@@ -66,8 +73,10 @@ const HexletButton = () => {
 };
 
 const MainPage = ({ children, path }) => {
+  console.log('App MainPage 1');
   const { loggedIn } = useContext(AuthContext);
 
+  console.log('App MainPage 2');
   return (
     <Route
       path={path}
@@ -78,29 +87,32 @@ const MainPage = ({ children, path }) => {
   );
 };
 
-export default () => (
-  <AuthProvider>
-    <Suspense fallback="loading...">
-      <Router>
-        <div className="d-flex flex-column h-100">
-          <Navbar className="mb-3 bg-light expand-lg">
-            <HexletButton />
-            <LogOutButton />
-          </Navbar>
+export default () => {
+  console.log('App return');
+  return (
+    <AuthProvider>
+      <Suspense fallback="loading...">
+        <Router>
+          <div className="d-flex flex-column h-100">
+            <Navbar className="mb-3 bg-light expand-lg">
+              <HexletButton />
+              <LogOutButton />
+            </Navbar>
 
-          <Switch>
-            <Route path="/login">
-              <LoginPage />
-            </Route>
-            <Route path="/signup">
-              <SignupPage />
-            </Route>
-            <MainPage path="/">
-              <ChatPage />
-            </MainPage>
-          </Switch>
-        </div>
-      </Router>
-    </Suspense>
-  </AuthProvider>
-);
+            <Switch>
+              <Route path="/login">
+                <LoginPage />
+              </Route>
+              <Route path="/signup">
+                <SignupPage />
+              </Route>
+              <MainPage path="/">
+                <ChatPage />
+              </MainPage>
+            </Switch>
+          </div>
+        </Router>
+      </Suspense>
+    </AuthProvider>
+  );
+};

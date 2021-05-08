@@ -9,6 +9,7 @@ import MessageBox from './MessageBox.jsx';
 import ModalComponent from './Modal.jsx';
 import routes from '../routes.js';
 
+console.log('ChatPage enter');
 const ChatBox = () => (
   <div className="row flex-grow-1 h-75 pb-3">
     <ChannelBox />
@@ -54,6 +55,7 @@ const MainPage = () => {
     return () => mounted.state = true;
   });
 
+  console.log('ChatPage return');
   return <>{(hasData && ChatBox()) || Spinner(t)}</>;
 };
 

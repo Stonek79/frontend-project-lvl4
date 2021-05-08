@@ -14,6 +14,7 @@ import { itemsLength } from '../constants';
 
 const { minLength, minPassLength, maxLength } = itemsLength;
 
+console.log('SignupPage enter');
 const generateSignup = ({
   history,
   logIn,
@@ -67,6 +68,7 @@ const SignupPage = () => {
     onSubmit: generateSignup({ history, logIn, t }),
   });
 
+  console.log('SignupPage return');
   return (
     <div className="row justify-content-center pt-5">
       <div className="col-sm-4">
