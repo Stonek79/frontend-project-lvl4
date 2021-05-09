@@ -14,7 +14,7 @@ import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
 // import i18next from './i18n.js';
-// import './i18n.js';
+import './i18n.js';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
