@@ -32,7 +32,9 @@ const generateSubmit = ({
 };
 
 const LoginPage = () => {
+  console.log('LoginPage');
   const { t } = useTranslation();
+  console.log('After useTranslation');
   const { logIn } = useContext(AuthContext);
   const history = useHistory();
   const location = useLocation();
