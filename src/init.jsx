@@ -102,9 +102,9 @@ const Init = async (socket) => {
   return (
     <Provider store={store}>
       <AppContext.Provider value={contextValues}>
-        <I18nextProvider i18n={i18n}>
+        {/* <I18nextProvider i18n={i18n}> */}
           <App />
-        </I18nextProvider>
+        {/* </I18nextProvider> */}
       </AppContext.Provider>
     </Provider>
   );
