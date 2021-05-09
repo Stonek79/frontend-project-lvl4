@@ -2,11 +2,11 @@
 import React from 'react';
 // import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
-import { I18nextProvider } from 'react-i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
-// import i18next from 'i18next';
+import i18next from 'i18next';
 
-// import resources from './resources/resources.js';
+import resources from './resources/resources.js';
 import App from './components/App.jsx';
 import AppContext from './context/AppContext.jsx';
 import rootReducer from './slices/index.js';
@@ -15,7 +15,6 @@ import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
-import i18n from './i18n.js';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -38,17 +37,18 @@ export default async (socket) => {
   });
 
   console.log('init 2');
-  // const i18n = i18next.createInstance();
-  // await i18n
-  //   .init({
-  //     lng: 'ru',
-  //     debug: false,
-  //     resources,
-  //     react: {
-  //       useSuspense: false,
-  //       wait: false,
-  //     },
-  //   });
+  const i18n = i18next.createInstance();
+  await i18n
+    .use(initReactI18next)
+    .init({
+      lng: 'ru',
+      debug: false,
+      resources,
+      react: {
+        useSuspense: false,
+        wait: false,
+      },
+    });
 
   console.log('init 3');
   const updateCurrentStore = (data, id) => {
