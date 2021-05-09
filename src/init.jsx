@@ -37,17 +37,17 @@ export default async (socket) => {
   });
 
   console.log('init 2');
-  const i18n = i18next.createInstance();
-  await i18n
-    .init({
-      lng: 'ru',
-      debug: false,
-      resources,
-      react: {
-        useSuspense: false,
-        wait: false,
-      },
-    });
+  // const i18n = i18next.createInstance();
+  // await i18n
+  //   .init({
+  //     lng: 'ru',
+  //     debug: false,
+  //     resources,
+  //     react: {
+  //       useSuspense: false,
+  //       wait: false,
+  //     },
+  //   });
 
   console.log('init 3');
   const updateCurrentStore = (data, id) => {
@@ -100,11 +100,11 @@ export default async (socket) => {
   console.log('init run');
   return (
     <Provider store={store}>
-      <I18nextProvider i18n={i18n}>
+      {/* <I18nextProvider i18n={i18n}> */}
         <AppContext.Provider value={contextValues}>
           <App />
         </AppContext.Provider>
-      </I18nextProvider>
+      {/* </I18nextProvider> */}
     </Provider>
   );
 };
