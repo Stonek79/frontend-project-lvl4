@@ -4,7 +4,6 @@ import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
-import i18next from 'i18next';
 
 import resources from './resources/resources.js';
 import App from './components/App.jsx';
@@ -15,6 +14,7 @@ import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
+import i18next from './i18n.js';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
