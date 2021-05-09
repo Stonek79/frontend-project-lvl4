@@ -29,7 +29,7 @@ const getAuthHeader = () => {
 };
 console.log('init module');
 
-const init = async (socket) => {
+export default async (socket) => {
   console.log('init 1');
 
   const store = configureStore({
@@ -108,5 +108,3 @@ const init = async (socket) => {
     </Provider>
   );
 };
-
-export default init;

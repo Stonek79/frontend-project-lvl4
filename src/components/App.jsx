@@ -1,4 +1,4 @@
-import React, { Suspense, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Navbar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import {
@@ -92,28 +92,26 @@ const App = () => {
   console.log('App return');
   return (
     <AuthProvider>
-      <Suspense fallback="loading...">
-        <Router>
-          <div className="d-flex flex-column h-100">
-            <Navbar className="mb-3 bg-light expand-lg">
-              <HexletButton />
-              <LogOutButton />
-            </Navbar>
+      <Router>
+        <div className="d-flex flex-column h-100">
+          <Navbar className="mb-3 bg-light expand-lg">
+            <HexletButton />
+            <LogOutButton />
+          </Navbar>
 
-            <Switch>
-              <Route path="/login">
-                <LoginPage />
-              </Route>
-              <Route path="/signup">
-                <SignupPage />
-              </Route>
-              <MainPage path="/">
-                <ChatPage />
-              </MainPage>
-            </Switch>
-          </div>
-        </Router>
-      </Suspense>
+          <Switch>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <Route path="/signup">
+              <SignupPage />
+            </Route>
+            <MainPage path="/">
+              <ChatPage />
+            </MainPage>
+          </Switch>
+        </div>
+      </Router>
     </AuthProvider>
   );
 };
