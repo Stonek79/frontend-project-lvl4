@@ -1,17 +1,17 @@
 import React, { useContext, useState } from 'react';
-import { Button, Navbar } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
+import { Navbar } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect,
 } from 'react-router-dom';
 
 import AuthContext from '../context/AuthContext.jsx';
 import ChatPage from './ChatPage.jsx';
+import HexletButton from './HexletButton.jsx';
 import LoginPage from './LoginPage.jsx';
+import LogOutButton from './LogOutButton.jsx';
 import SignupPage from './SignupPage.jsx';
 
 console.log('App 1');
@@ -33,42 +33,6 @@ const AuthProvider = ({ children }) => {
     >
       {children}
     </AuthContext.Provider>
-  );
-};
-
-const LogOutButton = () => {
-  console.log('App LogOutButton 1');
-  const { t } = useTranslation();
-  const auth = useContext(AuthContext);
-
-  console.log('App LogOutButton 2');
-  return (
-    auth.loggedIn
-      ? (
-        <Button
-          onClick={auth.logOut}
-          as={Link}
-          to="/login"
-        >
-          {t('mainPage.logOut')}
-        </Button>
-      ) : null
-  );
-};
-
-const HexletButton = () => {
-  console.log('App HexletButton 1');
-  const { t } = useTranslation();
-
-  console.log('App HexletButton 2');
-  return (
-    <Navbar.Brand
-      className="mr-auto"
-      as={Link}
-      to="/"
-    >
-      {t('hexletChat')}
-    </Navbar.Brand>
   );
 };
 

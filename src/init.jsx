@@ -2,7 +2,7 @@
 import React from 'react';
 // import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
-import { I18nextProvider, initReactI18next, withTranslation } from 'react-i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
 import i18next from 'i18next';
 
@@ -111,7 +111,5 @@ const Init = async (socket) => {
     </Provider>
   );
 };
-
-// export default withTranslation()(Init);
 
 export default Init;
