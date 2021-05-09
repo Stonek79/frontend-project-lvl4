@@ -27,12 +27,15 @@ const getAuthHeader = () => {
 
   return {};
 };
-
+console.log('init module');
 export default async (socket) => {
+  console.log('init 1');
+
   const store = configureStore({
     reducer: rootReducer,
   });
 
+  console.log('init 2');
   const i18n = i18next.createInstance();
   await i18n
     .init({
@@ -45,6 +48,7 @@ export default async (socket) => {
       },
     });
 
+  console.log('init 3');
   const updateCurrentStore = (data, id) => {
     const { channels, currentChannelId, messages } = data;
     const currentId = id ?? currentChannelId;
@@ -66,7 +70,9 @@ export default async (socket) => {
   //   }
   // });
 
+  console.log('init 4');
   socket.on('newChannel', (data) => {
+    console.log('init in newChannel');
     store.dispatch(addChannel({ channelData: data }));
   });
 
@@ -83,12 +89,14 @@ export default async (socket) => {
     store.dispatch(addMessage({ messageData: data }));
   });
 
+  console.log('init 5');
   const contextValues = {
     getAuthHeader,
     socket,
     updateCurrentStore,
   };
 
+  console.log('init run');
   return (
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
