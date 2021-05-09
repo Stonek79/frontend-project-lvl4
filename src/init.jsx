@@ -13,7 +13,7 @@ import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
-import i18n from './i18n.js';
+import i18next from './i18n.js';
 
 const getAuthHeader = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -27,7 +27,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-console.log('init module');
+console.log(i18next, 'init module');
 // const i18n = i18next.createInstance();
 
 const Init = async (socket) => {
@@ -39,7 +39,7 @@ const Init = async (socket) => {
 
   console.log('init 2');
 
-  await i18n;
+  const i18n = await i18next;
 
   console.log('init 3');
   const updateCurrentStore = (data, id) => {
