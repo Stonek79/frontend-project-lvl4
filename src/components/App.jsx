@@ -14,7 +14,7 @@ import LoginPage from './LoginPage.jsx';
 import LogOutButton from './LogOutButton.jsx';
 import SignupPage from './SignupPage.jsx';
 
-console.log('App 1');
+console.log('App enter');
 const AuthProvider = ({ children }) => {
   console.log('App AuthProvider 1');
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('userId'));
