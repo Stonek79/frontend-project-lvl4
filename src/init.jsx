@@ -2,7 +2,7 @@
 import React from 'react';
 // import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
-import { I18nextProvider } from 'react-i18next';
+// import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
 import App from './components/App.jsx';
@@ -13,7 +13,7 @@ import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
-import i18next from './i18n.js';
+// import i18next from './i18n.js';
 // import './i18n.js';
 
 const getAuthHeader = () => {
@@ -40,7 +40,7 @@ const Init = async (socket) => {
 
   console.log('init 2');
 
-  const i18n = await i18next;
+  // const i18n = await i18next;
 
   console.log('init 3');
   const updateCurrentStore = (data, id) => {
@@ -94,9 +94,9 @@ const Init = async (socket) => {
   return (
     <Provider store={store}>
       <AppContext.Provider value={contextValues}>
-        <I18nextProvider i18n={i18n}>
+        {/* <I18nextProvider i18n={i18n}> */}
           <App />
-        </I18nextProvider>
+        {/* </I18nextProvider> */}
       </AppContext.Provider>
     </Provider>
   );
