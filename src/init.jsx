@@ -41,7 +41,7 @@ export default async (socket) => {
   await i18n
     .use(initReactI18next)
     .init({
-      fallbackLng: 'ru',
+      lng: 'ru',
       debug: false,
       resources,
       react: {
