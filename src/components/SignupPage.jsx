@@ -15,22 +15,22 @@ import { itemsLength } from '../constants';
 const { minLength, minPassLength, maxLength } = itemsLength;
 
 console.log('SignupPage enter');
-const generateSignup = ({
-  history,
-  logIn,
-  t,
-}) => async (value, { setErrors }) => {
-  const { signupPath } = routes;
-  try {
-    const { data } = await axios.post(signupPath(), value);
-    const { token, username } = data;
-    localStorage.setItem('userId', JSON.stringify({ token, username }));
-    logIn();
-    history.push('/');
-  } catch (err) {
-    setErrors({ passwordConfirm: t('errors.exist') });
-  }
-};
+// const generateSignup = ({
+//   history,
+//   logIn,
+//   t,
+// }) => async (value, { setErrors }) => {
+//   const { signupPath } = routes;
+//   try {
+//     const { data } = await axios.post(signupPath(), value);
+//     const { token, username } = data;
+//     localStorage.setItem('userId', JSON.stringify({ token, username }));
+//     logIn();
+//     history.push('/');
+//   } catch (err) {
+//     setErrors({ passwordConfirm: t('errors.exist') });
+//   }
+// };
 
 const validationSchema = (t) => Yup.object({
   username: Yup.string().trim()
@@ -65,7 +65,18 @@ const SignupPage = () => {
     validateOnBlur: true,
     validateOnChange: true,
     validationSchema: validationSchema(t),
-    onSubmit: generateSignup({ history, logIn, t }),
+    onSubmit: async (value, { setErrors }) => {
+      const { signupPath } = routes;
+      try {
+        const { data } = await axios.post(signupPath(), value);
+        const { token, username } = data;
+        localStorage.setItem('userId', JSON.stringify({ token, username }));
+        logIn();
+        history.push('/');
+      } catch (err) {
+        setErrors({ passwordConfirm: t('errors.exist') });
+      }
+    },
   });
 
   console.log('SignupPage return');

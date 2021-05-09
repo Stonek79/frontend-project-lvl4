@@ -11,25 +11,25 @@ import AuthContext from '../context/AuthContext.jsx';
 import routes from '../routes.js';
 
 console.log('LoginPage enter');
-const generateSubmit = ({
-  history,
-  location,
-  logIn,
-  t,
-}) => async (value, { setErrors }) => {
-  const { loginPath } = routes;
-  try {
-    const { data } = await axios.post(loginPath(), value);
-    const { token, username } = data;
-    localStorage.setItem('userId', JSON.stringify({ token, username }));
-    logIn();
-    const { from } = location.state || { from: { pathname: '/' } };
-    history.replace(from);
-  } catch (err) {
-    console.log(err);
-    setErrors({ password: t('errors.logError') });
-  }
-};
+// const generateSubmit = ({
+//   history,
+//   location,
+//   logIn,
+//   t,
+// }) => async (value, { setErrors }) => {
+//   const { loginPath } = routes;
+//   try {
+//     const { data } = await axios.post(loginPath(), value);
+//     const { token, username } = data;
+//     localStorage.setItem('userId', JSON.stringify({ token, username }));
+//     logIn();
+//     const { from } = location.state || { from: { pathname: '/' } };
+//     history.replace(from);
+//   } catch (err) {
+//     console.log(err);
+//     setErrors({ password: t('errors.logError') });
+//   }
+// };
 
 const LoginPage = () => {
   console.log('LoginPage');
@@ -50,9 +50,20 @@ const LoginPage = () => {
       username: '',
       password: '',
     },
-    onSubmit: generateSubmit({
-      history, location, logIn, t,
-    }),
+    onSubmit: async (value, { setErrors }) => {
+      const { loginPath } = routes;
+      try {
+        const { data } = await axios.post(loginPath(), value);
+        const { token, username } = data;
+        localStorage.setItem('userId', JSON.stringify({ token, username }));
+        logIn();
+        const { from } = location.state || { from: { pathname: '/' } };
+        history.replace(from);
+      } catch (err) {
+        console.log(err);
+        setErrors({ password: t('errors.logError') });
+      }
+    },
   });
 
   console.log('LoginPage return');
