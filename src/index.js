@@ -9,7 +9,7 @@ import 'core-js/stable/index.js';
 import 'regenerator-runtime/runtime.js';
 
 import '../assets/application.scss';
-import run from './init.jsx';
+import init from './init.jsx';
 
 const start = async () => {
   new Rollbar({
@@ -26,7 +26,7 @@ const start = async () => {
   const url = window.location.origin;
   const socket = io(url);
 
-  const virtualDom = await run(socket);
+  const virtualDom = await init(socket);
 
   const element = document.getElementById('chat');
 
