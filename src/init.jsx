@@ -217,4 +217,7 @@ import React from 'react';
 //   );
 // };
 
-export default (socket) => (<p>Hello</p>)
+export default (socket) => {
+  console.log(socket);
+  return (<p>Hello</p>);
+};
