@@ -35,7 +35,8 @@ const LoginPage = () => {
   console.log('LoginPage');
   const { t } = useTranslation();
   console.log('After useTranslation');
-  const { logIn } = useContext(AuthContext);
+  const { logIn, loggedIn } = useContext(AuthContext);
+  console.log(logIn, loggedIn);
   const history = useHistory();
   const location = useLocation();
   const nameInput = useRef(null);
