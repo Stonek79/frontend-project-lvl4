@@ -30,14 +30,14 @@ const ChannelBox = () => {
       <Form className="col-3 h-100">
         <FormGroup className="d-flex mb-2">
           <FormLabel><b>{t('channels.channels')}</b></FormLabel>
-          <Button
+          {/* <Button
             type="button"
             variant="outline-primary"
             className="ml-auto p-1"
             onClick={handleAddChannel(dispatch)}
           >
             <b>+</b>
-          </Button>
+          </Button> */}
         </FormGroup>
         <FormGroup className="h-100 overflow-auto">
           <ListGroup className="nav">
