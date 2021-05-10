@@ -58,7 +58,7 @@ const LoginPage = () => {
         logIn();
         // const { from } = location.state || { from: { pathname: '/' } };
         // history.replace(from);
-        history.push('/');
+        // history.push('/');
       } catch (err) {
         console.log(err);
         setErrors({ password: t('errors.logError') });
