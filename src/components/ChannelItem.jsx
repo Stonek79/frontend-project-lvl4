@@ -39,10 +39,10 @@ const ChannelItem = ({
               {name}
             </Button>
             <Dropdown.Toggle split variant={variant} className="flex-grow-0 text-left nav-link" />
-            <Dropdown.Menu variant={variant} title="">
+            {/* <Dropdown.Menu variant={variant} title="">
               <Dropdown.Item onClick={handleRemoveChannel}>{t('channels.remove')}</Dropdown.Item>
               <Dropdown.Item onClick={handleRenameChannel}>{t('channels.rename')}</Dropdown.Item>
-            </Dropdown.Menu>
+            </Dropdown.Menu> */}
           </Dropdown>
         </li>
       )
