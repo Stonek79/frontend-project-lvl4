@@ -30,7 +30,6 @@ const getAuthHeader = () => {
 };
 
 console.log('init module');
-const i18n = i18next.createInstance();
 
 const Init = async (socket) => {
   console.log('INIT');
@@ -39,12 +38,12 @@ const Init = async (socket) => {
     reducer: rootReducer,
   });
 
+  const i18n = i18next.createInstance();
   await i18n
     .use(initReactI18next)
     .init({
-      lng: 'ru',
-      debug: false,
       resources,
+      fallbackLng: 'ru',
     });
 
   const updateCurrentStore = (data, id) => {
