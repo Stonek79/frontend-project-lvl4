@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-// import axios from 'axios';
+import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
@@ -11,7 +11,7 @@ import AppContext from './context/AppContext.jsx';
 import resources from './resources/resources.js';
 import rootReducer from './slices/index.js';
 
-// import routes from './routes';
+import routes from './routes';
 import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, updateChannels,
@@ -48,20 +48,18 @@ const Init = async (socket) => {
     store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
 
-  // console.log(socket.on, 'socket');
+  socket.on('reconnect', async () => {
+    const { authorization } = getAuthHeader();
+    const { channels: { currentChannelId } } = store.getState();
 
-  // socket.on('reconnect', async () => {
-  //   const { authorization } = getAuthHeader();
-  //   const { channels: { currentChannelId } } = store.getState();
+    const { data } = await axios.get(routes.currentData(), { headers: authorization });
 
-  //   const { data } = await axios.get(routes.currentData(), { headers: authorization });
-
-  //   try {
-  //     updateCurrentStore(data, currentChannelId);
-  //   } catch (err) {
-  //     console.log(err.message);
-  //   }
-  // });
+    try {
+      updateCurrentStore(data, currentChannelId);
+    } catch (err) {
+      console.log(err.message);
+    }
+  });
 
   socket.on('newChannel', (data) => {
     store.dispatch(addChannel({ channelData: data }));
