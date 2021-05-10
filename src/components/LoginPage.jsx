@@ -60,7 +60,7 @@ const LoginPage = () => {
         history.replace(from);
       } catch (err) {
         console.log(err);
-        setErrors({ password: t('errors.logError') });
+        // setErrors({ password: t('errors.logError') });
       }
     },
   });
