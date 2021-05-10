@@ -52,7 +52,7 @@ const MainPage = () => {
     getChatData();
 
     return () => mounted.state = true;
-  });
+  }, []);
 
   return <>{(hasData && ChatBox()) || Spinner(t)}</>;
 };
