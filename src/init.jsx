@@ -29,11 +29,7 @@ const getAuthHeader = () => {
   return {};
 };
 
-console.log('init module');
-
 const Init = async (socket) => {
-  console.log('INIT');
-
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -52,7 +48,7 @@ const Init = async (socket) => {
     store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
   };
 
-  console.log(socket.on, 'socket');
+  // console.log(socket.on, 'socket');
 
   // socket.on('reconnect', async () => {
   //   const { authorization } = getAuthHeader();

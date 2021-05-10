@@ -6,11 +6,9 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext.jsx';
 
 const LogOutButton = () => {
-  console.log('App LogOutButton 1');
   const { t } = useTranslation();
   const auth = useContext(AuthContext);
 
-  console.log('App LogOutButton 2');
   return (
     auth.loggedIn
       ? (

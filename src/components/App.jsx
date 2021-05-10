@@ -14,9 +14,7 @@ import LoginPage from './LoginPage.jsx';
 import LogOutButton from './LogOutButton.jsx';
 import SignupPage from './SignupPage.jsx';
 
-console.log('App enter');
 const AuthProvider = ({ children }) => {
-  console.log('App AuthProvider 1');
   const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('userId'));
 
   const logIn = () => setLoggedIn(true);
@@ -25,7 +23,6 @@ const AuthProvider = ({ children }) => {
     setLoggedIn(false);
   };
 
-  console.log('App AuthProvider 2');
   return (
     <AuthContext.Provider value={{
       loggedIn, logIn, logOut,
@@ -37,10 +34,8 @@ const AuthProvider = ({ children }) => {
 };
 
 const MainPage = ({ children, path }) => {
-  console.log('App MainPage 1');
   const { loggedIn } = useContext(AuthContext);
 
-  console.log('App MainPage 2');
   return (
     <Route
       path={path}
@@ -51,33 +46,29 @@ const MainPage = ({ children, path }) => {
   );
 };
 
-console.log('App preApp');
-const App = () => {
-  console.log('App return');
-  return (
-    <AuthProvider>
-      <Router>
-        <div className="d-flex flex-column h-100">
-          <Navbar className="mb-3 bg-light expand-lg">
-            <HexletButton />
-            <LogOutButton />
-          </Navbar>
+const App = () => (
+  <AuthProvider>
+    <Router>
+      <div className="d-flex flex-column h-100">
+        <Navbar className="mb-3 bg-light expand-lg">
+          <HexletButton />
+          <LogOutButton />
+        </Navbar>
 
-          <Switch>
-            <Route path="/login">
-              <LoginPage />
-            </Route>
-            <Route path="/signup">
-              <SignupPage />
-            </Route>
-            <MainPage path="/">
-              <ChatPage />
-            </MainPage>
-          </Switch>
-        </div>
-      </Router>
-    </AuthProvider>
-  );
-};
+        <Switch>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+          <Route path="/signup">
+            <SignupPage />
+          </Route>
+          <MainPage path="/">
+            <ChatPage />
+          </MainPage>
+        </Switch>
+      </div>
+    </Router>
+  </AuthProvider>
+);
 
 export default App;

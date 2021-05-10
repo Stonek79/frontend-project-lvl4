@@ -95,14 +95,14 @@ const MessageForm = ({ currentChannelId }) => {
             disabled={formik.isSubmitting}
             isInvalid={isError}
           />
-          <Button
+          {/* <Button
             type="submit"
             variant="primary"
             className="ml-2"
             disabled={formik.isSubmitting}
           >
             {formik.isSubmitting ? Spinner('process.sending', t) : t('mainPage.send')}
-          </Button>
+          </Button> */}
         </InputGroup>
         <FormGroup
           className={isError ? 'text-danger' : 'text-info'}

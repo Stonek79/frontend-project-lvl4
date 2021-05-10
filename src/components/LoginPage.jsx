@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useHistory, useLocation } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import {
   Button, Form, FormGroup, FormControl, FormLabel,
 } from 'react-bootstrap';
@@ -10,34 +10,10 @@ import {
 import AuthContext from '../context/AuthContext.jsx';
 import routes from '../routes.js';
 
-console.log('LoginPage enter');
-// const generateSubmit = ({
-//   history,
-//   location,
-//   logIn,
-//   t,
-// }) => async (value, { setErrors }) => {
-//   const { loginPath } = routes;
-//   try {
-//     const { data } = await axios.post(loginPath(), value);
-//     const { token, username } = data;
-//     localStorage.setItem('userId', JSON.stringify({ token, username }));
-//     logIn();
-//     const { from } = location.state || { from: { pathname: '/' } };
-//     history.replace(from);
-//   } catch (err) {
-//     console.log(err);
-//     setErrors({ password: t('errors.logError') });
-//   }
-// };
-
 const LoginPage = () => {
-  console.log('LoginPage');
   const { t } = useTranslation();
-  console.log('After useTranslation');
   const { logIn } = useContext(AuthContext);
   const history = useHistory();
-  // const location = useLocation();
   const nameInput = useRef(null);
 
   useEffect(() => {
@@ -56,9 +32,7 @@ const LoginPage = () => {
         const { token, username } = data;
         localStorage.setItem('userId', JSON.stringify({ token, username }));
         logIn();
-        // const { from } = location.state || { from: { pathname: '/' } };
-        // history.replace(from);
-        // history.push('/');
+        history.push('/');
       } catch (err) {
         console.log(err);
         setErrors({ password: t('errors.logError') });
@@ -66,7 +40,6 @@ const LoginPage = () => {
     },
   });
 
-  console.log('LoginPage return');
   return (
     <div className="row justify-content-center pt-5">
       <div className="col-sm-4">
