@@ -37,7 +37,7 @@ const LoginPage = () => {
   console.log('After useTranslation');
   const { logIn } = useContext(AuthContext);
   const history = useHistory();
-  const location = useLocation();
+  // const location = useLocation();
   const nameInput = useRef(null);
 
   useEffect(() => {
@@ -56,10 +56,11 @@ const LoginPage = () => {
         const { token, username } = data;
         localStorage.setItem('userId', JSON.stringify({ token, username }));
         logIn();
-        const { from } = location.state || { from: { pathname: '/' } };
-        history.replace(from);
+        // const { from } = location.state || { from: { pathname: '/' } };
+        // history.replace(from);
+        history.push('/');
       } catch (err) {
-        // console.log(err);
+        console.log(err);
         setErrors({ password: t('errors.logError') });
       }
     },
