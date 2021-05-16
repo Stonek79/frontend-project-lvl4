@@ -44,19 +44,28 @@ const SignupPage = () => {
       password: '',
       passwordConfirm: '',
     },
-    validateOnBlur: true,
-    validateOnChange: true,
+    validateOnChange: false,
     validationSchema: validationSchema(t),
     onSubmit: async (value, { setErrors }) => {
       const { signupPath } = routes;
       try {
         const { data } = await axios.post(signupPath(), value);
         const { token, username } = data;
-        localStorage.setItem('userId', JSON.stringify({ token, username }));
-        logIn();
+        logIn({ token, username });
         history.push('/');
       } catch (err) {
-        setErrors({ passwordConfirm: t('errors.exist') });
+        console.log(err);
+        const getError = (e) => {
+          if (e.message.includes('409')) {
+            return 'errors.exist';
+          }
+          if (e.message.includes('Network Error')) {
+            return 'errors.netError';
+          }
+          return 'errors.someError';
+        };
+        nameInput.current.select();
+        setErrors({ username: ' ', password: ' ', passwordConfirm: t(getError(err)) });
       }
     },
   });
@@ -79,9 +88,13 @@ const SignupPage = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.username}
-              isInvalid={formik.errors.username}
+              isInvalid={formik.touched.username && Boolean(formik.errors.username)}
             />
-            <FormGroup className="text-danger small">{formik.errors.username}</FormGroup>
+            <FormGroup className="text-danger small">
+              {formik.touched.username
+              && Boolean(formik.errors.username)
+              && formik.errors.username}
+            </FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
             <FormLabel className="form-label" htmlFor="password">{t('register.password')}</FormLabel>
@@ -96,9 +109,13 @@ const SignupPage = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.password}
-              isInvalid={formik.errors.password}
+              isInvalid={formik.touched.password && Boolean(formik.errors.password)}
             />
-            <FormGroup className="text-danger small">{formik.errors.password}</FormGroup>
+            <FormGroup className="text-danger small">
+              {formik.touched.password
+              && Boolean(formik.errors.password)
+              && formik.errors.password}
+            </FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
             <FormLabel className="form-label" htmlFor="passwordConfirm">{t('register.confirm')}</FormLabel>
@@ -113,9 +130,13 @@ const SignupPage = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.passwordConfirm}
-              isInvalid={formik.errors.passwordConfirm}
+              isInvalid={formik.touched.passwordConfirm && Boolean(formik.errors.passwordConfirm)}
             />
-            <FormGroup className="text-danger small">{formik.errors.passwordConfirm}</FormGroup>
+            <FormGroup className="text-danger small">
+              {formik.touched.passwordConfirm
+              && Boolean(formik.errors.passwordConfirm)
+              && formik.errors.passwordConfirm}
+            </FormGroup>
           </FormGroup>
           <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('register.toSignup')}</Button>
         </Form>

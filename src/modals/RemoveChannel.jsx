@@ -5,32 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
 
 import { getChannelId } from '../slices/modalSlice.js';
-import AppContext from '../context/AppContext.jsx';
+import ApiContext from '../context/ApiContext.jsx';
 
-const generateRemove = ({
-  close,
-  currentChannalId,
-  socket,
-  t,
-}) => (values, { setErrors, setSubmitting }) => {
+const generateRemove = ({ close, currentChannalId, removeChannel }) => () => {
   const id = currentChannalId;
-
-  if (socket.connected === false) {
-    setSubmitting(false);
-    setErrors({ channelInfo: t('errors.netError') });
-    return;
-  }
-
-  const timerId = setTimeout(() => {
-    setSubmitting(false);
-    setErrors({ channelInfo: t('errors.netError') });
-  }, 3000);
-  socket.emit('removeChannel', { id }, (r) => {
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      close();
-    }
-  });
+  removeChannel({ close, id });
 };
 
 const Spinner = (name, t) => (
@@ -42,19 +21,15 @@ const Spinner = (name, t) => (
 
 const RemoveChannel = ({ close }) => {
   const { t } = useTranslation();
-  const { socket } = useContext(AppContext);
+  const { removeChannel } = useContext(ApiContext);
 
   const currentChannalId = useSelector(getChannelId);
   const formik = useFormik({
     initialValues: {
       channelInfo: '',
     },
-    onSubmit: generateRemove({
-      close, currentChannalId, socket, t,
-    }),
+    onSubmit: generateRemove({ close, currentChannalId, removeChannel }),
   });
-
-  const isError = formik.errors.channelInfo === t('errors.netError');
 
   return (
     <>
@@ -63,11 +38,7 @@ const RemoveChannel = ({ close }) => {
       </Modal.Header>
       <Modal.Body className="text-danger">
         <p><b>{t('modals.confirm')}</b></p>
-        <FormGroup
-          className={isError ? 'text-danger' : 'text-info'}
-        >
-          {formik.errors.channelInfo}
-        </FormGroup>
+        <FormGroup className="text-danger">{formik.errors.channelInfo}</FormGroup>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button

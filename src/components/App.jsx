@@ -1,5 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useState } from 'react';
-import { Navbar } from 'react-bootstrap';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,23 +9,38 @@ import {
 
 import AuthContext from '../context/AuthContext.jsx';
 import ChatPage from './ChatPage.jsx';
-import HexletButton from './HexletButton.jsx';
 import LoginPage from './LoginPage.jsx';
-import LogOutButton from './LogOutButton.jsx';
+import Navbar from './Navbar.jsx';
 import SignupPage from './SignupPage.jsx';
+import routes from '../routes.js';
+
+const getAuthHeader = () => {
+  const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
+  if (userLoginData && userLoginData.token) {
+    return { authorization: { Authorization: `Bearer ${userLoginData.token}` } };
+  }
+
+  return {};
+};
 
 const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('userId'));
+  const getStorageUserData = localStorage.getItem('userLoginData');
+  const userData = getStorageUserData ? JSON.parse(getStorageUserData) : false;
+  const [loggedIn, setLoggedIn] = useState(userData);
 
-  const logIn = () => setLoggedIn(true);
+  const logIn = ({ token, username }) => {
+    localStorage.setItem('userLoginData', JSON.stringify({ token, username }));
+    setLoggedIn({ token, username });
+  };
+
   const logOut = () => {
-    localStorage.removeItem('userId');
+    localStorage.removeItem('userLoginData');
     setLoggedIn(false);
   };
 
   return (
     <AuthContext.Provider value={{
-      loggedIn, logIn, logOut,
+      getAuthHeader, loggedIn, logIn, logOut,
     }}
     >
       {children}
@@ -33,14 +48,14 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-const MainPage = ({ children, path }) => {
+const PrivateRout = ({ children, ...props }) => {
   const { loggedIn } = useContext(AuthContext);
 
   return (
     <Route
-      path={path}
+      {...props}
       render={() => (
-        loggedIn ? (children) : (<Redirect to="/login" />)
+        loggedIn ? (children) : (<Redirect to={routes.login()} />)
       )}
     />
   );
@@ -50,21 +65,18 @@ const App = () => (
   <AuthProvider>
     <Router>
       <div className="d-flex flex-column h-100">
-        <Navbar className="mb-3 bg-light expand-lg">
-          <HexletButton />
-          <LogOutButton />
-        </Navbar>
+        <Navbar />
 
         <Switch>
-          <Route path="/login">
+          <Route path={routes.login()}>
             <LoginPage />
           </Route>
-          <Route path="/signup">
+          <Route path={routes.signup()}>
             <SignupPage />
           </Route>
-          <MainPage path="/">
+          <PrivateRout exact path={routes.mainpage()}>
             <ChatPage />
-          </MainPage>
+          </PrivateRout>
         </Switch>
       </div>
     </Router>

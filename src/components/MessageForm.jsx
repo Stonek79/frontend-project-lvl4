@@ -7,42 +7,19 @@ import {
 } from 'react-bootstrap';
 
 import { itemsLength } from '../constants.js';
-import AppContext from '../context/AppContext.jsx';
+import ApiContext from '../context/ApiContext.jsx';
+import AuthContext from '../context/AuthContext.jsx';
 
 const { messageMax } = itemsLength;
 
-const handleSubmit = ({
-  currentChannelId,
-  getAuthHeader,
-  socket,
-  t,
-}) => (
-  values,
-  { setErrors, setSubmitting, resetForm },
-) => {
-  const { username } = getAuthHeader();
+const handleSubmit = ({ currentChannelId, loggedIn, sendMessage }) => (values, { resetForm }) => {
   const message = {
-    user: username,
+    user: loggedIn.username,
     channelId: currentChannelId,
     text: values.message,
   };
 
-  if (socket.connected === false) {
-    setSubmitting(false);
-    setErrors({ message: t('errors.netError') });
-    return;
-  }
-
-  const timerId = setTimeout(() => {
-    setSubmitting(false);
-    setErrors({ message: t('errors.netError') });
-  }, 3000);
-  socket.emit('newMessage', message, (r) => {
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      resetForm();
-    }
-  });
+  sendMessage({ message, resetForm });
 };
 
 const validationSchema = Yup.object({
@@ -60,20 +37,15 @@ const Spinner = (name, t) => (
 
 const MessageForm = ({ currentChannelId }) => {
   const { t } = useTranslation();
-  const { getAuthHeader, socket } = useContext(AppContext);
+  const { sendMessage } = useContext(ApiContext);
+  const { loggedIn } = useContext(AuthContext);
 
   const formik = useFormik({
-    initialValues: {
-      message: '',
-    },
+    initialValues: { message: '' },
     status: false,
     validationSchema,
-    onSubmit: handleSubmit({
-      getAuthHeader, currentChannelId, socket, t,
-    }),
+    onSubmit: handleSubmit({ loggedIn, currentChannelId, sendMessage }),
   });
-
-  const isError = formik.errors.message === t('errors.netError');
 
   const textInput = useRef(null);
   useEffect(() => {
@@ -93,7 +65,7 @@ const MessageForm = ({ currentChannelId }) => {
             value={formik.values.message}
             onChange={formik.handleChange}
             disabled={formik.isSubmitting}
-            isInvalid={isError}
+            isInvalid={formik.errors.message}
           />
           <Button
             type="submit"
@@ -104,11 +76,7 @@ const MessageForm = ({ currentChannelId }) => {
             {formik.isSubmitting ? Spinner('process.sending', t) : t('mainPage.send')}
           </Button>
         </InputGroup>
-        <FormGroup
-          className={isError ? 'text-danger' : 'text-info'}
-        >
-          {formik.errors.message}
-        </FormGroup>
+        <FormGroup className="text-danger">{formik.errors.message}</FormGroup>
       </Form>
     </FormGroup>
   );

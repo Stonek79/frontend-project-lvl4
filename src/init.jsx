@@ -1,35 +1,23 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
 import i18next from 'i18next';
 
 import App from './components/App.jsx';
-import AppContext from './context/AppContext.jsx';
-import resources from './resources/resources.js';
+import ApiContext from './context/ApiContext.jsx';
+import resources from './resources/index.js';
 import rootReducer from './slices/index.js';
 
-import routes from './routes';
+// import routes from './routes';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, removeChannel, renameChannel, updateChannels,
+  addChannel, removeChannel, renameChannel,
 } from './slices/channelSlice.js';
 
-const getAuthHeader = () => {
-  const userId = JSON.parse(localStorage.getItem('userId'));
-  if (userId && userId.token) {
-    return {
-      username: userId.username,
-      authorization: { Authorization: `Bearer ${userId.token}` },
-    };
-  }
-
-  return {};
-};
-
-const Init = async (socket) => {
+export default async (socket) => {
   const store = configureStore({
     reducer: rootReducer,
   });
@@ -42,24 +30,44 @@ const Init = async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const updateCurrentStore = (data, id) => {
-    const { channels, currentChannelId, messages } = data;
-    const currentId = id ?? currentChannelId;
-    store.dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
+  const api = {
+    sendMessage: ({ message, resetForm }) => socket.connected
+      && socket.emit('newMessage', message, (r) => {
+        if (r.status === 'ok') {
+          resetForm();
+        }
+      }),
+    addChannel: ({ close, name }) => socket.connected
+      && socket.emit('newChannel', { name }, (r) => {
+        if (r.status === 'ok') {
+          close();
+        }
+      }),
+    renameChannel: ({ id, close, name }) => socket.connected
+      && socket.emit('renameChannel', { id, name }, (r) => {
+        if (r.status === 'ok') {
+          close();
+        }
+      }),
+    removeChannel: ({ close, id }) => socket.connected
+      && socket.emit('removeChannel', { id }, (r) => {
+        if (r.status === 'ok') {
+          close();
+        }
+      }),
   };
 
-  socket.on('reconnect', async () => {
-    const { authorization } = getAuthHeader();
-    const { channels: { currentChannelId } } = store.getState();
+  // socket.on('reconnect', async () => { // не работает, поменять на socket.io.on
+  //   const { authorization } = getAuthHeader();
+  //   const { channels: { currentChannelId } } = store.getState();
 
-    const { data } = await axios.get(routes.currentData(), { headers: authorization });
-
-    try {
-      updateCurrentStore(data, currentChannelId);
-    } catch (err) {
-      console.log(err.message);
-    }
-  });
+  //   try {
+  //     const { data } = await axios.get(routes.currentData(), { headers: authorization });
+  //     updateCurrentStore(data, currentChannelId);
+  //   } catch (err) {
+  //     console.log(err.message);
+  //   }
+  // });
 
   socket.on('newChannel', (data) => {
     store.dispatch(addChannel({ channelData: data }));
@@ -78,21 +86,13 @@ const Init = async (socket) => {
     store.dispatch(addMessage({ messageData: data }));
   });
 
-  const contextValues = {
-    getAuthHeader,
-    socket,
-    updateCurrentStore,
-  };
-
   return (
     <Provider store={store}>
-      <AppContext.Provider value={contextValues}>
-        <I18nextProvider i18n={i18n}>
+      <I18nextProvider i18n={i18n}>
+        <ApiContext.Provider value={api}>
           <App />
-        </I18nextProvider>
-      </AppContext.Provider>
+        </ApiContext.Provider>
+      </I18nextProvider>
     </Provider>
   );
 };
-
-export default Init;

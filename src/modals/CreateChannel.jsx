@@ -7,31 +7,13 @@ import {
 } from 'react-bootstrap';
 
 import { itemsLength } from '../constants.js';
-import AppContext from '../context/AppContext.jsx';
+import ApiContext from '../context/ApiContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const generateSubmit = ({
-  close,
-  socket,
-  t,
-}) => (value, { setErrors, setSubmitting }) => {
-  if (socket.connected === false) {
-    setSubmitting(false);
-    setErrors({ channelName: t('errors.netError') });
-    return;
-  }
-
-  const timerId = setTimeout(() => {
-    setSubmitting(false);
-    setErrors({ channelName: t('errors.netError') });
-  }, 3000);
-  socket.emit('newChannel', { name: value.channelName.trim() }, (r) => {
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      close();
-    }
-  });
+const generateSubmit = ({ addChannel, close }) => (value) => {
+  const name = value.channelName.trim();
+  addChannel({ close, name });
 };
 
 const Spinner = (name, t) => (
@@ -51,7 +33,7 @@ const validationSchema = ({ channelsNames, t }) => Yup.object({
 
 const CreateChannel = ({ close, channels }) => {
   const { t } = useTranslation();
-  const { socket } = useContext(AppContext);
+  const { addChannel } = useContext(ApiContext);
 
   const channelsNames = channels.map((ch) => ch.name);
 
@@ -62,12 +44,8 @@ const CreateChannel = ({ close, channels }) => {
     validateOnBlur: false,
     validateOnChange: false,
     validationSchema: validationSchema({ channelsNames, t }),
-    onSubmit: generateSubmit({
-      close, socket, t,
-    }),
+    onSubmit: generateSubmit({ addChannel, close }),
   });
-
-  const isError = formik.errors.channelName === t('errors.netError');
 
   const textInput = useRef(null);
   useEffect(() => {
@@ -92,15 +70,11 @@ const CreateChannel = ({ close, channels }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              isInvalid={isError}
+              isInvalid={formik.errors.channelName}
             />
           </InputGroup>
         </Form>
-        <FormGroup
-          className={isError ? 'text-danger' : 'text-info'}
-        >
-          {formik.errors.channelName}
-        </FormGroup>
+        <FormGroup className="text-danger">{formik.errors.channelName}</FormGroup>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button

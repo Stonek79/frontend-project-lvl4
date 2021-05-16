@@ -1,13 +1,15 @@
 /* eslint-disable no-return-assign */
 import React, { useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-import AppContext from '../context/AppContext.jsx';
+import AuthContext from '../context/AuthContext.jsx';
 import ChannelBox from './ChannelBox.jsx';
 import MessageBox from './MessageBox.jsx';
 import ModalComponent from './Modal.jsx';
 import routes from '../routes.js';
+import { updateChannels } from '../slices/channelSlice.js';
 
 const ChatBox = () => (
   <div className="row flex-grow-1 h-75 pb-3">
@@ -25,22 +27,25 @@ const Spinner = (t) => (
 );
 
 const MainPage = () => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
-  const {
-    updateCurrentStore,
-    getAuthHeader,
-  } = useContext(AppContext);
+  const { getAuthHeader } = useContext(AuthContext);
   const [hasData, setData] = useState(false);
 
   const { authorization } = getAuthHeader();
   const { currentData } = routes;
+
+  const updateCurrentStore = (data, id) => {
+    const { channels, currentChannelId, messages } = data;
+    const currentId = id ?? currentChannelId;
+    dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
+  };
 
   useEffect(() => {
     const mounted = { state: false };
 
     const getChatData = async () => {
       const { data } = await axios.get(currentData(), { headers: authorization });
-
       if (!mounted.state) {
         setData(true);
         return updateCurrentStore(data);

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import {
   Button, Form, FormGroup, FormControl, FormLabel,
 } from 'react-bootstrap';
@@ -14,6 +14,7 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const { logIn } = useContext(AuthContext);
   const history = useHistory();
+  const location = useLocation();
   const nameInput = useRef(null);
 
   useEffect(() => {
@@ -30,12 +31,12 @@ const LoginPage = () => {
       try {
         const { data } = await axios.post(loginPath(), value);
         const { token, username } = data;
-        localStorage.setItem('userId', JSON.stringify({ token, username }));
-        logIn();
-        history.push('/');
+        logIn({ token, username });
+        const { from } = location.state || { from: { pathname: '/' } };
+        history.replace(from);
       } catch (err) {
         console.log(err);
-        setErrors({ password: t('errors.logError') });
+        setErrors({ password: t(err.message === 'Network Error' ? 'errors.netError' : 'errors.logError') });
       }
     },
   });
@@ -56,6 +57,7 @@ const LoginPage = () => {
               required
               onChange={formik.handleChange}
               value={formik.values.username}
+              isInvalid={formik.errors.password}
             />
           </FormGroup>
           <FormGroup className="form-group">
@@ -69,6 +71,7 @@ const LoginPage = () => {
               required
               onChange={formik.handleChange}
               value={formik.values.password}
+              isInvalid={formik.errors.password}
             />
             <FormGroup className="text-danger">{formik.errors.password}</FormGroup>
           </FormGroup>

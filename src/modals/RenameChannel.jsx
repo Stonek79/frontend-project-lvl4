@@ -9,35 +9,15 @@ import {
 
 import { getChannelId } from '../slices/modalSlice.js';
 import { itemsLength } from '../constants.js';
-import AppContext from '../context/AppContext.jsx';
+import ApiContext from '../context/ApiContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const generateRename = ({
-  close,
-  currentChannalId,
-  socket,
-  t,
-}) => (value, { setErrors, setSubmitting }) => {
+const generateRename = ({ close, currentChannalId, renameChannel }) => (value) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
 
-  if (socket.connected === false) {
-    setSubmitting(false);
-    setErrors({ channelName: t('errors.netError') });
-    return;
-  }
-
-  const timerId = setTimeout(() => {
-    setSubmitting(false);
-    setErrors({ channelName: t('errors.netError') });
-  }, 3000);
-  socket.emit('renameChannel', { id, name }, (r) => {
-    if (r.status === 'ok') {
-      clearTimeout(timerId);
-      close();
-    }
-  });
+  renameChannel({ id, close, name });
 };
 
 const Spinner = (name, t) => (
@@ -57,7 +37,7 @@ const validationSchema = ({ channelsNames, t }) => Yup.object({
 
 const RenameChannel = ({ close, channels }) => {
   const { t } = useTranslation();
-  const { socket } = useContext(AppContext);
+  const { renameChannel } = useContext(ApiContext);
   const channelId = useSelector(getChannelId);
 
   const channelsNames = channels
@@ -74,12 +54,8 @@ const RenameChannel = ({ close, channels }) => {
     validateOnBlur: false,
     validateOnChange: false,
     validationSchema: validationSchema({ channelsNames, t }),
-    onSubmit: generateRename({
-      close, currentChannalId, socket, t,
-    }),
+    onSubmit: generateRename({ close, currentChannalId, renameChannel }),
   });
-
-  const isError = formik.errors.channelName === t('errors.netError');
 
   const textInput = useRef();
   useEffect(() => {
@@ -104,15 +80,11 @@ const RenameChannel = ({ close, channels }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
-              isInvalid={isError}
+              isInvalid={formik.errors.channelName}
             />
           </InputGroup>
         </Form>
-        <FormGroup
-          className={isError ? 'text-danger' : 'text-info'}
-        >
-          {formik.errors.channelName}
-        </FormGroup>
+        <FormGroup className="text-danger">{formik.errors.channelName}</FormGroup>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
