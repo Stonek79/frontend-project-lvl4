@@ -83,6 +83,10 @@ export default async (socket) => {
         }
       });
     },
+    // reconnect: ({ updateCurrentStore, data }) => {
+    //   const { channels: { currentChannelId } } = store.getState();
+    //   updateCurrentStore(data, currentChannelId);
+    // },
   };
 
   // socket.on('reconnect', async () => { // не работает, поменять на socket.io.on
