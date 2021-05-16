@@ -12,14 +12,16 @@ import AuthContext from '../context/AuthContext.jsx';
 
 const { messageMax } = itemsLength;
 
-const handleSubmit = ({ currentChannelId, loggedIn, sendMessage }) => (values, { resetForm }) => {
+const handleSubmit = ({
+  currentChannelId, loggedIn, sendMessage,
+}) => (values, { resetForm, setSubmitting }) => {
   const message = {
     user: loggedIn.username,
     channelId: currentChannelId,
     text: values.message,
   };
 
-  sendMessage({ message, resetForm });
+  sendMessage({ message, resetForm, setSubmitting });
 };
 
 const validationSchema = Yup.object({

@@ -31,30 +31,48 @@ export default async (socket) => {
     });
 
   const api = {
-    sendMessage: ({ message, resetForm }) => socket.connected
-      && socket.emit('newMessage', message, (r) => {
+    sendMessage: ({ message, resetForm, setSubmitting }) => {
+      if (socket.connected === false) {
+        return setSubmitting(false);
+      }
+      return socket.emit('newMessage', message, (r) => {
         if (r.status === 'ok') {
           resetForm();
         }
-      }),
-    addChannel: ({ close, name }) => socket.connected
-      && socket.emit('newChannel', { name }, (r) => {
+      });
+    },
+    addChannel: ({ close, name, setSubmitting }) => {
+      if (socket.connected === false) {
+        return setSubmitting(false);
+      }
+      return socket.emit('newChannel', { name }, (r) => {
         if (r.status === 'ok') {
           close();
         }
-      }),
-    renameChannel: ({ id, close, name }) => socket.connected
-      && socket.emit('renameChannel', { id, name }, (r) => {
+      });
+    },
+    renameChannel: ({
+      id, close, name, setSubmitting,
+    }) => {
+      if (socket.connected === false) {
+        return setSubmitting(false);
+      }
+      return socket.emit('renameChannel', { id, name }, (r) => {
         if (r.status === 'ok') {
           close();
         }
-      }),
-    removeChannel: ({ close, id }) => socket.connected
-      && socket.emit('removeChannel', { id }, (r) => {
+      });
+    },
+    removeChannel: ({ close, id, setSubmitting }) => {
+      if (socket.connected === false) {
+        return setSubmitting(false);
+      }
+      return socket.emit('removeChannel', { id }, (r) => {
         if (r.status === 'ok') {
           close();
         }
-      }),
+      });
+    },
   };
 
   // socket.on('reconnect', async () => { // не работает, поменять на socket.io.on
