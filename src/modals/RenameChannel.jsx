@@ -15,12 +15,12 @@ const { minLength, maxLength } = itemsLength;
 
 const generateRename = ({
   close, currentChannalId, renameChannel,
-}) => (value, { setSubmitting }) => {
+}) => (value, { setErrors, setSubmitting }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
 
   renameChannel({
-    id, close, name, setSubmitting,
+    id, close, name, setErrors, setSubmitting,
   });
 };
 
@@ -44,19 +44,13 @@ const RenameChannel = ({ close, channels }) => {
   const { renameChannel } = useContext(ApiContext);
   const channelId = useSelector(getChannelId);
 
-  const channelsNames = channels
-    .map((ch) => ch.name);
-  const currentChannel = channels
-    .find((channel) => channel.id === channelId);
+  const channelsNames = channels.map((ch) => ch.name);
+  const currentChannel = channels.find((channel) => channel.id === channelId);
   const { name } = currentChannel;
   const currentChannalId = currentChannel.id;
 
   const formik = useFormik({
-    initialValues: {
-      channelName: name,
-    },
-    validateOnBlur: false,
-    validateOnChange: false,
+    initialValues: { channelName: name },
     validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateRename({ close, currentChannalId, renameChannel }),
   });

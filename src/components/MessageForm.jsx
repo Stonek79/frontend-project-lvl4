@@ -14,14 +14,16 @@ const { messageMax } = itemsLength;
 
 const handleSubmit = ({
   currentChannelId, loggedIn, sendMessage,
-}) => (values, { resetForm, setSubmitting }) => {
+}) => (values, { resetForm, setErrors, setSubmitting }) => {
   const message = {
     user: loggedIn.username,
     channelId: currentChannelId,
     text: values.message,
   };
 
-  sendMessage({ message, resetForm, setSubmitting });
+  sendMessage({
+    message, resetForm, setErrors, setSubmitting,
+  });
 };
 
 const validationSchema = Yup.object({

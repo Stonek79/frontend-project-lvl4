@@ -9,9 +9,11 @@ import ApiContext from '../context/ApiContext.jsx';
 
 const generateRemove = ({
   close, currentChannalId, removeChannel,
-}) => (value, { setSubmitting }) => {
+}) => (value, { setErrors, setSubmitting }) => {
   const id = currentChannalId;
-  removeChannel({ close, id, setSubmitting });
+  removeChannel({
+    close, id, setErrors, setSubmitting,
+  });
 };
 
 const Spinner = (name, t) => (
@@ -27,9 +29,7 @@ const RemoveChannel = ({ close }) => {
 
   const currentChannalId = useSelector(getChannelId);
   const formik = useFormik({
-    initialValues: {
-      channelInfo: '',
-    },
+    initialValues: { channelInfo: '' },
     onSubmit: generateRemove({ close, currentChannalId, removeChannel }),
   });
 

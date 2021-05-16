@@ -11,9 +11,11 @@ import ApiContext from '../context/ApiContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const generateSubmit = ({ addChannel, close }) => (value, { setSubmitting }) => {
+const generateSubmit = ({ addChannel, close }) => (value, { setErrors, setSubmitting }) => {
   const name = value.channelName.trim();
-  addChannel({ close, name, setSubmitting });
+  addChannel({
+    close, name, setErrors, setSubmitting,
+  });
 };
 
 const Spinner = (name, t) => (
@@ -38,11 +40,7 @@ const CreateChannel = ({ close, channels }) => {
   const channelsNames = channels.map((ch) => ch.name);
 
   const formik = useFormik({
-    initialValues: {
-      channelName: '',
-    },
-    validateOnBlur: false,
-    validateOnChange: false,
+    initialValues: { channelName: '' },
     validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateSubmit({ addChannel, close }),
   });
