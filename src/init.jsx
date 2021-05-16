@@ -2,7 +2,7 @@
 import React from 'react';
 // import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
-import { I18nextProvider, initReactI18next, useTranslation } from 'react-i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
 import i18next from 'i18next';
 
@@ -30,13 +30,12 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const { t } = useTranslation();
   const api = {
     sendMessage: ({
       message, resetForm, setErrors, setSubmitting,
     }) => {
       if (socket.connected === false) {
-        setErrors({ message: t('errors.netError') });
+        setErrors({ message: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
       return socket.emit('newMessage', message, (r) => {
@@ -49,7 +48,7 @@ export default async (socket) => {
       close, name, setErrors, setSubmitting,
     }) => {
       if (socket.connected === false) {
-        setErrors({ channelName: t('errors.netError') });
+        setErrors({ channelName: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
       return socket.emit('newChannel', { name }, (r) => {
@@ -62,7 +61,7 @@ export default async (socket) => {
       id, close, name, setErrors, setSubmitting,
     }) => {
       if (socket.connected === false) {
-        setErrors({ channelName: t('errors.netError') });
+        setErrors({ channelName: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
       return socket.emit('renameChannel', { id, name }, (r) => {
@@ -75,7 +74,7 @@ export default async (socket) => {
       close, id, setErrors, setSubmitting,
     }) => {
       if (socket.connected === false) {
-        setErrors({ channelInfo: t('errors.netError') });
+        setErrors({ channelInfo: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
       return socket.emit('removeChannel', { id }, (r) => {
