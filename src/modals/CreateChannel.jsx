@@ -11,9 +11,9 @@ import ApiContext from '../context/ApiContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const generateSubmit = ({ addChannel, close }) => (value) => {
+const generateSubmit = ({ addChannel, close }) => (value, { setSubmitting }) => {
   const name = value.channelName.trim();
-  addChannel({ close, name });
+  addChannel({ close, name, setSubmitting });
 };
 
 const Spinner = (name, t) => (

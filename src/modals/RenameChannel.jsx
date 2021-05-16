@@ -13,11 +13,15 @@ import ApiContext from '../context/ApiContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const generateRename = ({ close, currentChannalId, renameChannel }) => (value) => {
+const generateRename = ({
+  close, currentChannalId, renameChannel,
+}) => (value, { setSubmitting }) => {
   const name = value.channelName.trim();
   const id = currentChannalId;
 
-  renameChannel({ id, close, name });
+  renameChannel({
+    id, close, name, setSubmitting,
+  });
 };
 
 const Spinner = (name, t) => (

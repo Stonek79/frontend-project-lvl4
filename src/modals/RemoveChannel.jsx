@@ -7,9 +7,11 @@ import { Button, FormGroup, Modal } from 'react-bootstrap';
 import { getChannelId } from '../slices/modalSlice.js';
 import ApiContext from '../context/ApiContext.jsx';
 
-const generateRemove = ({ close, currentChannalId, removeChannel }) => () => {
+const generateRemove = ({
+  close, currentChannalId, removeChannel,
+}) => (value, { setSubmitting }) => {
   const id = currentChannalId;
-  removeChannel({ close, id });
+  removeChannel({ close, id, setSubmitting });
 };
 
 const Spinner = (name, t) => (
