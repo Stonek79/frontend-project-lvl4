@@ -51,7 +51,7 @@ const MainPage = () => {
       if (!mounted.state) {
         setData(true);
         console.log(reconnect(), id, 'LOG');
-        return reconnect() && updateCurrentStore(data, id);
+        return (reconnect() && updateCurrentStore(data, id)) || updateCurrentStore(data, id);
       }
 
       return data;
