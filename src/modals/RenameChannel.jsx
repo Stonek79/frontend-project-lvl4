@@ -24,19 +24,19 @@ const generateRename = ({
   });
 };
 
-const Spinner = (name, t) => (
+const Spinner = (name) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { t(name) }
+    { name }
   </>
 );
 
-const validationSchema = ({ channelsNames, t }) => Yup.object({
+const validationSchema = ({ channelsNames }) => Yup.object({
   channelName: Yup.string().trim()
-    .min(minLength, t('errors.length'))
-    .max(maxLength, t('errors.length'))
-    .notOneOf(channelsNames, t('errors.uniq'))
-    .required(t('errors.required')),
+    .min(minLength, 'errors.length')
+    .max(maxLength, 'errors.length')
+    .notOneOf(channelsNames, 'errors.uniq')
+    .required('errors.required'),
 });
 
 const RenameChannel = ({ close, channels }) => {
@@ -52,7 +52,7 @@ const RenameChannel = ({ close, channels }) => {
   const formik = useFormik({
     initialValues: { channelName: name },
     validateOnChange: false,
-    validationSchema: validationSchema({ channelsNames, t }),
+    validationSchema: validationSchema({ channelsNames }),
     onSubmit: generateRename({ close, currentChannalId, renameChannel }),
   });
 
@@ -82,7 +82,7 @@ const RenameChannel = ({ close, channels }) => {
             />
           </InputGroup>
         </Form>
-        <FormGroup className="text-danger">{formik.errors.channelName}</FormGroup>
+        <FormGroup className="text-danger">{t(formik.errors.channelName)}</FormGroup>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
@@ -99,7 +99,7 @@ const RenameChannel = ({ close, channels }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('process.sending', t) : t('modals.send')}
+          {formik.isSubmitting ? Spinner(t('process.sending')) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

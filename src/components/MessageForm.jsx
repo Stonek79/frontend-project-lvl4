@@ -32,10 +32,10 @@ const validationSchema = Yup.object({
     .required(''),
 });
 
-const Spinner = (name, t) => (
+const Spinner = (name) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { t(name) }
+    { name }
   </>
 );
 
@@ -77,7 +77,7 @@ const MessageForm = ({ currentChannelId }) => {
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? Spinner('process.sending', t) : t('mainPage.send')}
+            {formik.isSubmitting ? Spinner(t('process.sending')) : t('mainPage.send')}
           </Button>
         </InputGroup>
         <FormGroup className="text-danger">{formik.errors.message}</FormGroup>

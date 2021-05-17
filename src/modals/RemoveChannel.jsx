@@ -16,10 +16,10 @@ const generateRemove = ({
   });
 };
 
-const Spinner = (name, t) => (
+const Spinner = (name) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { t(name) }
+    { name }
   </>
 );
 
@@ -57,7 +57,7 @@ const RemoveChannel = ({ close }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner('process.removing', t) : t('modals.remove')}
+          {formik.isSubmitting ? Spinner(t('process.removing')) : t('modals.remove')}
         </Button>
       </Modal.Footer>
     </>

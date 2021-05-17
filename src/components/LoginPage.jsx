@@ -36,7 +36,7 @@ const LoginPage = () => {
         history.replace(from);
       } catch (err) {
         console.log(err);
-        setErrors({ password: t(err.message === 'Network Error' ? 'errors.netError' : 'errors.logError') });
+        setErrors({ password: err.message === 'Network Error' ? 'errors.netError' : 'errors.logError' });
       }
     },
   });
@@ -73,7 +73,7 @@ const LoginPage = () => {
               value={formik.values.password}
               isInvalid={formik.errors.password}
             />
-            <FormGroup className="text-danger">{formik.errors.password}</FormGroup>
+            <FormGroup className="text-danger">{t(formik.errors.password)}</FormGroup>
           </FormGroup>
           <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('login.logIn')}</Button>
           <div className="d-flex flex-column align-items-center">

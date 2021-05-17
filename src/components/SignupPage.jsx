@@ -14,18 +14,18 @@ import { itemsLength } from '../constants';
 
 const { minLength, minPassLength, maxLength } = itemsLength;
 
-const validationSchema = (t) => Yup.object({
+const validationSchema = Yup.object({
   username: Yup.string().trim()
-    .min(minLength, t('errors.length'))
-    .max(maxLength, t('errors.length'))
-    .required(t('errors.required')),
+    .min(minLength, 'errors.length')
+    .max(maxLength, 'errors.length')
+    .required('errors.required'),
   password: Yup.string().trim()
-    .min(minPassLength, t('errors.passMin'))
-    .max(maxLength, t('errors.passMax'))
-    .required(t('errors.required')),
+    .min(minPassLength, 'errors.passMin')
+    .max(maxLength, 'errors.passMax')
+    .required('errors.required'),
   passwordConfirm: Yup.string().trim()
-    .oneOf([Yup.ref('password'), null], t('errors.confirm'))
-    .required(t('errors.required')),
+    .oneOf([Yup.ref('password'), null], 'errors.confirm')
+    .required('errors.required'),
 });
 
 const SignupPage = () => {
@@ -45,7 +45,7 @@ const SignupPage = () => {
       passwordConfirm: '',
     },
     validateOnChange: false,
-    validationSchema: validationSchema(t),
+    validationSchema,
     onSubmit: async (value, { setErrors }) => {
       const { signupPath } = routes;
       try {
@@ -65,7 +65,7 @@ const SignupPage = () => {
           return 'errors.someError';
         };
         nameInput.current.select();
-        setErrors({ username: ' ', password: ' ', passwordConfirm: t(getError(err)) });
+        setErrors({ username: ' ', password: ' ', passwordConfirm: getError(err) });
       }
     },
   });
@@ -91,7 +91,7 @@ const SignupPage = () => {
               isInvalid={formik.touched.username && Boolean(formik.errors.username)}
             />
             <FormGroup className="text-danger small">
-              {formik.touched.username
+              {t(formik.touched.username)
               && Boolean(formik.errors.username)
               && formik.errors.username}
             </FormGroup>
@@ -112,7 +112,7 @@ const SignupPage = () => {
               isInvalid={formik.touched.password && Boolean(formik.errors.password)}
             />
             <FormGroup className="text-danger small">
-              {formik.touched.password
+              {t(formik.touched.password)
               && Boolean(formik.errors.password)
               && formik.errors.password}
             </FormGroup>
@@ -133,7 +133,7 @@ const SignupPage = () => {
               isInvalid={formik.touched.passwordConfirm && Boolean(formik.errors.passwordConfirm)}
             />
             <FormGroup className="text-danger small">
-              {formik.touched.passwordConfirm
+              {t(formik.touched.passwordConfirm)
               && Boolean(formik.errors.passwordConfirm)
               && formik.errors.passwordConfirm}
             </FormGroup>
