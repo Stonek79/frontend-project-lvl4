@@ -51,6 +51,7 @@ const RenameChannel = ({ close, channels }) => {
 
   const formik = useFormik({
     initialValues: { channelName: name },
+    validateOnChange: false,
     validationSchema: validationSchema({ channelsNames, t }),
     onSubmit: generateRename({ close, currentChannalId, renameChannel }),
   });
@@ -76,7 +77,6 @@ const RenameChannel = ({ close, channels }) => {
               maxLength={20}
               value={formik.values.channelName}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
               disabled={formik.isSubmitting}
               isInvalid={formik.errors.channelName}
             />

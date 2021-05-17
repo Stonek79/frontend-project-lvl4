@@ -42,7 +42,7 @@ export default async (socket) => {
       close, name, setErrors, setSubmitting,
     }) => {
       if (!socket.connected) {
-        setErrors({ channelName: i18n.t('errors.netError') });
+        setErrors({ channelName: 'errors.netError' });
         return setSubmitting(false);
       }
       return socket.emit('newChannel', { name }, (r) => r.status === 'ok' && close());
