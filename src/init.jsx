@@ -83,11 +83,11 @@ export default async (socket) => {
         }
       });
     },
-    reconnect: () => {
+    reconnect: (func) => {
       socket.on('connect', () => {
         console.log(socket.connected, 'reconnect');
+        return func;
       });
-      return socket.connected;
     },
   };
 
