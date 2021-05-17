@@ -84,7 +84,10 @@ export default async (socket) => {
       });
     },
     reconnect: () => {
-      socket.on('connect', () => socket.connected);
+      socket.on('connect', () => {
+        console.log(socket.connected, 'reconnect');
+      });
+      return socket.connected;
     },
   };
 

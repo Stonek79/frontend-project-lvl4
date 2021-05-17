@@ -50,9 +50,8 @@ const MainPage = () => {
       const { data } = await axios.get(currentData(), { headers: authorization });
       if (!mounted.state) {
         setData(true);
-        reconnect();
         console.log(reconnect(), id, 'LOG');
-        return (reconnect() && updateCurrentStore(data, id)) || updateCurrentStore(data, id);
+        return reconnect() && updateCurrentStore(data, id);
       }
 
       return data;
