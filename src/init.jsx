@@ -1,6 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-// import axios from 'axios';
 import { configureStore } from '@reduxjs/toolkit';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
@@ -11,7 +10,6 @@ import ApiContext from './context/ApiContext.jsx';
 import resources from './resources/index.js';
 import rootReducer from './slices/index.js';
 
-// import routes from './routes';
 import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel,
@@ -34,60 +32,38 @@ export default async (socket) => {
     sendMessage: ({
       message, resetForm, setErrors, setSubmitting,
     }) => {
-      if (socket.connected === false) {
+      if (!socket.connected) {
         setErrors({ message: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
-      return socket.emit('newMessage', message, (r) => {
-        if (r.status === 'ok') {
-          resetForm();
-        }
-      });
+      return socket.emit('newMessage', message, (r) => r.status === 'ok' && resetForm());
     },
     addChannel: ({
       close, name, setErrors, setSubmitting,
     }) => {
-      if (socket.connected === false) {
+      if (!socket.connected) {
         setErrors({ channelName: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
-      return socket.emit('newChannel', { name }, (r) => {
-        if (r.status === 'ok') {
-          close();
-        }
-      });
+      return socket.emit('newChannel', { name }, (r) => r.status === 'ok' && close());
     },
     renameChannel: ({
       id, close, name, setErrors, setSubmitting,
     }) => {
-      if (socket.connected === false) {
+      if (!socket.connected) {
         setErrors({ channelName: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
-      return socket.emit('renameChannel', { id, name }, (r) => {
-        if (r.status === 'ok') {
-          close();
-        }
-      });
+      return socket.emit('renameChannel', { id, name }, (r) => r.status === 'ok' && close());
     },
     removeChannel: ({
       close, id, setErrors, setSubmitting,
     }) => {
-      if (socket.connected === false) {
+      if (!socket.connected) {
         setErrors({ channelInfo: i18n.t('errors.netError') });
         return setSubmitting(false);
       }
-      return socket.emit('removeChannel', { id }, (r) => {
-        if (r.status === 'ok') {
-          close();
-        }
-      });
-    },
-    reconnect: (func) => {
-      socket.on('connect', () => {
-        console.log(socket.connected, 'reconnect');
-        return func;
-      });
+      return socket.emit('removeChannel', { id }, (r) => r.status === 'ok' && close());
     },
   };
 

@@ -10,7 +10,6 @@ import MessageBox from './MessageBox.jsx';
 import ModalComponent from './Modal.jsx';
 import routes from '../routes.js';
 import { getCurrentChannelId, updateChannels } from '../slices/channelSlice.js';
-import ApiContext from '../context/ApiContext.jsx';
 
 const ChatBox = () => (
   <div className="row flex-grow-1 h-75 pb-3">
@@ -31,7 +30,6 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { getAuthHeader } = useContext(AuthContext);
-  const { reconnect } = useContext(ApiContext);
   const [hasData, setData] = useState(false);
   const id = useSelector(getCurrentChannelId);
 
@@ -51,7 +49,6 @@ const MainPage = () => {
       if (!mounted.state) {
         setData(true);
         console.log(id, 'LOG');
-        reconnect(updateCurrentStore(data, id));
         return updateCurrentStore(data, id);
       }
 
