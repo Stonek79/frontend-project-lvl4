@@ -1,6 +1,6 @@
 /* eslint-disable no-return-assign */
 import React, { useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
@@ -9,7 +9,7 @@ import ChannelBox from './ChannelBox.jsx';
 import MessageBox from './MessageBox.jsx';
 import ModalComponent from './Modal.jsx';
 import routes from '../routes.js';
-import { updateChannels } from '../slices/channelSlice.js';
+import { getCurrentChannelId, updateChannels } from '../slices/channelSlice.js';
 import ApiContext from '../context/ApiContext.jsx';
 
 const ChatBox = () => (
@@ -33,14 +33,14 @@ const MainPage = () => {
   const { getAuthHeader } = useContext(AuthContext);
   const { reconnect } = useContext(ApiContext);
   const [hasData, setData] = useState(false);
+  const id = useSelector(getCurrentChannelId);
 
   const { authorization } = getAuthHeader();
   const { currentData } = routes;
 
-  const updateCurrentStore = (data, id) => {
-    const { channels, currentChannelId, messages } = data;
-    const currentId = id ?? currentChannelId;
-    dispatch(updateChannels({ channels, currentChannelId: currentId, messages }));
+  const updateCurrentStore = (data, currentChannelId) => {
+    const { channels, messages } = data;
+    dispatch(updateChannels({ channels, currentChannelId, messages }));
   };
 
   useEffect(() => {
@@ -51,8 +51,8 @@ const MainPage = () => {
       if (!mounted.state) {
         setData(true);
         reconnect();
-        console.log('LOG');
-        return updateCurrentStore(data);
+        console.log(reconnect(), id, 'LOG');
+        return (reconnect() && updateCurrentStore(data, id)) || updateCurrentStore(data, id);
       }
 
       return data;

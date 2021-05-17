@@ -7,7 +7,7 @@ const channelSlice = createSlice({
   name: 'channelData',
   initialState: {
     channels: [],
-    currentChannelId: '',
+    currentChannelId: 1,
   },
   reducers: {
     addChannel(state, action) {
