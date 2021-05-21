@@ -8,15 +8,9 @@ import {
 
 import { itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
+import { setCurrentChannelId } from '../slices/channelSlice.js';
 
 const { minLength, maxLength } = itemsLength;
-
-const generateSubmit = ({ addChannel, close }) => (value, { setErrors, setSubmitting }) => {
-  const name = value.channelName.trim();
-  addChannel({
-    close, name, setErrors, setSubmitting,
-  });
-};
 
 const Spinner = (name) => (
   <>
@@ -25,25 +19,35 @@ const Spinner = (name) => (
   </>
 );
 
-const validationSchema = ({ channelsNames }) => Yup.object({
-  channelName: Yup.string().trim()
-    .min(minLength, 'errors.length')
-    .max(maxLength, 'errors.length')
-    .notOneOf(channelsNames, 'errors.uniq')
-    .required('errors.required'),
-});
-
-const CreateChannel = ({ close, channels }) => {
+const CreateChannel = ({ close, channels, dispatch }) => {
   const { t } = useTranslation();
   const { addChannel } = useContext(ApiContext);
-
   const channelsNames = channels.map((ch) => ch.name);
 
   const formik = useFormik({
     initialValues: { channelName: '' },
     validateOnChange: false,
-    validationSchema: validationSchema({ channelsNames }),
-    onSubmit: generateSubmit({ addChannel, close }),
+    validationSchema: Yup.object({
+      channelName: Yup.string().trim()
+        .min(minLength, 'errors.length')
+        .max(maxLength, 'errors.length')
+        .notOneOf(channelsNames, 'errors.uniq')
+        .required('errors.required'),
+    }),
+    onSubmit: (initialValues, { setErrors, setSubmitting }) => {
+      const name = initialValues.channelName.trim();
+      try {
+        addChannel({ name }, (res) => {
+          const { id } = res.data;
+          dispatch(setCurrentChannelId({ id }));
+        });
+        close();
+      } catch (err) {
+        console.log(err);
+        setErrors({ channelName: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setTimeout(() => setSubmitting(false), 3000);
+      }
+    },
   });
 
   const textInput = useRef(null);

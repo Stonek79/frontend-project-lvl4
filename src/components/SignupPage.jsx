@@ -14,20 +14,6 @@ import { itemsLength } from '../constants';
 
 const { minLength, minPassLength, maxLength } = itemsLength;
 
-const validationSchema = Yup.object({
-  username: Yup.string().trim()
-    .min(minLength, 'errors.length')
-    .max(maxLength, 'errors.length')
-    .required('errors.required'),
-  password: Yup.string().trim()
-    .min(minPassLength, 'errors.passMin')
-    .max(maxLength, 'errors.passMax')
-    .required('errors.required'),
-  passwordConfirm: Yup.string().trim()
-    .oneOf([Yup.ref('password'), null], 'errors.confirm')
-    .required('errors.required'),
-});
-
 const SignupPage = () => {
   const { t } = useTranslation();
   const { logIn } = useContext(AuthContext);
@@ -38,6 +24,30 @@ const SignupPage = () => {
     nameInput.current.focus();
   }, [nameInput]);
 
+  const validationSchema = Yup.object({
+    username: Yup.string().trim()
+      .min(minLength, 'errors.length')
+      .max(maxLength, 'errors.length')
+      .required('errors.required'),
+    password: Yup.string().trim()
+      .min(minPassLength, 'errors.passMin')
+      .max(maxLength, 'errors.passMax')
+      .required('errors.required'),
+    passwordConfirm: Yup.string().trim()
+      .oneOf([Yup.ref('password'), null], 'errors.confirm')
+      .required('errors.required'),
+  });
+
+  const getError = (e) => {
+    if (e.response.status === 409) {
+      return 'errors.exist';
+    }
+    if (e.response.statusText === 'Network Error') {
+      return 'errors.netError';
+    }
+    return 'errors.someError';
+  };
+
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -47,23 +57,13 @@ const SignupPage = () => {
     validateOnChange: false,
     validationSchema,
     onSubmit: async (value, { setErrors }) => {
-      const { signupPath } = routes;
+      const { chatPagePath, signupPath } = routes;
       try {
         const { data } = await axios.post(signupPath(), value);
-        const { token, username } = data;
-        logIn({ token, username });
-        history.push('/');
+        logIn(data);
+        history.push(chatPagePath());
       } catch (err) {
         console.log(err);
-        const getError = (e) => {
-          if (e.message.includes('409')) {
-            return 'errors.exist';
-          }
-          if (e.message.includes('Network Error')) {
-            return 'errors.netError';
-          }
-          return 'errors.someError';
-        };
         nameInput.current.select();
         setErrors({ username: ' ', password: ' ', passwordConfirm: getError(err) });
       }
@@ -91,9 +91,9 @@ const SignupPage = () => {
               isInvalid={formik.touched.username && Boolean(formik.errors.username)}
             />
             <FormGroup className="text-danger small">
-              {t(formik.touched.username)
+              {formik.touched.username
               && Boolean(formik.errors.username)
-              && formik.errors.username}
+              && t(formik.errors.username)}
             </FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
@@ -112,9 +112,9 @@ const SignupPage = () => {
               isInvalid={formik.touched.password && Boolean(formik.errors.password)}
             />
             <FormGroup className="text-danger small">
-              {t(formik.touched.password)
+              {formik.touched.password
               && Boolean(formik.errors.password)
-              && formik.errors.password}
+              && t(formik.errors.password)}
             </FormGroup>
           </FormGroup>
           <FormGroup className="form-group">
@@ -133,9 +133,9 @@ const SignupPage = () => {
               isInvalid={formik.touched.passwordConfirm && Boolean(formik.errors.passwordConfirm)}
             />
             <FormGroup className="text-danger small">
-              {t(formik.touched.passwordConfirm)
+              {formik.touched.passwordConfirm
               && Boolean(formik.errors.passwordConfirm)
-              && formik.errors.passwordConfirm}
+              && t(formik.errors.passwordConfirm)}
             </FormGroup>
           </FormGroup>
           <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('register.toSignup')}</Button>

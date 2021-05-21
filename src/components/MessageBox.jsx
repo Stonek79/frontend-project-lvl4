@@ -30,7 +30,7 @@ const MessageBox = () => {
   }, [messages, currentChannelId]);
 
   return (
-    <FormGroup className="col h-100">
+    <FormGroup className="col h-100 border border-light">
       <FormGroup className="d-flex flex-column h-100">
         <FormGroup id="message-box" className="chat-messages overflow-auto mb-3">
           {currentMessages.map(Message)}

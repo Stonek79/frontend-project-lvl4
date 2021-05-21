@@ -7,15 +7,6 @@ import { Button, FormGroup, Modal } from 'react-bootstrap';
 import { getChannelId } from '../slices/modalSlice.js';
 import ApiContext from '../context/ApiContext.jsx';
 
-const generateRemove = ({
-  close, currentChannalId, removeChannel,
-}) => (value, { setErrors, setSubmitting }) => {
-  const id = currentChannalId;
-  removeChannel({
-    close, id, setErrors, setSubmitting,
-  });
-};
-
 const Spinner = (name) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
@@ -27,10 +18,20 @@ const RemoveChannel = ({ close }) => {
   const { t } = useTranslation();
   const { removeChannel } = useContext(ApiContext);
 
-  const currentChannalId = useSelector(getChannelId);
+  const id = useSelector(getChannelId);
+
   const formik = useFormik({
     initialValues: { channelInfo: '' },
-    onSubmit: generateRemove({ close, currentChannalId, removeChannel }),
+    onSubmit: (initialValues, { setErrors, setSubmitting }) => {
+      try {
+        removeChannel({ id }, (res) => res);
+        close();
+      } catch (err) {
+        console.log(err);
+        setErrors({ channelInfo: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setTimeout(() => setSubmitting(false), 3000);
+      }
+    },
   });
 
   return (

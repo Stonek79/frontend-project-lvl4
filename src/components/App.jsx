@@ -5,6 +5,7 @@ import {
   Switch,
   Route,
   Redirect,
+  useLocation,
 } from 'react-router-dom';
 
 import AuthContext from '../context/AuthContext.jsx';
@@ -14,33 +15,31 @@ import Navbar from './Navbar.jsx';
 import SignupPage from './SignupPage.jsx';
 import routes from '../routes.js';
 
+const { chatPagePath, loginPagePath, signupPagePath } = routes;
+
 const getAuthHeader = () => {
   const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
-  if (userLoginData && userLoginData.token) {
-    return { authorization: { Authorization: `Bearer ${userLoginData.token}` } };
-  }
-
-  return {};
+  return userLoginData?.token
+    ? { Authorization: `Bearer ${userLoginData.token}` } : {};
 };
 
 const AuthProvider = ({ children }) => {
-  const getStorageUserData = localStorage.getItem('userLoginData');
-  const userData = getStorageUserData ? JSON.parse(getStorageUserData) : false;
-  const [loggedIn, setLoggedIn] = useState(userData);
+  const userData = JSON.parse(localStorage.getItem('userLoginData'));
+  const [user, setUser] = useState(userData ? userData.username : false);
 
-  const logIn = ({ token, username }) => {
-    localStorage.setItem('userLoginData', JSON.stringify({ token, username }));
-    setLoggedIn({ token, username });
+  const logIn = (userLoginData) => {
+    localStorage.setItem('userLoginData', JSON.stringify(userLoginData));
+    setUser(userLoginData.username);
   };
 
   const logOut = () => {
     localStorage.removeItem('userLoginData');
-    setLoggedIn(false);
+    setUser(false);
   };
 
   return (
     <AuthContext.Provider value={{
-      getAuthHeader, loggedIn, logIn, logOut,
+      getAuthHeader, user, logIn, logOut,
     }}
     >
       {children}
@@ -48,14 +47,16 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-const PrivateRout = ({ children, ...props }) => {
-  const { loggedIn } = useContext(AuthContext);
+const PrivateRoute = ({ children, ...props }) => {
+  const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const { from } = location.state || { from: { pathname: loginPagePath() } };
 
   return (
     <Route
       {...props}
       render={() => (
-        loggedIn ? (children) : (<Redirect to={routes.login()} />)
+        user ? (children) : (<Redirect to={from} />)
       )}
     />
   );
@@ -68,15 +69,15 @@ const App = () => (
         <Navbar />
 
         <Switch>
-          <Route path={routes.login()}>
+          <Route path={loginPagePath()}>
             <LoginPage />
           </Route>
-          <Route path={routes.signup()}>
+          <Route path={signupPagePath()}>
             <SignupPage />
           </Route>
-          <PrivateRout exact path={routes.mainpage()}>
+          <PrivateRoute exact path={chatPagePath()}>
             <ChatPage />
-          </PrivateRout>
+          </PrivateRoute>
         </Switch>
       </div>
     </Router>

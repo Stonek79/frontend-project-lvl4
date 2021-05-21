@@ -13,31 +13,12 @@ import ApiContext from '../context/ApiContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const generateRename = ({
-  close, currentChannalId, renameChannel,
-}) => (value, { setErrors, setSubmitting }) => {
-  const name = value.channelName.trim();
-  const id = currentChannalId;
-
-  renameChannel({
-    id, close, name, setErrors, setSubmitting,
-  });
-};
-
 const Spinner = (name) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
     { name }
   </>
 );
-
-const validationSchema = ({ channelsNames }) => Yup.object({
-  channelName: Yup.string().trim()
-    .min(minLength, 'errors.length')
-    .max(maxLength, 'errors.length')
-    .notOneOf(channelsNames, 'errors.uniq')
-    .required('errors.required'),
-});
 
 const RenameChannel = ({ close, channels }) => {
   const { t } = useTranslation();
@@ -46,14 +27,31 @@ const RenameChannel = ({ close, channels }) => {
 
   const channelsNames = channels.map((ch) => ch.name);
   const currentChannel = channels.find((channel) => channel.id === channelId);
-  const { name } = currentChannel;
-  const currentChannalId = currentChannel.id;
+  const currentChannelName = currentChannel.name;
+  const { id } = currentChannel;
 
   const formik = useFormik({
-    initialValues: { channelName: name },
+    initialValues: { channelName: currentChannelName },
     validateOnChange: false,
-    validationSchema: validationSchema({ channelsNames }),
-    onSubmit: generateRename({ close, currentChannalId, renameChannel }),
+    validationSchema: Yup.object({
+      channelName: Yup.string().trim()
+        .min(minLength, 'errors.length')
+        .max(maxLength, 'errors.length')
+        .notOneOf(channelsNames, 'errors.uniq')
+        .required('errors.required'),
+    }),
+    onSubmit: (initialValues, { setErrors, setSubmitting }) => {
+      const name = initialValues.channelName.trim();
+
+      try {
+        renameChannel({ id, name }, (r) => r);
+        close();
+      } catch (err) {
+        console.log(err);
+        setErrors({ channelName: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setTimeout(() => setSubmitting(false), 3000);
+      }
+    },
   });
 
   const textInput = useRef();

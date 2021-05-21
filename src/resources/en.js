@@ -54,5 +54,9 @@ export default {
       toSignup: 'Signup',
       username: 'User name',
     },
+    theme: {
+      dark: 'Dark mode',
+      light: 'Light mode',
+    },
   },
 };

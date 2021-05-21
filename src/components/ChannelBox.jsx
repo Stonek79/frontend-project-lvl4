@@ -9,7 +9,7 @@ import ChannelItem from './ChannelItem.jsx';
 import { openModal } from '../slices/modalSlice.js';
 import { modalTypes } from '../constants.js';
 import {
-  addChannelId, getChannels, getCurrentChannelId,
+  setCurrentChannelId, getChannels, getCurrentChannelId,
 } from '../slices/channelSlice.js';
 
 const { add, remove, rename } = modalTypes;
@@ -17,7 +17,7 @@ const { add, remove, rename } = modalTypes;
 const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: add }));
 const handleRemoveChannel = (dispatch, id) => () => dispatch(openModal({ type: remove, id }));
 const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({ type: rename, id }));
-const handleChangeChannel = (dispatch, id) => () => dispatch(addChannelId({ id }));
+const handleChangeChannel = (dispatch, id) => () => dispatch(setCurrentChannelId({ id }));
 
 const ChannelBox = () => {
   const { t } = useTranslation();
@@ -27,8 +27,8 @@ const ChannelBox = () => {
 
   return (
     <>
-      <Form className="col-3 h-100">
-        <FormGroup className="d-flex mb-2">
+      <Form className="col-3 h-100 border border-light">
+        <FormGroup className="d-flex mt-2 mb-2">
           <FormLabel><b>{t('channels.channels')}</b></FormLabel>
           <Button
             type="button"

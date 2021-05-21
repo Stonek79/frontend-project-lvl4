@@ -12,26 +12,6 @@ import AuthContext from '../context/AuthContext.jsx';
 
 const { messageMax } = itemsLength;
 
-const handleSubmit = ({
-  currentChannelId, loggedIn, sendMessage,
-}) => (values, { resetForm, setErrors, setSubmitting }) => {
-  const message = {
-    user: loggedIn.username,
-    channelId: currentChannelId,
-    text: values.message,
-  };
-
-  sendMessage({
-    message, resetForm, setErrors, setSubmitting,
-  });
-};
-
-const validationSchema = Yup.object({
-  message: Yup.string().trim()
-    .max(messageMax)
-    .required(''),
-});
-
 const Spinner = (name) => (
   <>
     <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
@@ -42,13 +22,32 @@ const Spinner = (name) => (
 const MessageForm = ({ currentChannelId }) => {
   const { t } = useTranslation();
   const { sendMessage } = useContext(ApiContext);
-  const { loggedIn } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const formik = useFormik({
     initialValues: { message: '' },
     status: false,
-    validationSchema,
-    onSubmit: handleSubmit({ loggedIn, currentChannelId, sendMessage }),
+    validationSchema: Yup.object({
+      message: Yup.string().trim()
+        .max(messageMax)
+        .required(''),
+    }),
+    onSubmit: (initialValues, { resetForm, setErrors, setSubmitting }) => {
+      const message = {
+        user,
+        channelId: currentChannelId,
+        text: initialValues.message,
+      };
+
+      try {
+        sendMessage(message, (r) => r);
+        resetForm();
+      } catch (err) {
+        console.log(err);
+        setErrors({ message: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setTimeout(() => setSubmitting(false), 3000);
+      }
+    },
   });
 
   const textInput = useRef(null);

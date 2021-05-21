@@ -7,9 +7,9 @@ export default {
   currentData: () => [host, prefix, 'data'].join('/'),
   loginPath: () => [host, prefix, 'login'].join('/'),
   signupPath: () => [host, prefix, 'signup'].join('/'),
-  login: () => '/login',
-  signup: () => '/signup',
-  mainpage: () => '/',
+  loginPagePath: () => '/login',
+  signupPagePath: () => '/signup',
+  chatPagePath: () => '/',
 
   // вопрос о необходимости вот этих роутов:
   channelMessagesPath: (id) => [host, prefix, 'channels', id, 'messages'].join('/'),

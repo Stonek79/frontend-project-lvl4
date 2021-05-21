@@ -54,5 +54,9 @@ export default {
       toSignup: 'Зарегистрироваться',
       username: 'Имя пользователя',
     },
+    theme: {
+      dark: 'Тёмная тема',
+      light: 'Светлая тема',
+    },
   },
 };

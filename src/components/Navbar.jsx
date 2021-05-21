@@ -5,36 +5,30 @@ import { Link } from 'react-router-dom';
 
 import AuthContext from '../context/AuthContext.jsx';
 import routes from '../routes.js';
+import ThemeSwitch from './ThemeSwitch.jsx';
 
-const HexletButton = () => {
-  const { t } = useTranslation();
+const { chatPagePath, loginPagePath } = routes;
 
-  return (
-    <NavbarBootstrap.Brand className="mr-auto" as={Link} to={routes.mainpage()}>
-      {t('hexletChat')}
-    </NavbarBootstrap.Brand>
-  );
-};
-
-const LogOutButton = () => {
+const Navbar = () => {
   const { t } = useTranslation();
   const auth = useContext(AuthContext);
 
   return (
-    auth.loggedIn
-      && (
-      <Button onClick={auth.logOut} as={Link} to={routes.login()}>
-        {t('mainPage.logOut')}
-      </Button>
-      )
+    <NavbarBootstrap className="mb-3 bg-light expand-lg">
+      <NavbarBootstrap.Brand className="mr-auto" as={Link} to={chatPagePath()}>
+        {t('hexletChat')}
+      </NavbarBootstrap.Brand>
+      <>
+        {auth.user
+        && (
+        <Button onClick={auth.logOut} as={Link} to={loginPagePath()}>
+          {t('mainPage.logOut')}
+        </Button>
+        )}
+      </>
+      <ThemeSwitch />
+    </NavbarBootstrap>
   );
 };
-
-const Navbar = () => (
-  <NavbarBootstrap className="mb-3 bg-light expand-lg">
-    <HexletButton />
-    <LogOutButton />
-  </NavbarBootstrap>
-);
 
 export default Navbar;

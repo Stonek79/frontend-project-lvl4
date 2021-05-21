@@ -11,4 +11,11 @@ const modalTypes = {
   rename: 'renaming',
 };
 
-export { itemsLength, modalTypes };
+const actions = {
+  newChannel: 'newChannel',
+  removeChannel: 'removeChannel',
+  renameChannel: 'renameChannel',
+  newMessage: 'newMessage',
+};
+
+export { actions, itemsLength, modalTypes };

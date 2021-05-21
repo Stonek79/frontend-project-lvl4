@@ -21,22 +21,33 @@ const LoginPage = () => {
     nameInput.current.focus();
   }, [nameInput]);
 
+  const getError = (e) => {
+    if (e.response.status === 401) {
+      return 'errors.logError';
+    }
+    if (e.response.statusText === 'Network Error') {
+      return 'errors.netError';
+    }
+    return 'errors.someError';
+  };
+
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
+    validateOnChange: false,
     onSubmit: async (value, { setErrors }) => {
-      const { loginPath } = routes;
+      const { chatPagePath, loginPath } = routes;
       try {
         const { data } = await axios.post(loginPath(), value);
-        const { token, username } = data;
-        logIn({ token, username });
-        const { from } = location.state || { from: { pathname: '/' } };
+        logIn(data);
+        const { from } = location.state || { from: { pathname: chatPagePath() } };
         history.replace(from);
       } catch (err) {
-        console.log(err);
-        setErrors({ password: err.message === 'Network Error' ? 'errors.netError' : 'errors.logError' });
+        console.log(err.response);
+        nameInput.current.select();
+        setErrors({ password: getError(err) });
       }
     },
   });
@@ -57,7 +68,7 @@ const LoginPage = () => {
               required
               onChange={formik.handleChange}
               value={formik.values.username}
-              isInvalid={formik.errors.password}
+              isInvalid={formik.touched.password && Boolean(formik.errors.password)}
             />
           </FormGroup>
           <FormGroup className="form-group">
@@ -71,14 +82,14 @@ const LoginPage = () => {
               required
               onChange={formik.handleChange}
               value={formik.values.password}
-              isInvalid={formik.errors.password}
+              isInvalid={formik.touched.password && Boolean(formik.errors.password)}
             />
             <FormGroup className="text-danger">{t(formik.errors.password)}</FormGroup>
           </FormGroup>
           <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('login.logIn')}</Button>
           <div className="d-flex flex-column align-items-center">
             <span className="small mb-2">{t('login.noAccount')}</span>
-            <NavLink to="/signup">{t('login.signup')}</NavLink>
+            <NavLink to={routes.signupPagePath()}>{t('login.signup')}</NavLink>
           </div>
         </Form>
       </div>

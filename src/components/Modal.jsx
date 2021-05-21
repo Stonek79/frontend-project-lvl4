@@ -33,6 +33,7 @@ const ModalComponent = () => {
       <Component
         close={close}
         channels={channels}
+        dispatch={dispatch}
       />
     </Modal>
   );
