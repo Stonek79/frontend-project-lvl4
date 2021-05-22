@@ -42,6 +42,8 @@ export default async (socket) => {
 
   const reconnect = (func) => {
     socket.on('connect_error', () => {
+      if (socket.disconnected) console.log('???');
+      console.log(socket.connected, 'CON');
       // setTimeout(() => {
       socket.on('connect', () => {
         const id = store.getState().channels.currentChannelId;
