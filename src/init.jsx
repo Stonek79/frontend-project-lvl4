@@ -32,12 +32,9 @@ export default async (socket) => {
     socket.on('connect_error', () => {
       console.log('connect_error');
       socket.connect();
-    });
-    if (socket.connected) {
-      console.log('connected');
       func();
       store.dispatch(setCurrentChannelId({ id }));
-    }
+    });
   };
 
   const socketConnectionHandler = (action, data, func) => {
