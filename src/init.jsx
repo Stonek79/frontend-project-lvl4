@@ -31,11 +31,11 @@ export default async (socket) => {
   const reconnect = (func) => {
     socket.on('connect', () => {
       const id = store.getState().channels.currentChannelId;
-      const setId = () => store.dispatch(setCurrentChannelId({ id }));
       console.log(socket.connected, 'connect');
       if (socket.connected) {
-        func(setId);
+        func();
         console.log(id, 'ID');
+        store.dispatch(setCurrentChannelId({ id }));
       }
     });
   };
