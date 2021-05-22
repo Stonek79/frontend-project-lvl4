@@ -28,35 +28,35 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const reconnect = (func) => {
-    socket.on('connect', () => {
-      const id = store.getState().channels.currentChannelId;
-      console.log(socket.connected, 'connect');
-      if (socket.connected) {
-        func();
-        console.log(id, 'ID');
-        store.dispatch(setCurrentChannelId({ id }));
-      }
-    });
-  };
-
   // const reconnect = (func) => {
-  //   socket.on('connect_error', () => {
-  //     setTimeout(() => {
-  //       socket.on('connect', () => {
-  //         const id = store.getState().channels.currentChannelId;
-  //         console.log(socket.connected, 'connect');
-  //         if (socket.connected) {
-  //           func();
-  //           console.log(id, 'ID');
-  //           store.dispatch(setCurrentChannelId({ id }));
-  //         }
-  //       });
-  //     }, 3000);
-  //     console.log('connect_error');
-  //     // socket.connect();
+  //   socket.on('connect', () => {
+  //     const id = store.getState().channels.currentChannelId;
+  //     console.log(socket.connected, 'connect');
+  //     if (socket.connected) {
+  //       func();
+  //       console.log(id, 'ID');
+  //       store.dispatch(setCurrentChannelId({ id }));
+  //     }
   //   });
   // };
+
+  const reconnect = (func) => {
+    socket.on('connect_error', () => {
+      // setTimeout(() => {
+      socket.on('connect', () => {
+        const id = store.getState().channels.currentChannelId;
+        console.log(socket.connected, 'connect');
+        if (socket.connected) {
+          func();
+          console.log(id, 'ID');
+          store.dispatch(setCurrentChannelId({ id }));
+        }
+      });
+      // }, 3000);
+      console.log('connect_error');
+      // socket.connect();
+    });
+  };
 
   const socketConnectionHandler = (action, data, func) => {
     if (!socket.connected) {
