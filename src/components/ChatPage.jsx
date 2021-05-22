@@ -40,11 +40,13 @@ const MainPage = () => {
   useEffect(() => {
     const mounted = { state: false };
 
-    const getChatData = async () => {
+    const getChatData = async (setCurrentChennalId) => {
       const { data } = await axios.get(currentData(), { headers: authorization });
       if (!mounted.state) {
         setData(true);
         dispatch(updateChannels(data));
+        setCurrentChennalId();
+        console.log('chatData');
       }
     };
 

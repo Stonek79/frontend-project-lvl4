@@ -29,16 +29,14 @@ export default async (socket) => {
     });
 
   const reconnect = (func) => {
-    socket.volatile.on('connect', () => {
+    socket.on('connect', () => {
       const id = store.getState().channels.currentChannelId;
+      const setId = () => store.dispatch(setCurrentChannelId({ id }));
       console.log(socket.connected, 'connect');
       if (socket.connected) {
-        func();
+        func(setId);
         console.log(id, 'ID');
-        store.dispatch(setCurrentChannelId({ id }));
       }
-      // console.log('connect_error');
-      // socket.connect();
     });
   };
 
