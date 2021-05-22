@@ -36,6 +36,7 @@ export default async (socket) => {
           console.log(socket.connected, 'connect');
           if (socket.connected) {
             func();
+            console.log(id, 'ID');
             store.dispatch(setCurrentChannelId({ id }));
           }
         });
