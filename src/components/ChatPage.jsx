@@ -52,7 +52,7 @@ const MainPage = () => {
 
     reconnectSocket(getChatData);
 
-    // getChatData();
+    getChatData();
 
     return () => mounted.state = true;
   }, []);
