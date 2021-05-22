@@ -48,7 +48,7 @@ const RenameChannel = ({ close, channels }) => {
         close();
       } catch (err) {
         console.log(err);
-        setErrors({ channelName: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setErrors({ channelName: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
         setTimeout(() => setSubmitting(false), 3000);
       }
     },

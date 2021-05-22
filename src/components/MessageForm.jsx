@@ -44,7 +44,7 @@ const MessageForm = ({ currentChannelId }) => {
         resetForm();
       } catch (err) {
         console.log(err);
-        setErrors({ message: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setErrors({ message: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
         setTimeout(() => setSubmitting(false), 3000);
       }
     },

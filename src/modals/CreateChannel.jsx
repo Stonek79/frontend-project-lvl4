@@ -43,8 +43,8 @@ const CreateChannel = ({ close, channels, dispatch }) => {
         });
         close();
       } catch (err) {
-        console.log(err);
-        setErrors({ channelName: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        console.log(err.message);
+        setErrors({ channelName: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
         setTimeout(() => setSubmitting(false), 3000);
       }
     },
