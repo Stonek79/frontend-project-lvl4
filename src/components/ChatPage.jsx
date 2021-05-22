@@ -1,6 +1,6 @@
 /* eslint-disable no-return-assign */
 import React, { useContext, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
@@ -10,6 +10,8 @@ import MessageBox from './MessageBox.jsx';
 import ModalComponent from './Modal.jsx';
 import routes from '../routes.js';
 import { updateChannels } from '../slices/channelSlice.js';
+import ApiContext from '../context/ApiContext.jsx';
+import { getChannelId } from '../slices/modalSlice.js';
 
 const ChatBox = () => (
   <div className="row flex-grow-1 h-75 pb-3">
@@ -29,6 +31,8 @@ const Spinner = (info) => (
 const MainPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const id = useSelector(getChannelId);
+  const { reconnectSocket } = useContext(ApiContext);
   const { getAuthHeader } = useContext(AuthContext);
   const [hasData, setData] = useState(false);
 
@@ -45,6 +49,8 @@ const MainPage = () => {
         dispatch(updateChannels(data));
       }
     };
+
+    reconnectSocket(id, getChatData);
 
     getChatData();
 

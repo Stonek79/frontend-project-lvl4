@@ -12,7 +12,7 @@ import rootReducer from './slices/index.js';
 import { actions } from './constants.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, removeChannel, renameChannel,
+  addChannel, removeChannel, renameChannel, setCurrentChannelId,
 } from './slices/channelSlice.js';
 
 export default async (socket) => {
@@ -28,11 +28,27 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
+  const reconnect = (id, func) => {
+    console.log(socket.connected, 'reconnection');
+    if (!socket.connected) {
+      const tryReconnect = () => {
+        setTimeout(() => {
+          if (socket.connected) {
+            func();
+            store.dispatch(setCurrentChannelId({ id }));
+          }
+          tryReconnect();
+        }, 2000);
+      };
+      tryReconnect();
+    }
+  };
+
   const socketConnectionHandler = (action, data, func) => {
     if (!socket.connected) {
       throw new Error('errors.netError');
     }
-    socket.volatile.emit(action, data, func);
+    socket.emit(action, data, func);
   };
 
   const api = {
@@ -40,6 +56,7 @@ export default async (socket) => {
     addChannel: (arg, func) => socketConnectionHandler(actions.newChannel, arg, func),
     renameChannel: (arg, func) => socketConnectionHandler(actions.renameChannel, arg, func),
     removeChannel: (arg, func) => socketConnectionHandler(actions.removeChannel, arg, func),
+    reconnectSocket: (id, func) => reconnect(id, func),
   };
 
   socket.on(actions.newChannel, (data) => {
