@@ -29,15 +29,15 @@ export default async (socket) => {
     });
 
   const reconnect = (id, func) => {
-    socket.on('disconnect', (reason) => {
+    socket.on('connect_error', () => {
       setTimeout(() => {
-        console.log(socket.connected);
+        console.log(socket.connected, 'connect');
         if (socket.connected) {
           func();
           store.dispatch(setCurrentChannelId({ id }));
         }
       }, 3000);
-      console.log(reason, 'disconnect');
+      console.log('connect_error');
       socket.connect();
     });
   };
