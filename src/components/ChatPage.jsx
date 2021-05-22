@@ -50,6 +50,7 @@ const MainPage = () => {
       }
     };
 
+    console.log(id);
     reconnectSocket(id, getChatData);
 
     getChatData();

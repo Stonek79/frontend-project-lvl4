@@ -31,7 +31,7 @@ export default async (socket) => {
   const reconnect = (id, func) => {
     socket.on('connect_error', () => {
       setTimeout(() => {
-        socket.on('connect', () => {
+        socket.volatile.on('connect', () => {
           console.log(socket.connected, 'connect');
           if (socket.connected) {
             func();
