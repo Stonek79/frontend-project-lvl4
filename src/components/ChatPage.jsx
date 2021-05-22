@@ -45,11 +45,12 @@ const MainPage = () => {
       if (!mounted.state) {
         setData(true);
         dispatch(updateChannels(data));
-        console.log('chatData');
       }
     };
 
     reconnectSocket(getChatData);
+
+    getChatData();
 
     return () => mounted.state = true;
   }, []);
