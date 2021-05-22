@@ -29,23 +29,13 @@ export default async (socket) => {
     });
 
   const reconnect = (id, func) => {
-    const tryReconnect = () => {
-      const timerId = setTimeout(() => {
-        if (socket.connected) {
-          console.log('connect');
-          clearTimeout(timerId);
-          func();
-          return store.dispatch(setCurrentChannelId({ id }));
-        }
-        console.log('re connect');
-        return tryReconnect();
-      }, 2000);
-    };
-    if (!socket.connected) {
-      console.log(socket.connected, 'reconnection');
-      tryReconnect();
+    socket.on('connect_error', () => {
+      console.log('connect_error');
+      socket.connect();
+    });
+    if (socket.connected) {
+      store.dispatch(setCurrentChannelId({ id }));
     }
-    setInterval(tryReconnect(), 3000);
   };
 
   const socketConnectionHandler = (action, data, func) => {
