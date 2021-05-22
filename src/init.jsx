@@ -28,10 +28,11 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const reconnect = (id, func) => {
+  const reconnect = (func) => {
     socket.on('connect_error', () => {
       setTimeout(() => {
         socket.volatile.on('connect', () => {
+          const id = store.getState().channels.currentChannelId;
           console.log(socket.connected, 'connect');
           if (socket.connected) {
             func();

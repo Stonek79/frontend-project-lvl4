@@ -3,11 +3,12 @@
 import _ from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
+const defaultChannelId = 1;
 const channelSlice = createSlice({
   name: 'channelData',
   initialState: {
     channels: [],
-    currentChannelId: '',
+    currentChannelId: defaultChannelId,
   },
   reducers: {
     addChannel(state, action) {
