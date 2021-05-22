@@ -45,7 +45,7 @@ export default async (socket) => {
       console.log(socket.connected, 'reconnection');
       tryReconnect();
     }
-    setTimeout(tryReconnect(), 3000);
+    setInterval(tryReconnect(), 3000);
   };
 
   const socketConnectionHandler = (action, data, func) => {
