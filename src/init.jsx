@@ -32,8 +32,9 @@ export default async (socket) => {
     console.log(socket.connected, 'reconnection');
     if (!socket.connected) {
       const tryReconnect = () => {
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
           if (socket.connected) {
+            clearTimeout(timerId);
             func();
             store.dispatch(setCurrentChannelId({ id }));
           }

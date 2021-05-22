@@ -28,7 +28,7 @@ const RemoveChannel = ({ close }) => {
         close();
       } catch (err) {
         console.log(err);
-        setErrors({ channelInfo: t(err.response.statusText === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
+        setErrors({ channelInfo: t(err === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
         setTimeout(() => setSubmitting(false), 3000);
       }
     },
