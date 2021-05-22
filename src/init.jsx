@@ -30,12 +30,16 @@ export default async (socket) => {
 
   const reconnect = (id, func) => {
     socket.on('connect_error', () => {
+      setTimeout(() => {
+        console.log(socket.connected);
+        if (socket.connected) {
+          func();
+          store.dispatch(setCurrentChannelId({ id }));
+        }
+      }, 3000);
       console.log('connect_error');
       socket.connect();
-      func();
-      // store.dispatch(setCurrentChannelId({ id }));
     });
-    console.log(socket.connected);
   };
 
   const socketConnectionHandler = (action, data, func) => {
