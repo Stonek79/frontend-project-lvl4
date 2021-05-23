@@ -42,8 +42,10 @@ export default async (socket) => {
   };
 
   const reconnect = (func) => {
-    console.log(socket);
-    setTimeout(() => startReconnect(func), 1000);
+    socket.on('connect_error', () => {
+      console.log(socket.disconnected, 'disconnect');
+      return startReconnect(func); // вызывается на каждую ошибку, надо что-то придумать
+    });
   };
 
   const socketConnectionHandler = (action, data, func) => {
