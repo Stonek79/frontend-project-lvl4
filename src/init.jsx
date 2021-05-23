@@ -30,7 +30,6 @@ export default async (socket) => {
     });
 
   const startReconnect = (f) => {
-    socket.sendBuffer = [];
     setTimeout(() => {
       if (socket.connected) {
         const id = store.getState().channels.currentChannelId;
@@ -43,11 +42,12 @@ export default async (socket) => {
   };
 
   const reconnect = (func) => {
-    socket.on('connect_error', () => {
-      socket.sendBuffer = [];
-      console.log(socket.disconnected, 'disconnect');
-      return startReconnect(func);
-    });
+    setTimeout(() => {
+      if (socket.disconnected) {
+        console.log(socket.disconnected, 'disconnect');
+        startReconnect(func);
+      }
+    }, 1000);
   };
 
   const socketConnectionHandler = (action, data, func) => {
