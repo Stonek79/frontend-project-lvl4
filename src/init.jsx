@@ -30,8 +30,6 @@ export default async (socket) => {
 
   const startReconnect = (f) => {
     socket.on('connect', () => {
-      // eslint-disable-next-line no-param-reassign
-      socket.sendBuffer = [];
       setTimeout(() => {
         if (socket.connected) {
           const id = store.getState().channels.currentChannelId;
@@ -46,6 +44,8 @@ export default async (socket) => {
 
   const reconnect = (func) => {
     socket.on('connect_error', () => {
+      // eslint-disable-next-line no-param-reassign
+      socket.sendBuffer = [];
       console.log(socket.disconnected, 'disconnect');
       return startReconnect(func);
     });
