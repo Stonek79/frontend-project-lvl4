@@ -42,11 +42,12 @@ export default async (socket) => {
   };
 
   const reconnect = (func) => {
-    setTimeout(() => {
+    setTimeout(function run() {
       if (socket.disconnected) {
         console.log(socket.disconnected, 'disconnect');
         startReconnect(func);
       }
+      setTimeout(run, 1000);
     }, 1000);
   };
 
