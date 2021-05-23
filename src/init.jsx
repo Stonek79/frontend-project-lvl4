@@ -42,9 +42,9 @@ export default async (socket) => {
   };
 
   const reconnect = (func) => {
-    socket.on('disconnect', () => {
-      console.log(socket.disconnected, 'disconnect');
-      startReconnect(func);
+    socket.on('disconnect', (info) => {
+      console.log(socket.disconnected, info, 'disconnect');
+      return startReconnect(func);
     });
   };
 

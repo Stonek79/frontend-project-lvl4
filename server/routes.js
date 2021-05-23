@@ -47,7 +47,7 @@ export default (app, defaultState = {}) => {
 
     // setTimeout(() => {
     //   socket.disconnect();
-    // }, 10000);
+    // }, 5000);
 
     socket.on('newMessage', (message, acknowledge) => {
       const messageWithId = {
