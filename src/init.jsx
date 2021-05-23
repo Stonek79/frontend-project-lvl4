@@ -44,7 +44,7 @@ export default async (socket) => {
   const reconnect = (func) => {
     socket.on('connect_error', () => {
       console.log(socket.disconnected, 'disconnect');
-      return startReconnect(func);
+      socket.once('connect', () => startReconnect(func));
     });
   };
 
