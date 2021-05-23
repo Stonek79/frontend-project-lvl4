@@ -28,23 +28,23 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
+  const startReconnect = (f) => {
+    socket.connect();
+    setTimeout(() => {
+      if (socket.connected) {
+        const id = store.getState().channels.currentChannelId;
+        const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
+        console.log(socket.connected, id, 'connect');
+        return f(setChannelId);
+      }
+      return startReconnect();
+    }, 3000);
+  };
+
   const reconnect = (func) => {
     socket.on('disconnect', () => {
       console.log(socket.disconnected, 'disconnect');
-      socket.connect();
-      const startReconnect = () => {
-        setTimeout(() => {
-          if (socket.connected) {
-            const id = store.getState().channels.currentChannelId;
-            const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
-            console.log(socket.connected, id, 'connect');
-            return func(setChannelId);
-          }
-          socket.connect();
-          return startReconnect();
-        }, 3000);
-      };
-      startReconnect();
+      startReconnect(func);
     });
   };
 
