@@ -37,7 +37,7 @@ export default async (socket) => {
         console.log(socket.connected, id, 'connect');
         return f(setChannelId);
       }
-      return startReconnect();
+      return startReconnect(f);
     }, 3000);
   };
 
