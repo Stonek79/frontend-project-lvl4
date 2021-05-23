@@ -29,7 +29,6 @@ export default async (socket) => {
     });
 
   const startReconnect = (f) => {
-    socket.connect();
     setTimeout(() => {
       if (socket.connected) {
         const id = store.getState().channels.currentChannelId;
