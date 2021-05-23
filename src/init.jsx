@@ -30,6 +30,7 @@ export default async (socket) => {
 
   const startReconnect = (f) => {
     socket.volatile.on('connect', () => {
+      console.log('count');
       setTimeout(() => {
         if (socket.connected) {
           const id = store.getState().channels.currentChannelId;
@@ -43,7 +44,6 @@ export default async (socket) => {
   };
 
   const reconnect = (func) => {
-    // console.log(socket.volatile);
     socket.on('connect_error', () => {
       console.log(socket.disconnected, 'disconnect');
       return startReconnect(func);
