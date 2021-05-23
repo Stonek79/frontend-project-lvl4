@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import i18next from 'i18next';
@@ -29,22 +30,20 @@ export default async (socket) => {
     });
 
   const startReconnect = (f) => {
-    socket.on('connect', () => {
-      setTimeout(() => {
-        if (socket.connected) {
-          const id = store.getState().channels.currentChannelId;
-          const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
-          console.log(socket.connected, id, 'connect');
-          return f(setChannelId);
-        }
-        return startReconnect(f);
-      }, 3000);
-    });
+    socket.sendBuffer = [];
+    setTimeout(() => {
+      if (socket.connected) {
+        const id = store.getState().channels.currentChannelId;
+        const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
+        console.log(socket.connected, id, 'connect');
+        return f(setChannelId);
+      }
+      return startReconnect(f);
+    }, 1000);
   };
 
   const reconnect = (func) => {
     socket.on('connect_error', () => {
-      // eslint-disable-next-line no-param-reassign
       socket.sendBuffer = [];
       console.log(socket.disconnected, 'disconnect');
       return startReconnect(func);
