@@ -29,19 +29,21 @@ export default async (socket) => {
     });
 
   const startReconnect = (f) => {
-    socket.connect();
-    setTimeout(() => {
-      if (socket.connected) {
-        const id = store.getState().channels.currentChannelId;
-        const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
-        console.log(socket.connected, id, 'connect');
-        return f(setChannelId);
-      }
-      return startReconnect(f);
-    }, 3000);
+    socket.volatile.on('connect', () => {
+      setTimeout(() => {
+        if (socket.connected) {
+          const id = store.getState().channels.currentChannelId;
+          const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
+          console.log(socket.connected, id, 'connect');
+          return f(setChannelId);
+        }
+        return startReconnect(f);
+      }, 3000);
+    });
   };
 
   const reconnect = (func) => {
+    // console.log(socket.volatile);
     socket.on('connect_error', () => {
       console.log(socket.disconnected, 'disconnect');
       return startReconnect(func);
