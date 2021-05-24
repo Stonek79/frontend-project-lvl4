@@ -29,22 +29,18 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const startReconnect = (f) => {
-    setTimeout(() => {
+  const reconnect = (func) => {
+    console.log(socket.connected);
+    socket.on('connect', () => {
+      console.log(socket.disconnected, 'disconnect');
+      console.log(socket);
+      socket.sendBuffer = [];
       if (socket.connected) {
         const id = store.getState().channels.currentChannelId;
         const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
         console.log(socket.connected, id, 'connect');
-        return f(setChannelId);
+        func(setChannelId);
       }
-      return startReconnect(f);
-    }, 1000);
-  };
-
-  const reconnect = (func) => {
-    socket.on('connect_error', () => {
-      console.log(socket.disconnected, 'disconnect');
-      return startReconnect(func); // вызывается на каждую ошибку, надо что-то придумать
     });
   };
 
@@ -60,7 +56,7 @@ export default async (socket) => {
     addChannel: (arg, func) => socketConnectionHandler(actions.newChannel, arg, func),
     renameChannel: (arg, func) => socketConnectionHandler(actions.renameChannel, arg, func),
     removeChannel: (arg, func) => socketConnectionHandler(actions.removeChannel, arg, func),
-    reconnectSocket: (id, func) => reconnect(id, func),
+    reconnectSocket: (func) => reconnect(func),
   };
 
   socket.on(actions.newChannel, (data) => {
