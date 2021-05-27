@@ -41,14 +41,7 @@ export default async (socket) => {
     });
   };
 
-  // const socketConnectionHandler = (action, data, func) => {
-  //   if (!socket.connected) {
-  //     throw new Error('errors.netError');
-  //   }
-  //   socket.volatile.emit(action, data, func);
-  // };
-
-  const socketHandler = (action, data) => new Promise((res, rej) => {
+  const socketHandler = (action) => (data) => new Promise((res, rej) => {
     const timer = setTimeout(() => rej(Error('errors.netError')), 3000);
     socket.volatile.emit(action, data, (r) => {
       if (r.status === 'ok') {
@@ -59,10 +52,10 @@ export default async (socket) => {
   });
 
   const api = {
-    sendMessage: (arg) => socketHandler(actions.newMessage, arg),
-    addChannel: (arg) => socketHandler(actions.newChannel, arg),
-    renameChannel: (arg) => socketHandler(actions.renameChannel, arg),
-    removeChannel: (arg) => socketHandler(actions.removeChannel, arg),
+    sendMessage: socketHandler(actions.newMessage),
+    addChannel: socketHandler(actions.newChannel),
+    renameChannel: socketHandler(actions.renameChannel),
+    removeChannel: socketHandler(actions.removeChannel),
     reconnectSocket: (func) => reconnect(func),
   };
 
