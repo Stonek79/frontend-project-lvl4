@@ -10,9 +10,4 @@ export default {
   loginPagePath: () => '/login',
   signupPagePath: () => '/signup',
   chatPagePath: () => '/',
-
-  // вопрос о необходимости вот этих роутов:
-  channelMessagesPath: (id) => [host, prefix, 'channels', id, 'messages'].join('/'),
-  channelPath: (id) => [host, prefix, 'channels', id].join('/'),
-  channelsPath: () => [host, prefix, 'channels'].join('/'),
 };

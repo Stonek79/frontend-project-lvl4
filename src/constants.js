@@ -11,11 +11,11 @@ const modalTypes = {
   rename: 'renaming',
 };
 
-const actions = {
+const socketActions = {
   newChannel: 'newChannel',
   removeChannel: 'removeChannel',
   renameChannel: 'renameChannel',
   newMessage: 'newMessage',
 };
 
-export { actions, itemsLength, modalTypes };
+export { socketActions, itemsLength, modalTypes };

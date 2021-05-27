@@ -24,6 +24,7 @@ const MessageForm = ({ currentChannelId }) => {
   const { sendMessage } = useContext(ApiContext);
   const { user } = useContext(AuthContext);
 
+  const { username } = user;
   const formik = useFormik({
     initialValues: { message: '' },
     status: false,
@@ -32,20 +33,19 @@ const MessageForm = ({ currentChannelId }) => {
         .max(messageMax)
         .required(''),
     }),
-    onSubmit: (initialValues, { resetForm, setErrors, setSubmitting }) => {
+    onSubmit: async (initialValues, { resetForm, setErrors }) => {
       const message = {
-        user,
+        user: username,
         channelId: currentChannelId,
         text: initialValues.message,
       };
 
       try {
-        sendMessage(message, (r) => r);
+        await sendMessage(message);
         resetForm();
       } catch (err) {
         console.log(err);
         setErrors({ message: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
-        setTimeout(() => setSubmitting(false), 3000);
       }
     },
   });

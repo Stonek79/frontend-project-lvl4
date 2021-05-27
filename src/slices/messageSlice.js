@@ -17,15 +17,16 @@ const messageSlice = createSlice({
     },
   },
 
-  extraReducers: {
-    [removeChannel]: (state, action) => {
-      const { channelId } = action.payload;
-      _.remove(state.messages, (m) => m.channelId === channelId);
-    },
-    [updateChannels]: (state, action) => {
-      const { messages } = action.payload;
-      state.messages = messages;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(removeChannel, (state, action) => {
+        const { channelId } = action.payload;
+        _.remove(state.messages, (m) => m.channelId === channelId);
+      })
+      .addCase(updateChannels, (state, action) => {
+        const { channelId } = action.payload;
+        _.remove(state.messages, (m) => m.channelId === channelId);
+      });
   },
 });
 

@@ -5,7 +5,6 @@ import {
   Switch,
   Route,
   Redirect,
-  useLocation,
 } from 'react-router-dom';
 
 import AuthContext from '../context/AuthContext.jsx';
@@ -25,16 +24,16 @@ const getAuthHeader = () => {
 
 const AuthProvider = ({ children }) => {
   const userData = JSON.parse(localStorage.getItem('userLoginData'));
-  const [user, setUser] = useState(userData ? userData.username : false);
+  const [user, setUser] = useState(userData ? { username: userData.username } : null);
 
   const logIn = (userLoginData) => {
     localStorage.setItem('userLoginData', JSON.stringify(userLoginData));
-    setUser(userLoginData.username);
+    setUser({ username: userLoginData.username });
   };
 
   const logOut = () => {
     localStorage.removeItem('userLoginData');
-    setUser(false);
+    setUser(null);
   };
 
   return (
@@ -49,15 +48,14 @@ const AuthProvider = ({ children }) => {
 
 const PrivateRoute = ({ children, ...props }) => {
   const { user } = useContext(AuthContext);
-  const location = useLocation();
-  const { from } = location.state || { from: { pathname: loginPagePath() } };
 
   return (
     <Route
       {...props}
-      render={() => (
-        user ? (children) : (<Redirect to={from} />)
-      )}
+      render={({ location }) => {
+        const { from } = location.state || { from: { pathname: loginPagePath() } };
+        return (user ? (children) : (<Redirect to={from} />));
+      }}
     />
   );
 };

@@ -10,7 +10,7 @@ import App from './components/App.jsx';
 import ApiContext from './context/ApiContext.jsx';
 import resources from './resources/index.js';
 import rootReducer from './slices/index.js';
-import { actions } from './constants.js';
+import { socketActions as actions } from './constants.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
   addChannel, removeChannel, renameChannel, setCurrentChannelId,
@@ -44,11 +44,21 @@ export default async (socket) => {
     if (!socket.connected) {
       throw new Error('errors.netError');
     }
-    socket.emit(action, data, func);
+    socket.volatile.emit(action, data, func);
   };
 
+  const socketHandler = (action, data) => new Promise((res, rej) => {
+    const timer = setTimeout(() => rej(Error('errors.netError')), 3000);
+    socket.volatile.emit(action, data, async (r) => {
+      if (r.status === 'ok') {
+        clearTimeout(timer);
+        res();
+      }
+    });
+  });
+
   const api = {
-    sendMessage: (arg, func) => socketConnectionHandler(actions.newMessage, arg, func),
+    sendMessage: (arg) => socketHandler(actions.newMessage, arg),
     addChannel: (arg, func) => socketConnectionHandler(actions.newChannel, arg, func),
     renameChannel: (arg, func) => socketConnectionHandler(actions.renameChannel, arg, func),
     removeChannel: (arg, func) => socketConnectionHandler(actions.removeChannel, arg, func),
