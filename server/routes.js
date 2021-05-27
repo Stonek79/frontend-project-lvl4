@@ -45,9 +45,9 @@ export default (app, defaultState = {}) => {
   app.io.on('connect', (socket) => {
     console.log({ 'socket.id': socket.id });
 
-    setTimeout(() => {
-      socket.disconnect();
-    }, 10000);
+    // setTimeout(() => {
+    //   socket.disconnect();
+    // }, 10000);
 
     socket.on('newMessage', (message, acknowledge) => {
       const messageWithId = {

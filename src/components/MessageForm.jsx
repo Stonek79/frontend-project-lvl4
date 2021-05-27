@@ -23,6 +23,7 @@ const MessageForm = ({ currentChannelId }) => {
   const { t } = useTranslation();
   const { sendMessage } = useContext(ApiContext);
   const { user } = useContext(AuthContext);
+  const textInput = useRef(null);
 
   const { username } = user;
   const formik = useFormik({
@@ -50,7 +51,6 @@ const MessageForm = ({ currentChannelId }) => {
     },
   });
 
-  const textInput = useRef(null);
   useEffect(() => {
     textInput.current.focus();
   });

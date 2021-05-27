@@ -22,14 +22,13 @@ const RemoveChannel = ({ close }) => {
 
   const formik = useFormik({
     initialValues: { channelInfo: '' },
-    onSubmit: (initialValues, { setErrors, setSubmitting }) => {
+    onSubmit: async (initialValues, { setErrors }) => {
       try {
-        removeChannel({ id }, (res) => res);
+        await removeChannel({ id });
         close();
       } catch (err) {
         console.log(err);
         setErrors({ channelInfo: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
-        setTimeout(() => setSubmitting(false), 3000);
       }
     },
   });

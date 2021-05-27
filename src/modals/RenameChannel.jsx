@@ -40,16 +40,14 @@ const RenameChannel = ({ close, channels }) => {
         .notOneOf(channelsNames, 'errors.uniq')
         .required('errors.required'),
     }),
-    onSubmit: (initialValues, { setErrors, setSubmitting }) => {
+    onSubmit: async (initialValues, { setErrors }) => {
       const name = initialValues.channelName.trim();
-
       try {
-        renameChannel({ id, name }, (r) => r);
+        await renameChannel({ id, name });
         close();
       } catch (err) {
         console.log(err);
         setErrors({ channelName: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
-        setTimeout(() => setSubmitting(false), 3000);
       }
     },
   });

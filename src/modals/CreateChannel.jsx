@@ -34,18 +34,16 @@ const CreateChannel = ({ close, channels, dispatch }) => {
         .notOneOf(channelsNames, 'errors.uniq')
         .required('errors.required'),
     }),
-    onSubmit: (initialValues, { setErrors, setSubmitting }) => {
+    onSubmit: async (initialValues, { setErrors }) => {
       const name = initialValues.channelName.trim();
       try {
-        addChannel({ name }, (res) => {
-          const { id } = res.data;
-          dispatch(setCurrentChannelId({ id }));
-        });
+        const res = await addChannel({ name });
+        const { id } = res.data;
+        dispatch(setCurrentChannelId({ id }));
         close();
       } catch (err) {
         console.log(err.message);
         setErrors({ channelName: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
-        setTimeout(() => setSubmitting(false), 3000);
       }
     },
   });

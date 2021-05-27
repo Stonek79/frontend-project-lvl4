@@ -49,8 +49,6 @@ const MainPage = () => {
       }
     };
 
-    getChatData();
-
     reconnectSocket(getChatData);
 
     return () => mounted.state = true;

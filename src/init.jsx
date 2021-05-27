@@ -30,6 +30,7 @@ export default async (socket) => {
     });
 
   const reconnect = (func) => {
+    func();
     socket.on('connect', () => {
       socket.sendBuffer = [];
       if (socket.connected) {
@@ -40,28 +41,28 @@ export default async (socket) => {
     });
   };
 
-  const socketConnectionHandler = (action, data, func) => {
-    if (!socket.connected) {
-      throw new Error('errors.netError');
-    }
-    socket.volatile.emit(action, data, func);
-  };
+  // const socketConnectionHandler = (action, data, func) => {
+  //   if (!socket.connected) {
+  //     throw new Error('errors.netError');
+  //   }
+  //   socket.volatile.emit(action, data, func);
+  // };
 
   const socketHandler = (action, data) => new Promise((res, rej) => {
     const timer = setTimeout(() => rej(Error('errors.netError')), 3000);
-    socket.volatile.emit(action, data, async (r) => {
+    socket.volatile.emit(action, data, (r) => {
       if (r.status === 'ok') {
         clearTimeout(timer);
-        res();
+        res(r);
       }
     });
   });
 
   const api = {
     sendMessage: (arg) => socketHandler(actions.newMessage, arg),
-    addChannel: (arg, func) => socketConnectionHandler(actions.newChannel, arg, func),
-    renameChannel: (arg, func) => socketConnectionHandler(actions.renameChannel, arg, func),
-    removeChannel: (arg, func) => socketConnectionHandler(actions.removeChannel, arg, func),
+    addChannel: (arg) => socketHandler(actions.newChannel, arg),
+    renameChannel: (arg) => socketHandler(actions.renameChannel, arg),
+    removeChannel: (arg) => socketHandler(actions.removeChannel, arg),
     reconnectSocket: (func) => reconnect(func),
   };
 
