@@ -55,9 +55,7 @@ const channelSlice = createSlice({
   },
   extraReducers: {
     [updateChannels.fulfilled]: (state, action) => {
-      const { channels, currentChannelId } = action.payload;
-      state.channels = channels;
-      state.currentChannelId = currentChannelId;
+      state.channels = action.payload.channels;
     },
   },
 });
