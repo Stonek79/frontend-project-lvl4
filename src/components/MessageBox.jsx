@@ -5,7 +5,6 @@ import { animateScroll as scroll } from 'react-scroll';
 import { FormGroup, FormText } from 'react-bootstrap';
 
 import MessageForm from './MessageForm.jsx';
-import { getCurrentChannelId } from '../slices/channelSlice.js';
 import { getMessages } from '../slices/messageSlice.js';
 
 const Message = ({ user, text, id }) => (
@@ -18,26 +17,20 @@ const Message = ({ user, text, id }) => (
 
 const MessageBox = () => {
   const messages = useSelector(getMessages);
-  const currentChannelId = useSelector(getCurrentChannelId);
-
-  const currentMessages = messages
-    .filter((message) => message.channelId === currentChannelId);
 
   useEffect(() => {
     scroll.scrollToBottom({
       containerId: 'message-box', smooth: false, duration: 0,
     });
-  }, [messages, currentChannelId]);
+  }, [messages]);
 
   return (
-    <FormGroup className="col h-100 border border-light">
+    <FormGroup className="col h-100 border-left border-light">
       <FormGroup className="d-flex flex-column h-100">
         <FormGroup id="message-box" className="chat-messages overflow-auto mb-3">
-          {currentMessages.map(Message)}
+          {messages.map(Message)}
         </FormGroup>
-        <MessageForm
-          currentChannelId={currentChannelId}
-        />
+        <MessageForm />
       </FormGroup>
     </FormGroup>
   );

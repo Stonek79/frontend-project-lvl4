@@ -19,10 +19,9 @@ const Spinner = (name) => (
   </>
 );
 
-const CreateChannel = ({ close, channels, dispatch }) => {
+const CreateChannel = ({ close, channelsNames, dispatch }) => {
   const { t } = useTranslation();
   const { addChannel } = useContext(ApiContext);
-  const channelsNames = channels.map((ch) => ch.name);
 
   const formik = useFormik({
     initialValues: { channelName: '' },

@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
 import { useFormik } from 'formik';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Button, FormGroup, Modal } from 'react-bootstrap';
 
-import { getChannelId } from '../slices/modalSlice.js';
 import ApiContext from '../context/ApiContext.jsx';
 
 const Spinner = (name) => (
@@ -14,15 +12,14 @@ const Spinner = (name) => (
   </>
 );
 
-const RemoveChannel = ({ close }) => {
+const RemoveChannel = ({ close, channelId }) => {
   const { t } = useTranslation();
   const { removeChannel } = useContext(ApiContext);
-
-  const id = useSelector(getChannelId);
 
   const formik = useFormik({
     initialValues: { channelInfo: '' },
     onSubmit: async (initialValues, { setErrors }) => {
+      const id = channelId;
       try {
         await removeChannel({ id });
         close();

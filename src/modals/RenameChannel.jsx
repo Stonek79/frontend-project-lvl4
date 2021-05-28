@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
   Button, Form, FormControl, FormGroup, InputGroup, Modal,
 } from 'react-bootstrap';
 
-import { getChannelId } from '../slices/modalSlice.js';
 import { itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 
@@ -20,18 +18,14 @@ const Spinner = (name) => (
   </>
 );
 
-const RenameChannel = ({ close, channels }) => {
+const RenameChannel = ({ close, currentChannel, channelsNames }) => {
   const { t } = useTranslation();
   const { renameChannel } = useContext(ApiContext);
-  const channelId = useSelector(getChannelId);
 
-  const channelsNames = channels.map((ch) => ch.name);
-  const currentChannel = channels.find((channel) => channel.id === channelId);
-  const currentChannelName = currentChannel.name;
-  const { id } = currentChannel;
+  const { id, name } = currentChannel;
 
   const formik = useFormik({
-    initialValues: { channelName: currentChannelName },
+    initialValues: { channelName: name },
     validateOnChange: false,
     validationSchema: Yup.object({
       channelName: Yup.string().trim()
@@ -41,9 +35,9 @@ const RenameChannel = ({ close, channels }) => {
         .required('errors.required'),
     }),
     onSubmit: async (initialValues, { setErrors }) => {
-      const name = initialValues.channelName.trim();
+      const newName = initialValues.channelName.trim();
       try {
-        await renameChannel({ id, name });
+        await renameChannel({ id, name: newName });
         close();
       } catch (err) {
         console.log(err);

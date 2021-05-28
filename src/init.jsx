@@ -13,7 +13,7 @@ import rootReducer from './slices/index.js';
 import { socketActions as actions } from './constants.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, removeChannel, renameChannel, setCurrentChannelId,
+  addChannel, removeChannel, renameChannel, setCurrentChannelId, updateChannels,
 } from './slices/channelSlice.js';
 
 export default async (socket) => {
@@ -29,24 +29,12 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const reconnect = (func) => {
-    func();
-    socket.on('connect', () => {
-      socket.sendBuffer = [];
-      if (socket.connected) {
-        const id = store.getState().channels.currentChannelId;
-        const setChannelId = () => store.dispatch(setCurrentChannelId({ id }));
-        func(setChannelId);
-      }
-    });
-  };
-
-  const socketHandler = (action) => (data) => new Promise((res, rej) => {
-    const timer = setTimeout(() => rej(Error('errors.netError')), 3000);
+  const socketHandler = (action) => (data) => new Promise((response, reject) => {
+    const timer = setTimeout(() => reject(Error('errors.netError')), 3000);
     socket.volatile.emit(action, data, (r) => {
       if (r.status === 'ok') {
         clearTimeout(timer);
-        res(r);
+        response(r);
       }
     });
   });
@@ -56,8 +44,14 @@ export default async (socket) => {
     addChannel: socketHandler(actions.newChannel),
     renameChannel: socketHandler(actions.renameChannel),
     removeChannel: socketHandler(actions.removeChannel),
-    reconnectSocket: (func) => reconnect(func),
   };
+
+  socket.on(actions.connect, () => {
+    socket.sendBuffer = [];
+    const id = store.getState().channels.currentChannelId;
+    store.dispatch(updateChannels());
+    store.dispatch(setCurrentChannelId({ id }));
+  });
 
   socket.on(actions.newChannel, (data) => {
     store.dispatch(addChannel({ channelData: data }));

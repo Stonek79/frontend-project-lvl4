@@ -7,7 +7,7 @@ import AuthContext from '../context/AuthContext.jsx';
 import routes from '../routes.js';
 import ThemeSwitch from './ThemeSwitch.jsx';
 
-const { chatPagePath, loginPagePath } = routes;
+const { chatPagePath } = routes;
 
 const Navbar = () => {
   const { t } = useTranslation();
@@ -18,14 +18,7 @@ const Navbar = () => {
       <NavbarBootstrap.Brand className="mr-auto" as={Link} to={chatPagePath()}>
         {t('hexletChat')}
       </NavbarBootstrap.Brand>
-      <>
-        {auth.user
-        && (
-        <Button onClick={auth.logOut} as={Link} to={loginPagePath()}>
-          {t('mainPage.logOut')}
-        </Button>
-        )}
-      </>
+      {auth.user && (<Button onClick={auth.logOut}>{t('mainPage.logOut')}</Button>)}
       <ThemeSwitch />
     </NavbarBootstrap>
   );

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import {
   Button, Form, FormControl, FormGroup, InputGroup,
 } from 'react-bootstrap';
@@ -9,6 +10,7 @@ import {
 import { itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 import AuthContext from '../context/AuthContext.jsx';
+import { getCurrentChannelId } from '../slices/channelSlice.js';
 
 const { messageMax } = itemsLength;
 
@@ -19,11 +21,12 @@ const Spinner = (name) => (
   </>
 );
 
-const MessageForm = ({ currentChannelId }) => {
+const MessageForm = () => {
   const { t } = useTranslation();
   const { sendMessage } = useContext(ApiContext);
   const { user } = useContext(AuthContext);
   const textInput = useRef(null);
+  const currentChannelId = useSelector(getCurrentChannelId);
 
   const { username } = user;
   const formik = useFormik({

@@ -59,7 +59,8 @@ const SignupPage = () => {
     onSubmit: async (value, { setErrors }) => {
       const { chatPagePath, signupPath } = routes;
       try {
-        const { data } = await axios.post(signupPath(), value);
+        const { username, passward } = value;
+        const { data } = await axios.post(signupPath(), { username, passward });
         logIn(data);
         history.push(chatPagePath());
       } catch (err) {

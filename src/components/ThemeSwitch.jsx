@@ -3,25 +3,24 @@ import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 const ThemeSwitch = ({ storeKey = 'ThemeSwitch' }) => {
-  const [active, setActive] = useState(localStorage.getItem(storeKey) === 'true' || false);
+  const [theme, setTheme] = useState(localStorage.getItem(storeKey) === 'light' || 'dark');
 
   useEffect(() => {
-    localStorage.setItem(storeKey, active);
-  }, [active, storeKey]);
+    localStorage.setItem(storeKey, theme);
+  }, [theme, storeKey]);
 
   const { t } = useTranslation();
 
-  const darkModeSwitcher = () => {
+  const darkModeSwitch = () => {
     document.body.classList.toggle('dark-theme');
-    setActive((a) => !a);
+    setTheme((mode) => (mode === 'light' ? 'dark' : 'light'));
   };
+
   return (
-    <>
-      <Button className="d-flex ml-2" variant={active ? 'light' : 'dark'} onClick={darkModeSwitcher}>
-        {' '}
-        <span>{t(active ? 'theme.light' : 'theme.dark')}</span>
-      </Button>
-    </>
+    <Button className="d-flex ml-2" variant={theme === 'light' ? 'primary' : 'dark'} onClick={darkModeSwitch}>
+      {' '}
+      <span>{(theme === 'dark' ? <>🌜</> : <>🌞</>)}</span>
+    </Button>
   );
 };
 

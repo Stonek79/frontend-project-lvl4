@@ -23,14 +23,17 @@ const messageSlice = createSlice({
         const { channelId } = action.payload;
         _.remove(state.messages, (m) => m.channelId === channelId);
       })
-      .addCase(updateChannels, (state, action) => {
-        const { channelId } = action.payload;
-        _.remove(state.messages, (m) => m.channelId === channelId);
+      .addCase(updateChannels.fulfilled, (state, action) => {
+        state.messages = action.payload.messages;
       });
   },
 });
 
-export const getMessages = (state) => state.messages.messages;
+export const getMessages = (state) => {
+  const { messages } = state.messages;
+  const { currentChannelId } = state.channels;
+  return messages.filter((message) => message.channelId === currentChannelId);
+};
 
 export const { addMessage, addMissedMessages } = messageSlice.actions;
 

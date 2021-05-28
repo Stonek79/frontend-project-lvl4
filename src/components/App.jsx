@@ -16,12 +16,6 @@ import routes from '../routes.js';
 
 const { chatPagePath, loginPagePath, signupPagePath } = routes;
 
-const getAuthHeader = () => {
-  const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
-  return userLoginData?.token
-    ? { Authorization: `Bearer ${userLoginData.token}` } : {};
-};
-
 const AuthProvider = ({ children }) => {
   const userData = JSON.parse(localStorage.getItem('userLoginData'));
   const [user, setUser] = useState(userData ? { username: userData.username } : null);
@@ -38,7 +32,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      getAuthHeader, user, logIn, logOut,
+      user, logIn, logOut,
     }}
     >
       {children}

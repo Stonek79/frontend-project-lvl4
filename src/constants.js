@@ -12,6 +12,7 @@ const modalTypes = {
 };
 
 const socketActions = {
+  connect: 'connect',
   newChannel: 'newChannel',
   removeChannel: 'removeChannel',
   renameChannel: 'renameChannel',

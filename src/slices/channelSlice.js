@@ -1,7 +1,24 @@
 /* eslint-disable no-param-reassign */
 
 import _ from 'lodash';
-import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import routes from '../routes.js';
+
+const getAuthHeader = () => {
+  const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
+  return userLoginData?.token
+    ? { Authorization: `Bearer ${userLoginData.token}` } : {};
+};
+
+const updateChannels = createAsyncThunk(
+  'channelData/updateChannels',
+  async () => {
+    const { data } = await axios.get(routes.currentDataPath(), { headers: getAuthHeader() });
+    return data;
+  },
+);
 
 const defaultChannelId = 1;
 const channelSlice = createSlice({
@@ -35,8 +52,9 @@ const channelSlice = createSlice({
       const currentChannel = state.channels.find((channel) => channel.id === channelId);
       currentChannel.name = channelName;
     },
-
-    updateChannels(state, action) {
+  },
+  extraReducers: {
+    [updateChannels.fulfilled]: (state, action) => {
       const { channels, currentChannelId } = action.payload;
       state.channels = channels;
       state.currentChannelId = currentChannelId;
@@ -45,16 +63,24 @@ const channelSlice = createSlice({
 });
 
 const getChannels = (state) => state.channels.channels;
+const getCurrentChannel = (state) => state.channels.channels
+  .find((channel) => channel.id === state.channels.currentChannelId);
 const getCurrentChannelId = (state) => state.channels.currentChannelId;
+const getChannelsNames = (state) => state.channels.channels.map((ch) => ch.name);
 
 export const {
   addChannel,
   setCurrentChannelId,
   removeChannel,
   renameChannel,
-  updateChannels,
 } = channelSlice.actions;
 
-export { getChannels, getCurrentChannelId };
+export {
+  getChannels,
+  getCurrentChannel,
+  getCurrentChannelId,
+  getChannelsNames,
+  updateChannels,
+};
 
 export default channelSlice.reducer;
