@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 
 const ThemeSwitch = ({ storeKey = 'ThemeSwitch' }) => {
   const [theme, setTheme] = useState(localStorage.getItem(storeKey) === 'light' || 'dark');
@@ -8,8 +7,6 @@ const ThemeSwitch = ({ storeKey = 'ThemeSwitch' }) => {
   useEffect(() => {
     localStorage.setItem(storeKey, theme);
   }, [theme, storeKey]);
-
-  const { t } = useTranslation();
 
   const darkModeSwitch = () => {
     document.body.classList.toggle('dark-theme');
