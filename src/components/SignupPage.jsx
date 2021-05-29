@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import {
-  Button, Form, FormControl, FormGroup, FormLabel,
+  Button, Card, Form, FormControl, FormGroup, FormLabel,
 } from 'react-bootstrap';
 
 import routes from '../routes.js';
@@ -72,75 +72,88 @@ const SignupPage = () => {
   });
 
   return (
-    <div className="row justify-content-center pt-5">
-      <div className="col-sm-4">
-        <Form className="p-3" onSubmit={formik.handleSubmit}>
-          <FormGroup className="form-group">
-            <FormLabel className="form-label" htmlFor="username">{t('register.username')}</FormLabel>
-            <FormControl
-              ref={nameInput}
-              type="text"
-              id="username"
-              name="username"
-              className="form-control"
-              autoComplete="username"
-              placeholder={t('placeholders.nickMin')}
-              required
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.username}
-              isInvalid={formik.touched.username && Boolean(formik.errors.username)}
-            />
-            <FormGroup className="text-danger small">
-              {formik.touched.username
-              && Boolean(formik.errors.username)
-              && t(formik.errors.username)}
-            </FormGroup>
-          </FormGroup>
-          <FormGroup className="form-group">
-            <FormLabel className="form-label" htmlFor="password">{t('register.password')}</FormLabel>
-            <FormControl
-              type="password"
-              id="password"
-              name="password"
-              className="form-control"
-              autoComplete="current-password"
-              placeholder={t('placeholders.passMin')}
-              required
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              isInvalid={formik.touched.password && Boolean(formik.errors.password)}
-            />
-            <FormGroup className="text-danger small">
-              {formik.touched.password
-              && Boolean(formik.errors.password)
-              && t(formik.errors.password)}
-            </FormGroup>
-          </FormGroup>
-          <FormGroup className="form-group">
-            <FormLabel className="form-label" htmlFor="passwordConfirm">{t('register.confirm')}</FormLabel>
-            <FormControl
-              type="password"
-              id="passwordConfirm"
-              name="passwordConfirm"
-              className="form-control"
-              autoComplete="password-confirm"
-              placeholder={t('placeholders.passConfirm')}
-              required
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.passwordConfirm}
-              isInvalid={formik.touched.passwordConfirm && Boolean(formik.errors.passwordConfirm)}
-            />
-            <FormGroup className="text-danger small">
-              {formik.touched.passwordConfirm
-              && Boolean(formik.errors.passwordConfirm)
-              && t(formik.errors.passwordConfirm)}
-            </FormGroup>
-          </FormGroup>
-          <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('register.toSignup')}</Button>
-        </Form>
+    <div className="container-fluid flex-grow-1">
+      <div className="row justify-content-center align-content-center h-100">
+        <div className="col-xl-8 col-xxl-6">
+          <Card id="signUp" className="shadow-sm">
+            <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
+              <div>
+                <img src="https://sun9-59.userapi.com/c855728/v855728548/18c349/AwUnPH5TZ6A.jpg" width="300" height="300" alt="Boommm" />
+              </div>
+              <Form className="w-50" onSubmit={formik.handleSubmit}>
+                <h1 className="text-center mb-4">{t('register.registry')}</h1>
+                <FormGroup className="form-floating mb-3">
+                  <FormControl
+                    ref={nameInput}
+                    type="text"
+                    id="username"
+                    name="username"
+                    className="form-control"
+                    autoComplete="username"
+                    placeholder={t('register.username')}
+                    required
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
+                    isInvalid={formik.touched.username && Boolean(formik.errors.username)}
+                  />
+                  <FormLabel className="form-label" htmlFor="username">{t('register.username')}</FormLabel>
+                  <FormGroup className="text-danger small">
+                    {formik.touched.username
+                      && Boolean(formik.errors.username)
+                      && t(formik.errors.username)}
+                  </FormGroup>
+                </FormGroup>
+                <FormGroup className="form-floating mb-3">
+                  <FormControl
+                    type="password"
+                    id="password"
+                    name="password"
+                    className="form-control"
+                    autoComplete="current-password"
+                    placeholder={t('register.password')}
+                    required
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                    isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                  />
+                  <FormLabel className="form-label" htmlFor="password">{t('register.password')}</FormLabel>
+                  <FormGroup className="text-danger small">
+                    {formik.touched.password
+                      && Boolean(formik.errors.password)
+                      && t(formik.errors.password)}
+                  </FormGroup>
+                </FormGroup>
+                <FormGroup className="form-floating mb-3">
+                  <FormControl
+                    type="password"
+                    id="passwordConfirm"
+                    name="passwordConfirm"
+                    className="form-control"
+                    autoComplete="password-confirm"
+                    placeholder={t('register.confirm')}
+                    required
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.passwordConfirm}
+                    isInvalid={
+                      formik.touched.passwordConfirm
+                      && Boolean(formik.errors.passwordConfirm)
+                    }
+                  />
+                  <FormLabel className="form-label" htmlFor="passwordConfirm">{t('register.confirm')}</FormLabel>
+                  <FormGroup className="text-danger small">
+                    {formik.touched.passwordConfirm
+                      && Boolean(formik.errors.passwordConfirm)
+                      && t(formik.errors.passwordConfirm)}
+                  </FormGroup>
+                </FormGroup>
+                <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('register.toSignup')}</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </div>
       </div>
     </div>
   );

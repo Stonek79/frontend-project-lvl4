@@ -59,14 +59,15 @@ const MessageForm = () => {
   });
 
   return (
-    <FormGroup className="mt-auto">
-      <Form onSubmit={formik.handleSubmit}>
+    <FormGroup className="border-top mt-auto py-3 px-5">
+      <Form noValidate onSubmit={formik.handleSubmit}>
         <InputGroup>
           <FormControl
             ref={textInput}
             name="message"
             data-testid="new-message"
             required
+            placeholder={t('process.addMessage')}
             maxLength={400}
             value={formik.values.message}
             onChange={formik.handleChange}
@@ -75,11 +76,11 @@ const MessageForm = () => {
           />
           <Button
             type="submit"
-            variant="primary"
+            variant="outline-secondary"
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? Spinner(t('process.sending')) : t('mainPage.send')}
+            {formik.isSubmitting ? Spinner(t('process.sending')) : <b>{t('mainPage.send')}</b>}
           </Button>
         </InputGroup>
         <FormGroup className="text-danger">{formik.errors.message}</FormGroup>

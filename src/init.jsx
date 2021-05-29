@@ -39,19 +39,23 @@ export default async (socket) => {
     });
   });
 
+  const reconnect = () => {
+    socket.on(actions.connect, () => {
+      socket.sendBuffer = [];
+      console.log('reconnect');
+      const id = store.getState().channels.currentChannelId;
+      store.dispatch(updateChannels());
+      store.dispatch(setCurrentChannelId({ id }));
+    });
+  };
+
   const api = {
     sendMessage: socketHandler(actions.newMessage),
     addChannel: socketHandler(actions.newChannel),
     renameChannel: socketHandler(actions.renameChannel),
     removeChannel: socketHandler(actions.removeChannel),
+    reconnect,
   };
-
-  socket.on(actions.connect, () => {
-    socket.sendBuffer = [];
-    const id = store.getState().channels.currentChannelId;
-    store.dispatch(updateChannels());
-    store.dispatch(setCurrentChannelId({ id }));
-  });
 
   socket.on(actions.newChannel, (data) => {
     store.dispatch(addChannel({ channelData: data }));

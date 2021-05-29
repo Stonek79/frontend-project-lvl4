@@ -1,5 +1,9 @@
 export default {
   translation: {
+    counts: {
+      key_0: '{{count}} post',
+      key_1: '{{count}} posts',
+    },
     channels: {
       channels: 'Channels',
       remove: 'Remove',
@@ -44,6 +48,7 @@ export default {
       passMin: 'Minimum 6 characters',
     },
     process: {
+      addMessage: 'Add message...',
       loading: 'Loading...',
       removing: 'Removing...',
       sending: 'Sending...',
@@ -51,6 +56,7 @@ export default {
     register: {
       confirm: 'Confirm password',
       password: 'Password',
+      register: 'Registry',
       toSignup: 'Signup',
       username: 'User name',
     },

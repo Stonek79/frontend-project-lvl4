@@ -1,19 +1,23 @@
 /* eslint-disable no-return-assign */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Container } from 'react-bootstrap';
 
 import ChannelBox from './ChannelBox.jsx';
 import MessageBox from './MessageBox.jsx';
 import ModalComponent from './Modal.jsx';
 import { updateChannels } from '../slices/channelSlice.js';
+import ApiContext from '../context/ApiContext.jsx';
 
 const ChatBox = () => (
-  <div className="row flex-grow-1 h-75 pb-3">
-    <ChannelBox />
-    <MessageBox />
-    <ModalComponent />
-  </div>
+  <Container className="flex-grow-1 my-4 overflow-hidden rounded shadow">
+    <div className="row h-100 bg-white">
+      <ChannelBox />
+      <MessageBox />
+      <ModalComponent />
+    </div>
+  </Container>
 );
 
 const Spinner = (info) => (
@@ -26,6 +30,7 @@ const Spinner = (info) => (
 const MainPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { reconnect } = useContext(ApiContext);
   const [hasData, setData] = useState(false);
 
   useEffect(() => {
@@ -38,6 +43,7 @@ const MainPage = () => {
       }
     };
 
+    reconnect();
     getChatData();
 
     return () => mounted.state = true;

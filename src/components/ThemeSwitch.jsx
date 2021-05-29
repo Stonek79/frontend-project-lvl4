@@ -14,7 +14,7 @@ const ThemeSwitch = ({ storeKey = 'ThemeSwitch' }) => {
   };
 
   return (
-    <Button className="d-flex ml-2" variant={theme === 'light' ? 'primary' : 'dark'} onClick={darkModeSwitch}>
+    <Button className="d-flex ms-2" variant={theme === 'light' ? 'outline-primary' : 'dark'} onClick={darkModeSwitch}>
       {' '}
       <span>{(theme === 'dark' ? <>🌜</> : <>🌞</>)}</span>
     </Button>

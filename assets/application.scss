@@ -1,11 +1,7 @@
 :root 
 
 body {
-  color: #222;
   background: #D3D3D3;
-}
-a {
-  color: #0033cc;
 }
 
 /* Dark Mode styles */
@@ -14,10 +10,44 @@ body.dark-theme {
   background-color: #121212;
 }
 
+body.dark-theme nav {
+  background-color: #C0C0C0!important;
+}
+
+body.dark-theme #logIn {
+  background-color: #121212!important;
+}
+
+body.dark-theme #signUp {
+  background-color: #121212!important;
+}
+
+.form-label {
+  color: #222;
+}
+
+body.dark-theme #channelBox {
+  color: #eee!important;
+  background-color: #121212!important;
+}
+
+body.dark-theme #messageBox {
+  color: #eee!important;
+  background-color: #121212!important;
+}
+
+body.dark-theme .row {
+  color: #eee!important;
+  background-color: #121212!important;
+}
+
 body.dark-theme .modal-content {
-	color: #eee;
+	color: #eee!important;
   background-color: #121212;
 }
 
+body.dark-theme .btn-close {
+  background-color: #eee!important;
+}
 
 @import '~bootstrap/scss/bootstrap';

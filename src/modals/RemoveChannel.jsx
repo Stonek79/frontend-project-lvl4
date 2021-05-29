@@ -32,8 +32,9 @@ const RemoveChannel = ({ close, channelId }) => {
 
   return (
     <>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title>{t('modals.remChannel')}</Modal.Title>
+        <Button aria-label="Close" variant="secondary" className="btn-close" onClick={close} />
       </Modal.Header>
       <Modal.Body className="text-danger">
         <p><b>{t('modals.confirm')}</b></p>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Button, Form, FormGroup, FormLabel, ListGroup,
+  Button, Col, FormGroup, FormLabel, Nav,
 } from 'react-bootstrap';
 
 import ChannelItem from './ChannelItem.jsx';
@@ -26,37 +26,35 @@ const ChannelBox = () => {
   const dispatch = useDispatch();
 
   return (
-    <Form className="col-3 h-100">
-      <FormGroup className="d-flex mt-2 mb-2">
-        <FormLabel><b>{t('channels.channels')}</b></FormLabel>
+    <Col id="channelBox" className="col-2 px-0 pt-5 border-end bg-light">
+      <FormGroup className="d-flex justify-content-between mb-2 px-4">
+        <FormLabel>{t('channels.channels')}</FormLabel>
         <Button
           type="button"
           variant="outline-primary"
-          className="ml-auto p-1"
+          size="sm"
           onClick={handleAddChannel(dispatch)}
         >
-          <b>+</b>
+          <span className="lg m-0">+</span>
         </Button>
       </FormGroup>
-      <FormGroup className="h-100 overflow-auto">
-        <ListGroup className="nav">
-          {channels.map((channel) => {
-            const { id, name, removable } = channel;
-            return (
-              <ChannelItem
-                key={id}
-                name={name}
-                removable={removable}
-                isCurrent={currentChannelId === id}
-                handleRemoveChannel={handleRemoveChannel(dispatch, id)}
-                handleRenameChannel={handleRenameChannel(dispatch, id)}
-                handleChangeChannel={handleChangeChannel(dispatch, id)}
-              />
-            );
-          })}
-        </ListGroup>
-      </FormGroup>
-    </Form>
+      <Nav className="flex-column nav-pills nav-fill">
+        {channels.map((channel) => {
+          const { id, name, removable } = channel;
+          return (
+            <ChannelItem
+              key={id}
+              name={name}
+              removable={removable}
+              isCurrent={currentChannelId === id}
+              handleRemoveChannel={handleRemoveChannel(dispatch, id)}
+              handleRenameChannel={handleRenameChannel(dispatch, id)}
+              handleChangeChannel={handleChangeChannel(dispatch, id)}
+            />
+          );
+        })}
+      </Nav>
+    </Col>
   );
 };
 

@@ -41,7 +41,7 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
         dispatch(setCurrentChannelId({ id }));
         close();
       } catch (err) {
-        console.log(err.message);
+        console.log(err);
         setErrors({ channelName: t(err.message === 'errors.netError' ? 'errors.netError' : 'errors.someError') });
       }
     },
@@ -54,8 +54,9 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
 
   return (
     <>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title>{t('modals.addChannel')}</Modal.Title>
+        <Button aria-label="Close" variant="secondary" className="btn-close" onClick={close} />
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>

@@ -13,7 +13,7 @@ const ChannelItem = ({
   removable,
 }) => {
   const { t } = useTranslation();
-  const variant = isCurrent ? 'primary' : 'light';
+  const variant = isCurrent ? 'secondary' : 'light';
 
   return (
     <li className="nav-item">
@@ -22,22 +22,28 @@ const ChannelItem = ({
           ? (
             <Button
               variant={variant}
-              className="nav-link btn-block text-left mb-2"
+              className="w-100 px-4 rounded-0 text-start"
               onClick={handleChangeChannel}
             >
+              <span className="me-3">
+                {'>'}
+              </span>
               {name}
             </Button>
           )
           : (
-            <Dropdown className="d-flex mb-2 text-left" as={ButtonGroup}>
+            <Dropdown className="d-flex" as={ButtonGroup}>
               <Button
                 variant={variant}
-                className="flex-grow-1 text-left nav-link"
+                className="w-100 px-4 rounded-0 text-start"
                 onClick={handleChangeChannel}
               >
+                <span className="me-3">
+                  {'>'}
+                </span>
                 {name}
               </Button>
-              <Dropdown.Toggle split variant={variant} className="flex-grow-0 text-left nav-link" />
+              <Dropdown.Toggle split variant={variant} className="flex-grow-0 text-left" />
               <Dropdown.Menu variant={variant} title="">
                 <Dropdown.Item onClick={handleRemoveChannel}>{t('channels.remove')}</Dropdown.Item>
                 <Dropdown.Item onClick={handleRenameChannel}>{t('channels.rename')}</Dropdown.Item>

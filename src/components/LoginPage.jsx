@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import {
-  Button, Form, FormGroup, FormControl, FormLabel,
+  Button, Form, FormGroup, FormControl, FormLabel, Card,
 } from 'react-bootstrap';
 
 import AuthContext from '../context/AuthContext.jsx';
@@ -53,45 +53,57 @@ const LoginPage = () => {
   });
 
   return (
-    <div className="row justify-content-center pt-5">
-      <div className="col-sm-4">
-        <Form className="p-3" onSubmit={formik.handleSubmit}>
-          <FormGroup className="form-group">
-            <FormLabel className="form-label" htmlFor="username">{t('login.nickname')}</FormLabel>
-            <FormControl
-              ref={nameInput}
-              type="text"
-              id="username"
-              name="username"
-              className="form-control"
-              autoComplete="username"
-              required
-              onChange={formik.handleChange}
-              value={formik.values.username}
-              isInvalid={formik.touched.password && Boolean(formik.errors.password)}
-            />
-          </FormGroup>
-          <FormGroup className="form-group">
-            <FormLabel className="form-label" htmlFor="password">{t('login.password')}</FormLabel>
-            <FormControl
-              type="password"
-              id="password"
-              name="password"
-              className="form-control"
-              autoComplete="current-password"
-              required
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              isInvalid={formik.touched.password && Boolean(formik.errors.password)}
-            />
-            <FormGroup className="text-danger">{t(formik.errors.password)}</FormGroup>
-          </FormGroup>
-          <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('login.logIn')}</Button>
-          <div className="d-flex flex-column align-items-center">
-            <span className="small mb-2">{t('login.noAccount')}</span>
-            <NavLink to={routes.signupPagePath()}>{t('login.signup')}</NavLink>
-          </div>
-        </Form>
+    <div className="container-fluid flex-grow-1">
+      <div className="row justify-content-center align-content-center h-100">
+        <div className="col-xl-8 col-xxl-6">
+          <Card id="logIn" className="shadow-sm">
+            <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
+              <div><img src="https://izent.ru/i/ps/2016/02/1454982615.jpg" width="300" height="300" alt="Boommmm" /></div>
+              <Form className="w-50" onSubmit={formik.handleSubmit}>
+                <h1 className="text-center mb-4">{t('login.logIn')}</h1>
+                <FormGroup className="form-floating mb-3">
+                  <FormControl
+                    ref={nameInput}
+                    type="text"
+                    id="username"
+                    name="username"
+                    className="form-control"
+                    autoComplete="username"
+                    required
+                    placeholder={t('login.nickname')}
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
+                    isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                  />
+                  <FormLabel htmlFor="username">{t('login.nickname')}</FormLabel>
+                </FormGroup>
+                <FormGroup className="form-floating mb-3">
+                  <FormControl
+                    type="password"
+                    id="password"
+                    name="password"
+                    className="form-control"
+                    autoComplete="current-password"
+                    required
+                    placeholder={t('login.password')}
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                    isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                  />
+                  <FormLabel htmlFor="password">{t('login.password')}</FormLabel>
+                  <FormGroup className="text-danger">{t(formik.errors.password)}</FormGroup>
+                </FormGroup>
+                <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('login.logIn')}</Button>
+              </Form>
+            </Card.Body>
+            <Card.Footer>
+              <div className="d-flex flex-column align-items-center">
+                <span className="small mb-2">{t('login.noAccount')}</span>
+                <NavLink to={routes.signupPagePath()}>{t('login.signup')}</NavLink>
+              </div>
+            </Card.Footer>
+          </Card>
+        </div>
       </div>
     </div>
   );

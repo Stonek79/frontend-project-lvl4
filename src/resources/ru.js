@@ -1,5 +1,10 @@
 export default {
   translation: {
+    counts: {
+      key_0: '{{count}} сообщение',
+      key_1: '{{count}} сообщения',
+      key_2: '{{count}} сообщений',
+    },
     channels: {
       channels: 'Каналы',
       remove: 'Удалить',
@@ -44,6 +49,7 @@ export default {
       passMin: 'Не менее 6 символов',
     },
     process: {
+      addMessage: 'Введите сообщение...',
       loading: 'Загрузка...',
       removing: 'Удаление...',
       sending: 'Отправка...',
@@ -51,6 +57,7 @@ export default {
     register: {
       confirm: 'Подтвердите пароль',
       password: 'Пароль',
+      registry: 'Регистрация',
       toSignup: 'Зарегистрироваться',
       username: 'Имя пользователя',
     },

@@ -23,7 +23,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.1",
     "axios": "^0.21.1",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^5.0.1",
     "core-js": "^3.10.1",
     "cors": "^2.8.5",
     "darkreader": "^4.9.32",
@@ -48,7 +48,7 @@
     "popper.js": "^1.16.1",
     "pug": "^3.0.2",
     "react": "0.0.0-experimental-57768ef90",
-    "react-bootstrap": "^1.5.2",
+    "react-bootstrap": "^1.6.0",
     "react-dom": "0.0.0-experimental-57768ef90",
     "react-i18next": "^11.8.13",
     "react-redux": "^7.2.3",
