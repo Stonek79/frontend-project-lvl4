@@ -9,9 +9,12 @@ import {
 
 import AuthContext from '../context/AuthContext.jsx';
 import routes from '../routes.js';
+import login from '../../assets/images/login.jpg';
+import ThemeContext from '../context/ThemeContext.jsx';
 
 const LoginPage = () => {
   const { t } = useTranslation();
+  const { theme } = useContext(ThemeContext);
   const { logIn } = useContext(AuthContext);
   const history = useHistory();
   const location = useLocation();
@@ -42,8 +45,7 @@ const LoginPage = () => {
       try {
         const { data } = await axios.post(loginPath(), value);
         logIn(data);
-        const { from } = location.state || { from: { pathname: chatPagePath() } };
-        history.replace(from);
+        history.replace({ pathname: chatPagePath(), state: { from: location } });
       } catch (err) {
         console.log(err.response);
         nameInput.current.select();
@@ -56,9 +58,9 @@ const LoginPage = () => {
     <div className="container-fluid flex-grow-1">
       <div className="row justify-content-center align-content-center h-100">
         <div className="col-xl-8 col-xxl-6">
-          <Card id="logIn" className="shadow-sm">
+          <Card id="logIn" className={`shadow-sm bg-${theme === 'light' ? '' : 'dark'}`}>
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
-              <div><img src="https://izent.ru/i/ps/2016/02/1454982615.jpg" width="300" height="300" alt="Boommmm" /></div>
+              <div><img src={login} width="300" height="300" alt="Boommmm" /></div>
               <Form className="w-50" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('login.logIn')}</h1>
                 <FormGroup className="form-floating mb-3">
@@ -67,7 +69,7 @@ const LoginPage = () => {
                     type="text"
                     id="username"
                     name="username"
-                    className="form-control"
+                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
                     autoComplete="username"
                     required
                     placeholder={t('login.nickname')}
@@ -82,7 +84,7 @@ const LoginPage = () => {
                     type="password"
                     id="password"
                     name="password"
-                    className="form-control"
+                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
                     autoComplete="current-password"
                     required
                     placeholder={t('login.password')}
@@ -91,7 +93,7 @@ const LoginPage = () => {
                     isInvalid={formik.touched.password && Boolean(formik.errors.password)}
                   />
                   <FormLabel htmlFor="password">{t('login.password')}</FormLabel>
-                  <FormGroup className="text-danger">{t(formik.errors.password)}</FormGroup>
+                  <Form.Control.Feedback type="invalid">{t(formik.errors.password)}</Form.Control.Feedback>
                 </FormGroup>
                 <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('login.logIn')}</Button>
               </Form>

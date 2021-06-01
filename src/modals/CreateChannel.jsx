@@ -3,24 +3,19 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
-  Button, Form, FormControl, FormGroup, InputGroup, Modal,
+  Button, Form, FormControl, InputGroup, Modal, Spinner,
 } from 'react-bootstrap';
 
 import { itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 import { setCurrentChannelId } from '../slices/channelSlice.js';
+import ThemeContext from '../context/ThemeContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const Spinner = (name) => (
-  <>
-    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { name }
-  </>
-);
-
 const CreateChannel = ({ close, channelsNames, dispatch }) => {
   const { t } = useTranslation();
+  const { theme } = useContext(ThemeContext);
   const { addChannel } = useContext(ApiContext);
 
   const formik = useFormik({
@@ -56,7 +51,7 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
     <>
       <Modal.Header>
         <Modal.Title>{t('modals.addChannel')}</Modal.Title>
-        <Button aria-label="Close" variant="secondary" className="btn-close" onClick={close} />
+        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === 'light' ? '' : 'light'}`} onClick={close} />
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -66,15 +61,16 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
               name="channelName"
               data-testid="add-channel"
               required
-              maxLength={20}
+              placeholder={t('placeholders.addChannel')}
+              maxLength={14}
               value={formik.values.channelName}
               onChange={formik.handleChange}
               disabled={formik.isSubmitting}
               isInvalid={formik.errors.channelName}
             />
+            <Form.Control.Feedback type="invalid">{t(formik.errors.channelName)}</Form.Control.Feedback>
           </InputGroup>
         </Form>
-        <FormGroup className="text-danger">{t(formik.errors.channelName)}</FormGroup>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
@@ -91,7 +87,12 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner(t('process.sending')) : t('modals.send')}
+          {formik.isSubmitting ? (
+            <>
+              <Spinner animation="border" size="sm" role="status" />
+              <span className="ms-2">{t('process.sending')}</span>
+            </>
+          ) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

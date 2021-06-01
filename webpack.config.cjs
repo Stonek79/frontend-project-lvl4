@@ -43,6 +43,10 @@ module.exports = {
           { loader: 'sass-loader' },
         ],
       },
+      {
+        test: /\.jpg/,
+        type: 'asset/inline',
+      },
     ],
   },
 };

@@ -12,7 +12,7 @@ export default {
     errors: {
       confirm: 'Passwords must match',
       exist: 'User already exists',
-      length: 'From 3 to 20 characters',
+      length: 'From 3 to 14 characters',
       logError: 'Incorrect user name or password',
       netError: 'Network error',
       passMax: 'Maximum 20 characters',
@@ -43,6 +43,7 @@ export default {
       send: 'Send',
     },
     placeholders: {
+      addChannel: 'From 3 to 14 characters',
       nickMin: 'From 3 to 20 characters',
       passConfirm: 'Passwords must match',
       passMin: 'Minimum 6 characters',

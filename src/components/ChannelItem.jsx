@@ -8,12 +8,11 @@ const ChannelItem = ({
   handleRemoveChannel,
   handleRenameChannel,
   handleChangeChannel,
-  isCurrent,
-  name,
-  removable,
+  variant,
+  channel,
 }) => {
   const { t } = useTranslation();
-  const variant = isCurrent ? 'secondary' : 'light';
+  const { name, removable } = channel;
 
   return (
     <li className="nav-item">
@@ -22,10 +21,10 @@ const ChannelItem = ({
           ? (
             <Button
               variant={variant}
-              className="w-100 px-4 rounded-0 text-start"
+              className="w-100 px-1 rounded-0 text-start"
               onClick={handleChangeChannel}
             >
-              <span className="me-3">
+              <span className="me-2">
                 {'>'}
               </span>
               {name}
@@ -35,10 +34,10 @@ const ChannelItem = ({
             <Dropdown className="d-flex" as={ButtonGroup}>
               <Button
                 variant={variant}
-                className="w-100 px-4 rounded-0 text-start"
+                className="w-100 px-1 rounded-0 text-start"
                 onClick={handleChangeChannel}
               >
-                <span className="me-3">
+                <span className="me-2">
                   {'>'}
                 </span>
                 {name}

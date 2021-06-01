@@ -115,6 +115,7 @@ export default (app, defaultState = {}) => {
     const newUser = { id: getNextId(), username, password };
     const token = app.jwt.sign({ userId: newUser.id });
     state.users.push(newUser);
+
     reply
       .code(201)
       .header('Content-Type', 'application/json; charset=utf-8')

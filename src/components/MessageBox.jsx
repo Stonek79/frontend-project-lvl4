@@ -6,7 +6,7 @@ import { Col, FormGroup } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import MessageForm from './MessageForm.jsx';
-import { getMessages } from '../slices/messageSlice.js';
+import { getCurrentChannelMessages } from '../slices/messageSlice.js';
 import { getCurrentChannel } from '../slices/channelSlice.js';
 
 const Message = ({ user, text, id }) => (
@@ -19,7 +19,7 @@ const Message = ({ user, text, id }) => (
 
 const MessageBox = () => {
   const { t } = useTranslation();
-  const messages = useSelector(getMessages);
+  const messages = useSelector(getCurrentChannelMessages);
   const currentChannel = useSelector(getCurrentChannel);
 
   const name = currentChannel && currentChannel.name;
@@ -34,7 +34,7 @@ const MessageBox = () => {
   return (
     <Col className="p-0 h-100">
       <div className="d-flex flex-column h-100">
-        <div id="messageBox" className="bg-light mb-4 p-3 shadow-sm small">
+        <div id="messageBox" className="mb-4 p-3 shadow-sm small">
           <p className="m-0">
             {'> '}
             <b>{name}</b>

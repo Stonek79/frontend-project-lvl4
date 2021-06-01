@@ -11,11 +11,14 @@ import {
 import routes from '../routes.js';
 import AuthContext from '../context/AuthContext.jsx';
 import { itemsLength } from '../constants';
+import signup from '../../assets/images/signup.jpg';
+import ThemeContext from '../context/ThemeContext.jsx';
 
 const { minLength, minPassLength, maxLength } = itemsLength;
 
 const SignupPage = () => {
   const { t } = useTranslation();
+  const { theme } = useContext(ThemeContext);
   const { logIn } = useContext(AuthContext);
   const history = useHistory();
 
@@ -35,6 +38,7 @@ const SignupPage = () => {
       .required('errors.required'),
     passwordConfirm: Yup.string().trim()
       .oneOf([Yup.ref('password'), null], 'errors.confirm')
+      .min(minPassLength, 'errors.passMin')
       .required('errors.required'),
   });
 
@@ -59,8 +63,8 @@ const SignupPage = () => {
     onSubmit: async (value, { setErrors }) => {
       const { chatPagePath, signupPath } = routes;
       try {
-        const { username, passward } = value;
-        const { data } = await axios.post(signupPath(), { username, passward });
+        const { username, password } = value;
+        const { data } = await axios.post(signupPath(), { username, password });
         logIn(data);
         history.push(chatPagePath());
       } catch (err) {
@@ -75,10 +79,10 @@ const SignupPage = () => {
     <div className="container-fluid flex-grow-1">
       <div className="row justify-content-center align-content-center h-100">
         <div className="col-xl-8 col-xxl-6">
-          <Card id="signUp" className="shadow-sm">
+          <Card id="signUp" className={`shadow-sm bg-${theme === 'light' ? '' : 'dark'}`}>
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <div>
-                <img src="https://sun9-59.userapi.com/c855728/v855728548/18c349/AwUnPH5TZ6A.jpg" width="300" height="300" alt="Boommm" />
+                <img src={signup} width="300" height="300" alt="Boommm" />
               </div>
               <Form className="w-50" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('register.registry')}</h1>
@@ -88,7 +92,7 @@ const SignupPage = () => {
                     type="text"
                     id="username"
                     name="username"
-                    className="form-control"
+                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
                     autoComplete="username"
                     placeholder={t('register.username')}
                     required
@@ -98,18 +102,18 @@ const SignupPage = () => {
                     isInvalid={formik.touched.username && Boolean(formik.errors.username)}
                   />
                   <FormLabel className="form-label" htmlFor="username">{t('register.username')}</FormLabel>
-                  <FormGroup className="text-danger small">
+                  <Form.Control.Feedback type="invalid">
                     {formik.touched.username
                       && Boolean(formik.errors.username)
                       && t(formik.errors.username)}
-                  </FormGroup>
+                  </Form.Control.Feedback>
                 </FormGroup>
                 <FormGroup className="form-floating mb-3">
                   <FormControl
                     type="password"
                     id="password"
                     name="password"
-                    className="form-control"
+                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
                     autoComplete="current-password"
                     placeholder={t('register.password')}
                     required
@@ -119,18 +123,18 @@ const SignupPage = () => {
                     isInvalid={formik.touched.password && Boolean(formik.errors.password)}
                   />
                   <FormLabel className="form-label" htmlFor="password">{t('register.password')}</FormLabel>
-                  <FormGroup className="text-danger small">
+                  <Form.Control.Feedback type="invalid">
                     {formik.touched.password
                       && Boolean(formik.errors.password)
                       && t(formik.errors.password)}
-                  </FormGroup>
+                  </Form.Control.Feedback>
                 </FormGroup>
                 <FormGroup className="form-floating mb-3">
                   <FormControl
                     type="password"
                     id="passwordConfirm"
                     name="passwordConfirm"
-                    className="form-control"
+                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
                     autoComplete="password-confirm"
                     placeholder={t('register.confirm')}
                     required
@@ -143,11 +147,11 @@ const SignupPage = () => {
                     }
                   />
                   <FormLabel className="form-label" htmlFor="passwordConfirm">{t('register.confirm')}</FormLabel>
-                  <FormGroup className="text-danger small">
+                  <Form.Control.Feedback type="invalid">
                     {formik.touched.passwordConfirm
                       && Boolean(formik.errors.passwordConfirm)
                       && t(formik.errors.passwordConfirm)}
-                  </FormGroup>
+                  </Form.Control.Feedback>
                 </FormGroup>
                 <Button type="submit" className="w-100 mb-3" variant="outline-primary">{t('register.toSignup')}</Button>
               </Form>

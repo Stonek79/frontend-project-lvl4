@@ -13,7 +13,7 @@ import rootReducer from './slices/index.js';
 import { socketActions as actions } from './constants.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, removeChannel, renameChannel, setCurrentChannelId, updateChannels,
+  addChannel, removeChannel, renameChannel, updateChannels,
 } from './slices/channelSlice.js';
 
 export default async (socket) => {
@@ -29,7 +29,7 @@ export default async (socket) => {
       fallbackLng: 'ru',
     });
 
-  const socketHandler = (action) => (data) => new Promise((response, reject) => {
+  const emitSocketWithAcknowledgement = (action) => (data) => new Promise((response, reject) => {
     const timer = setTimeout(() => reject(Error('errors.netError')), 3000);
     socket.volatile.emit(action, data, (r) => {
       if (r.status === 'ok') {
@@ -39,21 +39,19 @@ export default async (socket) => {
     });
   });
 
-  const reconnect = () => {
+  const reconnect = (getAuthHeader) => {
     socket.on(actions.connect, () => {
       socket.sendBuffer = [];
       console.log('reconnect');
-      const id = store.getState().channels.currentChannelId;
-      store.dispatch(updateChannels());
-      store.dispatch(setCurrentChannelId({ id }));
+      store.dispatch(updateChannels(getAuthHeader));
     });
   };
 
   const api = {
-    sendMessage: socketHandler(actions.newMessage),
-    addChannel: socketHandler(actions.newChannel),
-    renameChannel: socketHandler(actions.renameChannel),
-    removeChannel: socketHandler(actions.removeChannel),
+    sendMessage: emitSocketWithAcknowledgement(actions.newMessage),
+    addChannel: emitSocketWithAcknowledgement(actions.newChannel),
+    renameChannel: emitSocketWithAcknowledgement(actions.renameChannel),
+    removeChannel: emitSocketWithAcknowledgement(actions.removeChannel),
     reconnect,
   };
 

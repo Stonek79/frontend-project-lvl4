@@ -6,26 +6,23 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import routes from '../routes.js';
 
-const getAuthHeader = () => {
-  const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
-  return userLoginData?.token
-    ? { Authorization: `Bearer ${userLoginData.token}` } : {};
-};
-
 const updateChannels = createAsyncThunk(
   'channelData/updateChannels',
-  async () => {
-    const { data } = await axios.get(routes.currentDataPath(), { headers: getAuthHeader() });
-    return data;
+  async (getAuthHeader, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(routes.currentDataPath(), { headers: getAuthHeader() });
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   },
 );
 
-const defaultChannelId = 1;
 const channelSlice = createSlice({
   name: 'channelData',
   initialState: {
     channels: [],
-    currentChannelId: defaultChannelId,
+    currentChannelId: null,
   },
   reducers: {
     addChannel(state, action) {
@@ -55,7 +52,9 @@ const channelSlice = createSlice({
   },
   extraReducers: {
     [updateChannels.fulfilled]: (state, action) => {
+      console.log(action.payload);
       state.channels = action.payload.channels;
+      state.currentChannelId = action.payload.currentChannelId;
     },
   },
 });
@@ -63,7 +62,6 @@ const channelSlice = createSlice({
 const getChannels = (state) => state.channels.channels;
 const getCurrentChannel = (state) => state.channels.channels
   .find((channel) => channel.id === state.channels.currentChannelId);
-const getCurrentChannelId = (state) => state.channels.currentChannelId;
 const getChannelsNames = (state) => state.channels.channels.map((ch) => ch.name);
 
 export const {
@@ -76,7 +74,6 @@ export const {
 export {
   getChannels,
   getCurrentChannel,
-  getCurrentChannelId,
   getChannelsNames,
   updateChannels,
 };

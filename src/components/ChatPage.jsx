@@ -2,54 +2,53 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Container } from 'react-bootstrap';
+import { Container, Spinner } from 'react-bootstrap';
 
 import ChannelBox from './ChannelBox.jsx';
 import MessageBox from './MessageBox.jsx';
-import ModalComponent from './Modal.jsx';
 import { updateChannels } from '../slices/channelSlice.js';
 import ApiContext from '../context/ApiContext.jsx';
+import AuthContext from '../context/AuthContext.jsx';
+import ThemeContext from '../context/ThemeContext.jsx';
 
-const ChatBox = () => (
-  <Container className="flex-grow-1 my-4 overflow-hidden rounded shadow">
-    <div className="row h-100 bg-white">
+const ChatBox = (theme) => (
+  <Container className="h-100 flex-grow-1 overflow-hidden my-4 rounded shadow">
+    <div className={theme === 'light' ? 'row h-100 bg-white' : 'row h-100 text-light bg-dark'}>
       <ChannelBox />
       <MessageBox />
-      <ModalComponent />
     </div>
   </Container>
-);
-
-const Spinner = (info) => (
-  <>
-    <span role="status" className="spinner-grow text-primary" />
-    { info }
-  </>
 );
 
 const MainPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { reconnect } = useContext(ApiContext);
+  const { getAuthHeader } = useContext(AuthContext);
   const [hasData, setData] = useState(false);
-
+  const { theme } = useContext(ThemeContext);
   useEffect(() => {
     const mounted = { state: false };
 
-    const getChatData = async () => {
+    const getChatData = () => {
       if (!mounted.state) {
         setData(true);
-        dispatch(updateChannels());
+        dispatch(updateChannels(getAuthHeader));
       }
     };
 
-    reconnect();
+    reconnect(getAuthHeader);
     getChatData();
 
     return () => mounted.state = true;
   }, []);
 
-  return (hasData && ChatBox()) || Spinner(t('process.loading'));
+  return (hasData && ChatBox(theme)) || (
+    <>
+      <Spinner animation="grow" role="status" variant="primary" />
+      <span>{(t('process.loading'))}</span>
+    </>
+  );
 };
 
 export default MainPage;

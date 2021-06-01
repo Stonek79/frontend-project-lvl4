@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,8 +13,34 @@ import LoginPage from './LoginPage.jsx';
 import Navbar from './Navbar.jsx';
 import SignupPage from './SignupPage.jsx';
 import routes from '../routes.js';
+import ModalComponent from './Modal.jsx';
+import ThemeContext from '../context/ThemeContext.jsx';
 
 const { chatPagePath, loginPagePath, signupPagePath } = routes;
+
+const getAuthHeader = () => {
+  const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
+  return userLoginData?.token
+    ? { Authorization: `Bearer ${userLoginData.token}` } : {};
+};
+
+const ThemePrivider = ({ storeKey = 'ThemeSwitch', children }) => {
+  const currentTheme = localStorage.getItem(storeKey) ?? 'light';
+  const [theme, setTheme] = useState(currentTheme);
+
+  useEffect(() => {
+    localStorage.setItem('ThemeSwitch', theme);
+  }, [theme]);
+
+  const switchTheme = () => {
+    setTheme(() => (theme === 'light' ? 'dark' : 'light'));
+    document.body.classList.toggle('dark-theme');
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, switchTheme }}>{children}</ThemeContext.Provider>
+  );
+};
 
 const AuthProvider = ({ children }) => {
   const userData = JSON.parse(localStorage.getItem('userLoginData'));
@@ -32,7 +58,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user, logIn, logOut,
+      getAuthHeader, user, logIn, logOut,
     }}
     >
       {children}
@@ -46,33 +72,34 @@ const PrivateRoute = ({ children, ...props }) => {
   return (
     <Route
       {...props}
-      render={({ location }) => {
-        const { from } = location.state || { from: { pathname: loginPagePath() } };
-        return (user ? (children) : (<Redirect to={from} />));
-      }}
+      render={({ location }) => (user
+        ? children : (<Redirect to={{ pathname: loginPagePath(), state: { from: location } }} />))}
     />
   );
 };
 
 const App = () => (
   <AuthProvider>
-    <Router>
-      <div className="d-flex flex-column h-100">
-        <Navbar />
+    <ThemePrivider>
+      <Router>
+        <div className="d-flex flex-column h-100">
+          <Navbar />
 
-        <Switch>
-          <Route path={loginPagePath()}>
-            <LoginPage />
-          </Route>
-          <Route path={signupPagePath()}>
-            <SignupPage />
-          </Route>
-          <PrivateRoute exact path={chatPagePath()}>
-            <ChatPage />
-          </PrivateRoute>
-        </Switch>
-      </div>
-    </Router>
+          <Switch>
+            <Route path={loginPagePath()}>
+              <LoginPage />
+            </Route>
+            <Route path={signupPagePath()}>
+              <SignupPage />
+            </Route>
+            <PrivateRoute exact path={chatPagePath()}>
+              <ChatPage />
+            </PrivateRoute>
+          </Switch>
+        </div>
+      </Router>
+      <ModalComponent />
+    </ThemePrivider>
   </AuthProvider>
 );
 

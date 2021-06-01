@@ -3,26 +3,23 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
-  Button, Form, FormControl, FormGroup, InputGroup, Modal,
+  Button, Form, FormControl, InputGroup, Modal, Spinner,
 } from 'react-bootstrap';
 
 import { itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
+import ThemeContext from '../context/ThemeContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
 
-const Spinner = (name) => (
-  <>
-    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { name }
-  </>
-);
-
-const RenameChannel = ({ close, currentChannel, channelsNames }) => {
+const RenameChannel = ({
+  close, channelId, channels, channelsNames,
+}) => {
   const { t } = useTranslation();
+  const { theme } = useContext(ThemeContext);
   const { renameChannel } = useContext(ApiContext);
 
-  const { id, name } = currentChannel;
+  const { name } = channels.find((ch) => ch.id === channelId);
 
   const formik = useFormik({
     initialValues: { channelName: name },
@@ -37,7 +34,7 @@ const RenameChannel = ({ close, currentChannel, channelsNames }) => {
     onSubmit: async (initialValues, { setErrors }) => {
       const newName = initialValues.channelName.trim();
       try {
-        await renameChannel({ id, name: newName });
+        await renameChannel({ id: channelId, name: newName });
         close();
       } catch (err) {
         console.log(err);
@@ -55,7 +52,7 @@ const RenameChannel = ({ close, currentChannel, channelsNames }) => {
     <>
       <Modal.Header>
         <Modal.Title>{t('modals.renChannel')}</Modal.Title>
-        <Button aria-label="Close" variant="secondary" className="btn-close" onClick={close} />
+        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === 'light' ? '' : 'light'}`} onClick={close} />
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -65,15 +62,15 @@ const RenameChannel = ({ close, currentChannel, channelsNames }) => {
               data-testid="rename-channel"
               name="channelName"
               required
-              maxLength={20}
+              maxLength={14}
               value={formik.values.channelName}
               onChange={formik.handleChange}
               disabled={formik.isSubmitting}
               isInvalid={formik.errors.channelName}
             />
+            <Form.Control.Feedback type="invalid">{t(formik.errors.channelName)}</Form.Control.Feedback>
           </InputGroup>
         </Form>
-        <FormGroup className="text-danger">{t(formik.errors.channelName)}</FormGroup>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button
@@ -90,7 +87,12 @@ const RenameChannel = ({ close, currentChannel, channelsNames }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner(t('process.sending')) : t('modals.send')}
+          {formik.isSubmitting ? (
+            <>
+              <Spinner animation="border" size="sm" role="status" />
+              <span className="ms-2">{t('process.sending')}</span>
+            </>
+          ) : t('modals.send')}
         </Button>
       </Modal.Footer>
     </>

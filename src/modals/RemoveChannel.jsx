@@ -1,19 +1,16 @@
 import React, { useContext } from 'react';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Button, FormGroup, Modal } from 'react-bootstrap';
+import {
+  Button, FormGroup, Modal, Spinner,
+} from 'react-bootstrap';
 
 import ApiContext from '../context/ApiContext.jsx';
-
-const Spinner = (name) => (
-  <>
-    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { name }
-  </>
-);
+import ThemeContext from '../context/ThemeContext.jsx';
 
 const RemoveChannel = ({ close, channelId }) => {
   const { t } = useTranslation();
+  const { theme } = useContext(ThemeContext);
   const { removeChannel } = useContext(ApiContext);
 
   const formik = useFormik({
@@ -34,7 +31,7 @@ const RemoveChannel = ({ close, channelId }) => {
     <>
       <Modal.Header>
         <Modal.Title>{t('modals.remChannel')}</Modal.Title>
-        <Button aria-label="Close" variant="secondary" className="btn-close" onClick={close} />
+        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === 'light' ? '' : 'light'}`} onClick={close} />
       </Modal.Header>
       <Modal.Body className="text-danger">
         <p><b>{t('modals.confirm')}</b></p>
@@ -55,7 +52,12 @@ const RemoveChannel = ({ close, channelId }) => {
           onClick={formik.handleSubmit}
           disabled={formik.isSubmitting}
         >
-          {formik.isSubmitting ? Spinner(t('process.removing')) : t('modals.remove')}
+          {formik.isSubmitting ? (
+            <>
+              <Spinner animation="border" size="sm" role="status" />
+              <span className="ms-2">{t('process.removing')}</span>
+            </>
+          ) : t('modals.remove')}
         </Button>
       </Modal.Footer>
     </>

@@ -29,7 +29,7 @@ const messageSlice = createSlice({
   },
 });
 
-export const getMessages = (state) => {
+export const getCurrentChannelMessages = (state) => {
   const { messages } = state.messages;
   const { currentChannelId } = state.channels;
   return messages.filter((message) => message.channelId === currentChannelId);

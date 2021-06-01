@@ -4,43 +4,35 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
-  Button, Form, FormControl, FormGroup, InputGroup,
+  Button, Form, FormControl, FormGroup, InputGroup, Spinner,
 } from 'react-bootstrap';
 
 import { itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 import AuthContext from '../context/AuthContext.jsx';
-import { getCurrentChannelId } from '../slices/channelSlice.js';
+import { getCurrentChannel } from '../slices/channelSlice.js';
 
 const { messageMax } = itemsLength;
-
-const Spinner = (name) => (
-  <>
-    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" />
-    { name }
-  </>
-);
 
 const MessageForm = () => {
   const { t } = useTranslation();
   const { sendMessage } = useContext(ApiContext);
   const { user } = useContext(AuthContext);
   const textInput = useRef(null);
-  const currentChannelId = useSelector(getCurrentChannelId);
+  const currentChannelId = useSelector(getCurrentChannel);
 
   const { username } = user;
   const formik = useFormik({
     initialValues: { message: '' },
-    status: false,
     validationSchema: Yup.object({
       message: Yup.string().trim()
         .max(messageMax)
-        .required(''),
+        .required(t('errors.required')),
     }),
     onSubmit: async (initialValues, { resetForm, setErrors }) => {
       const message = {
         user: username,
-        channelId: currentChannelId,
+        channelId: currentChannelId.id,
         text: initialValues.message,
       };
 
@@ -65,8 +57,8 @@ const MessageForm = () => {
           <FormControl
             ref={textInput}
             name="message"
-            data-testid="new-message"
             required
+            data-testid="new-message"
             placeholder={t('process.addMessage')}
             maxLength={400}
             value={formik.values.message}
@@ -80,10 +72,15 @@ const MessageForm = () => {
             className="ml-2"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? Spinner(t('process.sending')) : <b>{t('mainPage.send')}</b>}
+            {formik.isSubmitting ? (
+              <>
+                <Spinner animation="border" size="sm" role="status" />
+                <span className="ms-2">{t('process.sending')}</span>
+              </>
+            ) : <b>{t('mainPage.send')}</b>}
           </Button>
+          <Form.Control.Feedback type="invalid">{t(formik.errors.message)}</Form.Control.Feedback>
         </InputGroup>
-        <FormGroup className="text-danger">{formik.errors.message}</FormGroup>
       </Form>
     </FormGroup>
   );
