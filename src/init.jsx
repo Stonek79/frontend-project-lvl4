@@ -13,7 +13,7 @@ import rootReducer from './slices/index.js';
 import { socketActions as actions } from './constants.js';
 import { addMessage } from './slices/messageSlice.js';
 import {
-  addChannel, removeChannel, renameChannel, updateChannels,
+  addChannel, removeChannel, renameChannel, setCurrentChannelId, updateChannels,
 } from './slices/channelSlice.js';
 
 export default async (socket) => {
@@ -39,15 +39,15 @@ export default async (socket) => {
     });
   });
 
-  // const getStoreData = (getAuthHeader) => {
-  //   socket.on(actions.connect, () => {
-  //     const id = store.getState().channels.currentChannelId;
-  //     store.dispatch(updateChannels(getAuthHeader));
-  //     store.dispatch(setCurrentChannelId({ id }));
-  //   });
-  // };
+  const getStoreData = (getAuthHeader) => {
+    socket.on(actions.connect, () => {
+      const id = store.getState().channels.currentChannelId;
+      store.dispatch(updateChannels(getAuthHeader));
+      store.dispatch(setCurrentChannelId({ id }));
+    });
+  };
 
-  const getStoreData = (getAuthHeader) => store.dispatch(updateChannels(getAuthHeader));
+  // const getStoreData = (getAuthHeader) => store.dispatch(updateChannels(getAuthHeader));
 
   const api = {
     sendMessage: emitSocketWithAcknowledgement(actions.newMessage),
