@@ -62,7 +62,7 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
               data-testid="add-channel"
               required
               placeholder={t('placeholders.addChannel')}
-              maxLength={14}
+              maxLength={20}
               value={formik.values.channelName}
               onChange={formik.handleChange}
               disabled={formik.isSubmitting}

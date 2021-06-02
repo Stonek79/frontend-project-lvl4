@@ -1,5 +1,5 @@
 const itemsLength = {
-  maxLength: 14,
+  maxLength: 20,
   messageMax: 400,
   minLength: 3,
   minPassLength: 6,

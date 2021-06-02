@@ -24,18 +24,20 @@ const getAuthHeader = () => {
     ? { Authorization: `Bearer ${userLoginData.token}` } : {};
 };
 
-const ThemePrivider = ({ storeKey = 'ThemeSwitch', children }) => {
-  const currentTheme = localStorage.getItem(storeKey) ?? 'light';
-  const [theme, setTheme] = useState(currentTheme);
+const storeKey = 'ThemeSwitch';
+const primaryStoreKey = localStorage.getItem(storeKey);
+const ThemePrivider = ({ children }) => {
+  const [theme, setTheme] = useState(primaryStoreKey ?? 'light');
 
   useEffect(() => {
-    localStorage.setItem('ThemeSwitch', theme);
-  }, [theme]);
+    localStorage.setItem(storeKey, theme);
+    if (theme === 'light') {
+      return document.body.classList.remove('dark-theme');
+    }
+    return document.body.classList.add('dark-theme');
+  }, [theme, storeKey]);
 
-  const switchTheme = () => {
-    setTheme(() => (theme === 'light' ? 'dark' : 'light'));
-    document.body.classList.toggle('dark-theme');
-  };
+  const switchTheme = () => setTheme(() => (theme === 'light' ? 'dark' : 'light'));
 
   return (
     <ThemeContext.Provider value={{ theme, switchTheme }}>{children}</ThemeContext.Provider>

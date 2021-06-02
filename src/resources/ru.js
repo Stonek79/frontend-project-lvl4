@@ -13,12 +13,13 @@ export default {
     errors: {
       confirm: 'Пароли должны совпадать',
       exist: 'Такой пользователь уже существует',
-      length: 'От 3 до 14 символов',
+      length: 'От 3 до 20 символов',
       logError: 'Неверные имя пользователя или пароль',
       netError: 'Ошибка сети',
       passMax: 'Не более 20 символов',
       passMin: 'Не менее 6 символов',
       required: 'Обязательное поле',
+      serverError: 'Ошибка сервера',
       someError: 'Ошибка',
       uniq: 'Должно быть уникальным',
     },
@@ -44,7 +45,7 @@ export default {
       send: 'Отправить',
     },
     placeholders: {
-      addChannel: 'От 3 to 14 символов',
+      addChannel: 'От 3 to 20 символов',
       nickMin: 'От 3 до 20 символов',
       passConfirm: 'Пароли должны совпадать',
       passMin: 'Не менее 6 символов',

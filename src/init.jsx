@@ -39,20 +39,22 @@ export default async (socket) => {
     });
   });
 
-  const reconnect = (getAuthHeader) => {
-    socket.on(actions.connect, () => {
-      socket.sendBuffer = [];
-      console.log('reconnect');
-      store.dispatch(updateChannels(getAuthHeader));
-    });
-  };
+  // const getStoreData = (getAuthHeader) => {
+  //   socket.on(actions.connect, () => {
+  //     const id = store.getState().channels.currentChannelId;
+  //     store.dispatch(updateChannels(getAuthHeader));
+  //     store.dispatch(setCurrentChannelId({ id }));
+  //   });
+  // };
+
+  const getStoreData = (getAuthHeader) => store.dispatch(updateChannels(getAuthHeader));
 
   const api = {
     sendMessage: emitSocketWithAcknowledgement(actions.newMessage),
     addChannel: emitSocketWithAcknowledgement(actions.newChannel),
     renameChannel: emitSocketWithAcknowledgement(actions.renameChannel),
     removeChannel: emitSocketWithAcknowledgement(actions.removeChannel),
-    reconnect,
+    getStoreData,
   };
 
   socket.on(actions.newChannel, (data) => {

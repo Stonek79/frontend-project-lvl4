@@ -13,7 +13,7 @@ const updateChannels = createAsyncThunk(
       const { data } = await axios.get(routes.currentDataPath(), { headers: getAuthHeader() });
       return data;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(new Error('errors.serverError'));
     }
   },
 );
@@ -52,7 +52,6 @@ const channelSlice = createSlice({
   },
   extraReducers: {
     [updateChannels.fulfilled]: (state, action) => {
-      console.log(action.payload);
       state.channels = action.payload.channels;
       state.currentChannelId = action.payload.currentChannelId;
     },

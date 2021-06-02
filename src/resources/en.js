@@ -18,6 +18,7 @@ export default {
       passMax: 'Maximum 20 characters',
       passMin: 'Minimum 6 characters',
       required: 'Required field',
+      serverError: 'Server error',
       someError: 'Error',
       uniq: 'Must be uniq',
     },
