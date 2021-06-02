@@ -52,9 +52,8 @@ const channelSlice = createSlice({
   },
   extraReducers: {
     [updateChannels.fulfilled]: (state, action) => {
-      const currentChannel = state.currentChannelId;
       state.channels = action.payload.channels;
-      state.currentChannelId = currentChannel ?? action.payload.currentChannelId;
+      state.currentChannelId = state.currentChannelId ?? action.payload.currentChannelId;
     },
   },
 });

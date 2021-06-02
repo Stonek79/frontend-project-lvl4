@@ -39,13 +39,13 @@ export default async (socket) => {
     });
   });
 
-  const getStoreData = (getAuthHeader) => {
-    socket.on(actions.connect, () => {
-      store.dispatch(updateChannels(getAuthHeader));
-    });
-  };
+  // const getStoreData = (getAuthHeader) => {
+  //   socket.on(actions.connect, () => {
+  //     store.dispatch(updateChannels(getAuthHeader));
+  //   });
+  // };
 
-  // const getStoreData = (getAuthHeader) => store.dispatch(updateChannels(getAuthHeader));
+  const getStoreData = (getAuthHeader) => store.dispatch(updateChannels(getAuthHeader));
 
   const api = {
     sendMessage: emitSocketWithAcknowledgement(actions.newMessage),
