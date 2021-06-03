@@ -21,7 +21,7 @@ const ChatBox = (theme) => (
 const MainPage = () => {
   const { t } = useTranslation();
   const { getStoreData } = useContext(ApiContext);
-  const { getAuthHeader } = useContext(AuthContext);
+  const { getAuthHeader, logOut } = useContext(AuthContext);
   const [hasData, setDataInfo] = useState(false);
   const { theme } = useContext(ThemeContext);
   useEffect(() => {
@@ -30,7 +30,7 @@ const MainPage = () => {
     const getChatData = () => {
       if (!mounted.state) {
         setDataInfo(true);
-        getStoreData(getAuthHeader);
+        getStoreData({ getAuthHeader, logOut });
       }
     };
 

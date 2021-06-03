@@ -8,12 +8,18 @@ import routes from '../routes.js';
 
 const updateChannels = createAsyncThunk(
   'channelData/updateChannels',
-  async (getAuthHeader, { rejectWithValue }) => {
+  async ({ getAuthHeader, logOut }) => {
     try {
       const { data } = await axios.get(routes.currentDataPath(), { headers: getAuthHeader() });
       return data;
     } catch (err) {
-      return rejectWithValue(new Error('errors.serverError'));
+      console.log(err);
+      if (err.response.status) {
+        logOut();
+      }
+      return false;
+    // TODO реализовать дефолтный выброс ошибки
+      // return rejectWithValue(new Error('errors.serverError')); ??
     }
   },
 );
@@ -50,11 +56,12 @@ const channelSlice = createSlice({
       currentChannel.name = channelName;
     },
   },
-  extraReducers: {
-    [updateChannels.fulfilled]: (state, action) => {
-      state.channels = action.payload.channels;
-      state.currentChannelId = state.currentChannelId ?? action.payload.currentChannelId;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(updateChannels.fulfilled, (state, action) => {
+        state.channels = action.payload.channels;
+        state.currentChannelId = state.currentChannelId ?? action.payload.currentChannelId;
+      });
   },
 });
 
