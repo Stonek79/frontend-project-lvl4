@@ -4,10 +4,15 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { darkMode } from '../constants.js';
 
 import AuthContext from '../context/AuthContext.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
 import routes from '../routes.js';
+
+const {
+  dark, darkThemeBtnPic, light, lightThemeBtnPic, white,
+} = darkMode;
 
 const { chatPagePath } = routes;
 
@@ -17,16 +22,16 @@ const Navbar = () => {
   const { theme, switchTheme } = useContext(ThemeContext);
 
   return (
-    <NavbarBootstrap id="nav" className={`shadow-sm navbar-expand-lg bg-${theme === 'light' ? 'white' : 'dark'}`}>
+    <NavbarBootstrap id="nav" className={`shadow-sm navbar-expand-lg bg-${theme === light ? white : dark}`}>
       <Container>
-        <NavbarBootstrap.Brand className={`mr-auto text-${theme === 'light' ? 'dark' : 'white'}`} as={Link} to={chatPagePath()}>
+        <NavbarBootstrap.Brand className={`mr-auto text-${theme === light ? dark : white}`} as={Link} to={chatPagePath()}>
           {t('hexletChat')}
         </NavbarBootstrap.Brand>
         <Nav>
           {auth.user && (<Button variant="outline-primary" onClick={auth.logOut}>{t('mainPage.logOut')}</Button>)}
-          <Button className="d-flex ms-2" variant={theme === 'light' ? 'outline-primary' : 'outline-dark'} onClick={switchTheme}>
+          <Button className="d-flex ms-2" variant="outline-primary" onClick={switchTheme}>
             {' '}
-            <span>{(theme === 'light' ? <>🌜</> : <>🌞</>)}</span>
+            <span>{(theme === light ? lightThemeBtnPic : darkThemeBtnPic)}</span>
           </Button>
         </Nav>
       </Container>

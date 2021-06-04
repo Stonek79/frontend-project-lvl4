@@ -6,11 +6,12 @@ import {
   Button, Form, FormControl, InputGroup, Modal, Spinner,
 } from 'react-bootstrap';
 
-import { itemsLength } from '../constants.js';
+import { darkMode, itemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
 
 const { minLength, maxLength } = itemsLength;
+const { light } = darkMode;
 
 const RenameChannel = ({
   close, channelId, channels, channelsNames,
@@ -52,7 +53,7 @@ const RenameChannel = ({
     <>
       <Modal.Header>
         <Modal.Title>{t('modals.renChannel')}</Modal.Title>
-        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === 'light' ? '' : 'light'}`} onClick={close} />
+        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === light ? '' : light}`} onClick={close} />
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>

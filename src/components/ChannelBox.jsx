@@ -38,7 +38,7 @@ const ChannelBox = () => {
           <span className="fs-5">+</span>
         </Button>
       </FormGroup>
-      <FormGroup id="channelsList" className="h-100 pb-3 overflow-auto">
+      <FormGroup id="channelsList" className="h-100 pb-3 pe-1 overflow-auto">
         <ListGroup className="nav">
           {channels.map((channel) => {
             const { id } = channel;

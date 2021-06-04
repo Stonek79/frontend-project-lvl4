@@ -1,8 +1,22 @@
+const darkMode = {
+  dark: 'dark',
+  darkTheme: 'dark-theme',
+  light: 'light',
+  lightThemeBtnPic: '🌜',
+  darkThemeBtnPic: '🌞',
+  white: 'white',
+};
+
 const itemsLength = {
   maxLength: 20,
   messageMax: 400,
   minLength: 3,
   minPassLength: 6,
+};
+
+const localStarageKeys = {
+  themeMode: 'themeMode',
+  loggedUserData: 'loggedUserData',
 };
 
 const modalTypes = {
@@ -19,4 +33,10 @@ const socketActions = {
   newMessage: 'newMessage',
 };
 
-export { socketActions, itemsLength, modalTypes };
+export {
+  darkMode,
+  itemsLength,
+  localStarageKeys,
+  modalTypes,
+  socketActions,
+};

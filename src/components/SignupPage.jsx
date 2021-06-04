@@ -10,11 +10,12 @@ import {
 
 import routes from '../routes.js';
 import AuthContext from '../context/AuthContext.jsx';
-import { itemsLength } from '../constants';
+import { darkMode, itemsLength } from '../constants';
 import signup from '../../assets/images/signup.jpg';
 import ThemeContext from '../context/ThemeContext.jsx';
 
 const { minLength, minPassLength, maxLength } = itemsLength;
+const { dark, light } = darkMode;
 
 const SignupPage = () => {
   const { t } = useTranslation();
@@ -79,7 +80,7 @@ const SignupPage = () => {
     <div className="container-fluid flex-grow-1">
       <div className="row justify-content-center align-content-center h-100">
         <div className="col-xl-8 col-xxl-6">
-          <Card id="signUp" className={`shadow-sm bg-${theme === 'light' ? '' : 'dark'}`}>
+          <Card id="signUp" className={`shadow-sm bg-${theme === light ? '' : dark}`}>
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <div>
                 <img src={signup} width="300" height="300" alt="Boommm" />
@@ -92,7 +93,7 @@ const SignupPage = () => {
                     type="text"
                     id="username"
                     name="username"
-                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
                     autoComplete="username"
                     placeholder={t('register.username')}
                     required
@@ -113,7 +114,7 @@ const SignupPage = () => {
                     type="password"
                     id="password"
                     name="password"
-                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
                     autoComplete="current-password"
                     placeholder={t('register.password')}
                     required
@@ -134,7 +135,7 @@ const SignupPage = () => {
                     type="password"
                     id="passwordConfirm"
                     name="passwordConfirm"
-                    className={`${theme === 'light' ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
                     autoComplete="password-confirm"
                     placeholder={t('register.confirm')}
                     required

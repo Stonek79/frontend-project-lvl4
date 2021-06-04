@@ -15,29 +15,31 @@ import SignupPage from './SignupPage.jsx';
 import routes from '../routes.js';
 import ModalComponent from './Modal.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
+import { darkMode, localStarageKeys } from '../constants.js';
 
 const { chatPagePath, loginPagePath, signupPagePath } = routes;
+const { themeMode, loggedUserData } = localStarageKeys;
+const { dark, darkTheme, light } = darkMode;
 
 const getAuthHeader = () => {
-  const userLoginData = JSON.parse(localStorage.getItem('userLoginData'));
-  return userLoginData?.token
-    ? { Authorization: `Bearer ${userLoginData.token}` } : {};
+  const loggedUser = JSON.parse(localStorage.getItem(loggedUserData));
+  return loggedUser?.token
+    ? { Authorization: `Bearer ${loggedUser.token}` } : {};
 };
 
-const storeKey = 'ThemeSwitch';
-const primaryStoreKey = localStorage.getItem(storeKey);
-const ThemePrivider = ({ children }) => {
-  const [theme, setTheme] = useState(primaryStoreKey ?? 'light');
+const primaryThemeMode = () => localStorage.getItem(themeMode);
+const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState(primaryThemeMode() ?? light);
 
   useEffect(() => {
-    localStorage.setItem(storeKey, theme);
-    if (theme === 'light') {
-      return document.body.classList.remove('dark-theme');
+    localStorage.setItem(themeMode, theme);
+    if (theme === light) {
+      return document.body.classList.remove(darkTheme);
     }
-    return document.body.classList.add('dark-theme');
-  }, [theme, storeKey]);
+    return document.body.classList.add(darkTheme);
+  }, [theme]);
 
-  const switchTheme = () => setTheme(() => (theme === 'light' ? 'dark' : 'light'));
+  const switchTheme = () => setTheme(() => (theme === light ? dark : light));
 
   return (
     <ThemeContext.Provider value={{ theme, switchTheme }}>{children}</ThemeContext.Provider>
@@ -45,16 +47,16 @@ const ThemePrivider = ({ children }) => {
 };
 
 const AuthProvider = ({ children }) => {
-  const userData = JSON.parse(localStorage.getItem('userLoginData'));
+  const userData = JSON.parse(localStorage.getItem(loggedUserData));
   const [user, setUser] = useState(userData ? { username: userData.username } : null);
 
-  const logIn = (userLoginData) => {
-    localStorage.setItem('userLoginData', JSON.stringify(userLoginData));
-    setUser({ username: userLoginData.username });
+  const logIn = (loggedUser) => {
+    localStorage.setItem(loggedUserData, JSON.stringify(loggedUser));
+    setUser({ username: loggedUser.username });
   };
 
   const logOut = () => {
-    localStorage.removeItem('userLoginData');
+    localStorage.removeItem(loggedUserData);
     setUser(null);
   };
 
@@ -82,7 +84,7 @@ const PrivateRoute = ({ children, ...props }) => {
 
 const App = () => (
   <AuthProvider>
-    <ThemePrivider>
+    <ThemeProvider>
       <Router>
         <div className="d-flex flex-column h-100">
           <Navbar />
@@ -101,7 +103,7 @@ const App = () => (
         </div>
       </Router>
       <ModalComponent />
-    </ThemePrivider>
+    </ThemeProvider>
   </AuthProvider>
 );
 

@@ -8,16 +8,16 @@ import routes from '../routes.js';
 
 const updateChannels = createAsyncThunk(
   'channelData/updateChannels',
-  async ({ getAuthHeader, logOut }) => {
+  async ({ authHeader, logOut }) => {
     try {
-      const { data } = await axios.get(routes.currentDataPath(), { headers: getAuthHeader() });
+      const { data } = await axios.get(routes.currentDataPath(), { headers: authHeader });
       return data;
     } catch (err) {
       console.log(err);
-      if (err.response.status) {
-        logOut();
+      if (err.response.status === 401) {
+        return logOut();
       }
-      return false;
+      return null;
     // TODO реализовать дефолтный выброс ошибки
       // return rejectWithValue(new Error('errors.serverError')); ??
     }
