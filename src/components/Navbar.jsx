@@ -10,28 +10,29 @@ import AuthContext from '../context/AuthContext.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
 import routes from '../routes.js';
 
-const {
-  dark, darkThemeBtnPic, light, lightThemeBtnPic, white,
-} = darkMode;
-
-const { chatPagePath } = routes;
-
 const Navbar = () => {
   const { t } = useTranslation();
   const auth = useContext(AuthContext);
   const { theme, switchTheme } = useContext(ThemeContext);
 
   return (
-    <NavbarBootstrap id="nav" className={`shadow-sm navbar-expand-lg bg-${theme === light ? white : dark}`}>
+    <NavbarBootstrap id="nav" className={`shadow-sm navbar-expand-lg bg-${theme === darkMode.light ? darkMode.white : darkMode.dark}`}>
       <Container>
-        <NavbarBootstrap.Brand className={`mr-auto text-${theme === light ? dark : white}`} as={Link} to={chatPagePath()}>
+        <NavbarBootstrap.Brand
+          className={`mr-auto text-${theme === darkMode.light ? darkMode.dark : darkMode.white}`}
+          as={Link}
+          to={routes.chatPagePath()}
+        >
           {t('hexletChat')}
         </NavbarBootstrap.Brand>
         <Nav>
           {auth.user && (<Button variant="outline-primary" onClick={auth.logOut}>{t('mainPage.logOut')}</Button>)}
           <Button className="d-flex ms-2" variant="outline-primary" onClick={switchTheme}>
             {' '}
-            <span>{(theme === light ? lightThemeBtnPic : darkThemeBtnPic)}</span>
+            <span>
+              {(theme === darkMode.light
+                ? darkMode.lightThemeBtnPic : darkMode.darkThemeBtnPic)}
+            </span>
           </Button>
         </Nav>
       </Container>

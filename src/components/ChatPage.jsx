@@ -10,11 +10,9 @@ import AuthContext from '../context/AuthContext.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
 import { darkMode } from '../constants.js';
 
-const { light } = darkMode;
-
 const ChatBox = (theme) => (
   <Container className="h-100 flex-grow overflow-hidden my-4 rounded shadow">
-    <div className={theme === light ? 'row h-100 bg-white' : 'row h-100 text-light bg-dark'}>
+    <div className={theme === darkMode.light ? 'row h-100 bg-white' : 'row h-100 text-light bg-dark'}>
       <ChannelBox />
       <MessageBox />
     </div>

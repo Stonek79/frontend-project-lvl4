@@ -10,12 +10,9 @@ import {
 
 import routes from '../routes.js';
 import AuthContext from '../context/AuthContext.jsx';
-import { darkMode, itemsLength } from '../constants';
+import { darkMode, inputItemsLength } from '../constants';
 import signup from '../../assets/images/signup.jpg';
 import ThemeContext from '../context/ThemeContext.jsx';
-
-const { minLength, minPassLength, maxLength } = itemsLength;
-const { dark, light } = darkMode;
 
 const SignupPage = () => {
   const { t } = useTranslation();
@@ -30,16 +27,16 @@ const SignupPage = () => {
 
   const validationSchema = Yup.object({
     username: Yup.string().trim()
-      .min(minLength, 'errors.length')
-      .max(maxLength, 'errors.length')
+      .min(inputItemsLength.minLength, 'errors.length')
+      .max(inputItemsLength.maxLength, 'errors.length')
       .required('errors.required'),
     password: Yup.string().trim()
-      .min(minPassLength, 'errors.passMin')
-      .max(maxLength, 'errors.passMax')
+      .min(inputItemsLength.minPassLength, 'errors.passMin')
+      .max(inputItemsLength.maxLength, 'errors.passMax')
       .required('errors.required'),
     passwordConfirm: Yup.string().trim()
       .oneOf([Yup.ref('password'), null], 'errors.confirm')
-      .min(minPassLength, 'errors.passMin')
+      .min(inputItemsLength.minPassLength, 'errors.passMin')
       .required('errors.required'),
   });
 
@@ -80,10 +77,10 @@ const SignupPage = () => {
     <div className="container-fluid flex-grow-1">
       <div className="row justify-content-center align-content-center h-100">
         <div className="col-xl-8 col-xxl-6">
-          <Card id="signUp" className={`shadow-sm bg-${theme === light ? '' : dark}`}>
+          <Card id="signUp" className={`shadow-sm bg-${theme === darkMode.light ? '' : darkMode.dark}`}>
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <div>
-                <img src={signup} width="300" height="300" alt="Boommm" />
+                <img src={signup} width="300" height="300" alt="signupPagePicture" />
               </div>
               <Form className="w-50" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('register.registry')}</h1>
@@ -93,7 +90,7 @@ const SignupPage = () => {
                     type="text"
                     id="username"
                     name="username"
-                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === darkMode.light ? '' : 'bg-dark text-white'}`}
                     autoComplete="username"
                     placeholder={t('register.username')}
                     required
@@ -114,7 +111,7 @@ const SignupPage = () => {
                     type="password"
                     id="password"
                     name="password"
-                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === darkMode.light ? '' : 'bg-dark text-white'}`}
                     autoComplete="current-password"
                     placeholder={t('register.password')}
                     required
@@ -135,7 +132,7 @@ const SignupPage = () => {
                     type="password"
                     id="passwordConfirm"
                     name="passwordConfirm"
-                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === darkMode.light ? '' : 'bg-dark text-white'}`}
                     autoComplete="password-confirm"
                     placeholder={t('register.confirm')}
                     required

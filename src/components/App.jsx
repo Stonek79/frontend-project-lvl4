@@ -15,31 +15,28 @@ import SignupPage from './SignupPage.jsx';
 import routes from '../routes.js';
 import ModalComponent from './Modal.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
-import { darkMode, localStarageKeys } from '../constants.js';
-
-const { chatPagePath, loginPagePath, signupPagePath } = routes;
-const { themeMode, loggedUserData } = localStarageKeys;
-const { dark, darkTheme, light } = darkMode;
+import { darkMode, localStorageKeys } from '../constants.js';
 
 const getAuthHeader = () => {
-  const loggedUser = JSON.parse(localStorage.getItem(loggedUserData));
+  const loggedUser = JSON.parse(localStorage.getItem(localStorageKeys.loggedUserData));
   return loggedUser?.token
     ? { Authorization: `Bearer ${loggedUser.token}` } : {};
 };
 
-const primaryThemeMode = () => localStorage.getItem(themeMode);
 const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(primaryThemeMode() ?? light);
+  const primaryThemeMode = localStorage.getItem(localStorageKeys.themeMode);
+  const [theme, setTheme] = useState(primaryThemeMode ?? darkMode.light);
 
   useEffect(() => {
-    localStorage.setItem(themeMode, theme);
-    if (theme === light) {
-      return document.body.classList.remove(darkTheme);
+    localStorage.setItem(localStorageKeys.themeMode, theme);
+    if (theme === darkMode.light) {
+      return document.body.classList.remove(darkMode.darkThemeStyle);
     }
-    return document.body.classList.add(darkTheme);
+    return document.body.classList.add(darkMode.darkThemeStyle);
   }, [theme]);
 
-  const switchTheme = () => setTheme(() => (theme === light ? dark : light));
+  const switchTheme = () => setTheme(() => (theme === darkMode.light
+    ? darkMode.dark : darkMode.light));
 
   return (
     <ThemeContext.Provider value={{ theme, switchTheme }}>{children}</ThemeContext.Provider>
@@ -47,16 +44,16 @@ const ThemeProvider = ({ children }) => {
 };
 
 const AuthProvider = ({ children }) => {
-  const userData = JSON.parse(localStorage.getItem(loggedUserData));
+  const userData = JSON.parse(localStorage.getItem(localStorageKeys.loggedUserData));
   const [user, setUser] = useState(userData ? { username: userData.username } : null);
 
   const logIn = (loggedUser) => {
-    localStorage.setItem(loggedUserData, JSON.stringify(loggedUser));
+    localStorage.setItem(localStorageKeys.loggedUserData, JSON.stringify(loggedUser));
     setUser({ username: loggedUser.username });
   };
 
   const logOut = () => {
-    localStorage.removeItem(loggedUserData);
+    localStorage.removeItem(localStorageKeys.loggedUserData);
     setUser(null);
   };
 
@@ -77,7 +74,8 @@ const PrivateRoute = ({ children, ...props }) => {
     <Route
       {...props}
       render={({ location }) => (user
-        ? children : (<Redirect to={{ pathname: loginPagePath(), state: { from: location } }} />))}
+        ? children
+        : (<Redirect to={{ pathname: routes.loginPagePath(), state: { from: location } }} />))}
     />
   );
 };
@@ -90,13 +88,13 @@ const App = () => (
           <Navbar />
 
           <Switch>
-            <Route path={loginPagePath()}>
+            <Route path={routes.loginPagePath()}>
               <LoginPage />
             </Route>
-            <Route path={signupPagePath()}>
+            <Route path={routes.signupPagePath()}>
               <SignupPage />
             </Route>
-            <PrivateRoute exact path={chatPagePath()}>
+            <PrivateRoute exact path={routes.chatPagePath()}>
               <ChatPage />
             </PrivateRoute>
           </Switch>

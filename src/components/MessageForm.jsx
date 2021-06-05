@@ -7,12 +7,10 @@ import {
   Button, Form, FormControl, FormGroup, InputGroup, Spinner,
 } from 'react-bootstrap';
 
-import { itemsLength } from '../constants.js';
+import { inputItemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 import AuthContext from '../context/AuthContext.jsx';
 import { getCurrentChannel } from '../slices/channelSlice.js';
-
-const { messageMax } = itemsLength;
 
 const MessageForm = () => {
   const { t } = useTranslation();
@@ -26,7 +24,7 @@ const MessageForm = () => {
     initialValues: { message: '' },
     validationSchema: Yup.object({
       message: Yup.string().trim()
-        .max(messageMax)
+        .max(inputItemsLength.messageMax)
         .required(t('errors.required')),
     }),
     onSubmit: async (initialValues, { resetForm, setErrors }) => {

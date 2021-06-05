@@ -1,20 +1,20 @@
 const darkMode = {
   dark: 'dark',
-  darkTheme: 'dark-theme',
+  darkThemeStyle: 'dark-theme',
   light: 'light',
   lightThemeBtnPic: '🌜',
   darkThemeBtnPic: '🌞',
   white: 'white',
 };
 
-const itemsLength = {
+const inputItemsLength = {
   maxLength: 20,
   messageMax: 400,
   minLength: 3,
   minPassLength: 6,
 };
 
-const localStarageKeys = {
+const localStorageKeys = {
   themeMode: 'themeMode',
   loggedUserData: 'loggedUserData',
 };
@@ -35,8 +35,8 @@ const socketActions = {
 
 export {
   darkMode,
-  itemsLength,
-  localStarageKeys,
+  inputItemsLength,
+  localStorageKeys,
   modalTypes,
   socketActions,
 };

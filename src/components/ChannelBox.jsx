@@ -11,11 +11,13 @@ import {
 } from '../slices/channelSlice.js';
 import ThemeContext from '../context/ThemeContext.jsx';
 
-const { add, remove, rename } = modalTypes;
-
-const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: add }));
-const handleRemoveChannel = (dispatch, id) => () => dispatch(openModal({ type: remove, id }));
-const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({ type: rename, id }));
+const handleAddChannel = (dispatch) => () => dispatch(openModal({ type: modalTypes.add }));
+const handleRemoveChannel = (dispatch, id) => () => dispatch(openModal({
+  type: modalTypes.remove, id,
+}));
+const handleRenameChannel = (dispatch, id) => () => dispatch(openModal({
+  type: modalTypes.rename, id,
+}));
 const handleChangeChannel = (dispatch, id) => () => dispatch(setCurrentChannelId({ id }));
 
 const ChannelBox = () => {

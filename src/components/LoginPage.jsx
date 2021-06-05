@@ -13,8 +13,6 @@ import login from '../../assets/images/login.jpg';
 import ThemeContext from '../context/ThemeContext.jsx';
 import { darkMode } from '../constants.js';
 
-const { dark, light } = darkMode;
-
 const LoginPage = () => {
   const { t } = useTranslation();
   const { theme } = useContext(ThemeContext);
@@ -48,8 +46,8 @@ const LoginPage = () => {
       try {
         const { data } = await axios.post(loginPath(), value);
         logIn(data);
-        const locationState = location.state.from.pathname;
-        history.replace(locationState ?? chatPagePath());
+        const { pathname } = location.state.from;
+        history.replace(pathname ?? chatPagePath());
       } catch (err) {
         console.log(err.response);
         nameInput.current.select();
@@ -62,9 +60,9 @@ const LoginPage = () => {
     <div className="container-fluid flex-grow-1">
       <div className="row justify-content-center align-content-center h-100">
         <div className="col-xl-8 col-xxl-6">
-          <Card id="logIn" className={`shadow-sm bg-${theme === light ? '' : dark}`}>
+          <Card id="logIn" className={`shadow-sm bg-${theme === darkMode.light ? '' : darkMode.dark}`}>
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
-              <div><img src={login} width="300" height="300" alt="Boommmm" /></div>
+              <div><img src={login} width="300" height="300" alt="loginPagePicture" /></div>
               <Form className="w-50" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('login.logIn')}</h1>
                 <FormGroup className="form-floating mb-3">
@@ -73,7 +71,7 @@ const LoginPage = () => {
                     type="text"
                     id="username"
                     name="username"
-                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === darkMode.light ? '' : 'bg-dark text-white'}`}
                     autoComplete="username"
                     required
                     placeholder={t('login.nickname')}
@@ -88,7 +86,7 @@ const LoginPage = () => {
                     type="password"
                     id="password"
                     name="password"
-                    className={`${theme === light ? '' : 'bg-dark text-white'}`}
+                    className={`${theme === darkMode.light ? '' : 'bg-dark text-white'}`}
                     autoComplete="current-password"
                     required
                     placeholder={t('login.password')}

@@ -9,8 +9,6 @@ import ApiContext from '../context/ApiContext.jsx';
 import ThemeContext from '../context/ThemeContext.jsx';
 import { darkMode } from '../constants.js';
 
-const { light } = darkMode;
-
 const RemoveChannel = ({ close, channelId }) => {
   const { t } = useTranslation();
   const { theme } = useContext(ThemeContext);
@@ -34,7 +32,12 @@ const RemoveChannel = ({ close, channelId }) => {
     <>
       <Modal.Header>
         <Modal.Title>{t('modals.remChannel')}</Modal.Title>
-        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === light ? '' : light}`} onClick={close} />
+        <Button
+          aria-label="Close"
+          variant="secondary"
+          className={`btn-close bg-${theme === darkMode.light ? '' : darkMode.light}`}
+          onClick={close}
+        />
       </Modal.Header>
       <Modal.Body className="text-danger">
         <p><b>{t('modals.confirm')}</b></p>

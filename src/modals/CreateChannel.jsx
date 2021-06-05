@@ -6,13 +6,10 @@ import {
   Button, Form, FormControl, InputGroup, Modal, Spinner,
 } from 'react-bootstrap';
 
-import { darkMode, itemsLength } from '../constants.js';
+import { darkMode, inputItemsLength } from '../constants.js';
 import ApiContext from '../context/ApiContext.jsx';
 import { setCurrentChannelId } from '../slices/channelSlice.js';
 import ThemeContext from '../context/ThemeContext.jsx';
-
-const { minLength, maxLength } = itemsLength;
-const { light } = darkMode;
 
 const CreateChannel = ({ close, channelsNames, dispatch }) => {
   const { t } = useTranslation();
@@ -24,8 +21,8 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
     validateOnChange: false,
     validationSchema: Yup.object({
       channelName: Yup.string().trim()
-        .min(minLength, 'errors.length')
-        .max(maxLength, 'errors.length')
+        .min(inputItemsLength.minLength, 'errors.length')
+        .max(inputItemsLength.maxLength, 'errors.length')
         .notOneOf(channelsNames, 'errors.uniq')
         .required('errors.required'),
     }),
@@ -52,7 +49,12 @@ const CreateChannel = ({ close, channelsNames, dispatch }) => {
     <>
       <Modal.Header>
         <Modal.Title>{t('modals.addChannel')}</Modal.Title>
-        <Button aria-label="Close" variant="secondary" className={`btn-close bg-${theme === light ? '' : light}`} onClick={close} />
+        <Button
+          aria-label="Close"
+          variant="secondary"
+          className={`btn-close bg-${theme === darkMode.light ? '' : darkMode.light}`}
+          onClick={close}
+        />
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
