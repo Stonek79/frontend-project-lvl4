@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -24,19 +24,19 @@ const getAuthHeader = () => {
 };
 
 const ThemeProvider = ({ children }) => {
-  const primaryThemeMode = localStorage.getItem(localStorageKeys.themeMode);
-  const [theme, setTheme] = useState(primaryThemeMode ?? darkMode.light);
+  const primaryThemeMode = localStorage.getItem(localStorageKeys.themeMode) ?? darkMode.light;
+  const [theme, setTheme] = useState(primaryThemeMode);
 
-  useEffect(() => {
-    localStorage.setItem(localStorageKeys.themeMode, theme);
-    if (theme === darkMode.light) {
+  if (theme === 'dark') document.body.classList.add(darkMode.darkThemeStyle);
+
+  const switchTheme = (mode) => {
+    setTheme(() => (theme === darkMode.light ? darkMode.dark : darkMode.light));
+    localStorage.setItem(localStorageKeys.themeMode, mode);
+    if (mode === darkMode.light) {
       return document.body.classList.remove(darkMode.darkThemeStyle);
     }
     return document.body.classList.add(darkMode.darkThemeStyle);
-  }, [theme]);
-
-  const switchTheme = () => setTheme(() => (theme === darkMode.light
-    ? darkMode.dark : darkMode.light));
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, switchTheme }}>{children}</ThemeContext.Provider>

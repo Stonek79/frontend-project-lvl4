@@ -27,7 +27,11 @@ const Navbar = () => {
         </NavbarBootstrap.Brand>
         <Nav>
           {auth.user && (<Button variant="outline-primary" onClick={auth.logOut}>{t('mainPage.logOut')}</Button>)}
-          <Button className="d-flex ms-2" variant="outline-primary" onClick={switchTheme}>
+          <Button
+            className="d-flex ms-2"
+            variant="outline-primary"
+            onClick={() => switchTheme(theme === darkMode.light ? darkMode.dark : darkMode.light)}
+          >
             {' '}
             <span>
               {(theme === darkMode.light

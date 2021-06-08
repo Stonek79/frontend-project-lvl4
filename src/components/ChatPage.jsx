@@ -1,4 +1,3 @@
-/* eslint-disable no-return-assign */
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Container, Spinner } from 'react-bootstrap';
@@ -23,25 +22,19 @@ const MainPage = () => {
   const { t } = useTranslation();
   const { getStoreData } = useContext(ApiContext);
   const { getAuthHeader, logOut } = useContext(AuthContext);
-  const [hasData, setDataInfo] = useState(false);
+  const [isLoaded, setLoadingStatus] = useState(false);
   const { theme } = useContext(ThemeContext);
+
   useEffect(() => {
-    const mounted = { state: false };
-
-    const getChatData = () => {
-      if (!mounted.state) {
-        setDataInfo(true);
-        const authHeader = getAuthHeader();
-        getStoreData({ authHeader, logOut });
-      }
-    };
-
-    getChatData();
-
-    return () => mounted.state = true;
+    setLoadingStatus(true);
+    const authHeader = getAuthHeader();
+    getStoreData({ authHeader, logOut });
   }, []);
 
-  return (hasData && ChatBox(theme)) || (
+  if (isLoaded) {
+    return ChatBox(theme);
+  }
+  return (
     <>
       <Spinner animation="grow" role="status" variant="primary" />
       <span>{(t('process.loading'))}</span>
