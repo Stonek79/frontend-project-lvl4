@@ -31,15 +31,15 @@ const MainPage = () => {
     getStoreData({ authHeader, logOut });
   }, []);
 
-  if (isLoaded) {
-    return ChatBox(theme);
+  if (!isLoaded) {
+    return (
+      <>
+        <Spinner animation="grow" role="status" variant="primary" />
+        <span>{(t('process.loading'))}</span>
+      </>
+    );
   }
-  return (
-    <>
-      <Spinner animation="grow" role="status" variant="primary" />
-      <span>{(t('process.loading'))}</span>
-    </>
-  );
+  return ChatBox(theme);
 };
 
 export default MainPage;
