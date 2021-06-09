@@ -49,6 +49,11 @@ export default async (socket) => {
     getStoreData,
   };
 
+  socket.on('reconnect', () => {
+    // store.dispatch(updateChannels(data));
+    console.log('test reconnect');
+  });
+
   socket.on(actions.newChannel, (data) => {
     store.dispatch(addChannel({ channelData: data }));
   });
