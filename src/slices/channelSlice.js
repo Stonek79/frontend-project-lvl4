@@ -59,8 +59,12 @@ const channelSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(updateChannels.fulfilled, (state, action) => {
+        const channelsList = state.channels.map((ch) => ch.id);
+        const hasChannel = channelsList.includes(action.payload.currentChannelId);
+        console.log(hasChannel, channelsList);
         state.channels = action.payload.channels;
-        state.currentChannelId = state.currentChannelId ?? action.payload.currentChannelId;
+        state.currentChannelId = hasChannel
+          ? state.currentChannelId : action.payload.currentChannelId;
       });
   },
 });
