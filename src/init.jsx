@@ -40,7 +40,6 @@ export default async (socket) => {
   });
 
   const getStoreData = (authData) => {
-    console.log('reconnect');
     socket.on('connect', () => {
       if (socket.connected) store.dispatch(updateChannels(authData));
     });

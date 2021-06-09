@@ -61,7 +61,6 @@ const channelSlice = createSlice({
       .addCase(updateChannels.fulfilled, (state, action) => {
         const channelsList = action.payload.channels.map((ch) => ch.id);
         const hasChannel = channelsList.includes(state.currentChannelId);
-        console.log(hasChannel, channelsList);
         state.channels = action.payload.channels;
         state.currentChannelId = hasChannel
           ? state.currentChannelId : action.payload.currentChannelId;
