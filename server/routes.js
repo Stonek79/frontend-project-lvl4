@@ -45,11 +45,6 @@ export default (app, defaultState = {}) => {
   app.io.on('connect', (socket) => {
     console.log({ 'socket.id': socket.id });
 
-    socket.on('reconnect', () => {
-      const currentState = _.omit(state, 'users');
-      app.io.emit('reconnect', currentState);
-    });
-
     socket.on('newMessage', (message, acknowledge) => {
       const messageWithId = {
         ...message,

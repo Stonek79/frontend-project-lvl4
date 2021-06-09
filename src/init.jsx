@@ -39,7 +39,12 @@ export default async (socket) => {
     });
   });
 
-  const getStoreData = (authData) => store.dispatch(updateChannels(authData));
+  const getStoreData = (authData) => {
+    console.log('reconnect');
+    socket.on('connect', () => {
+      if (socket.connected) store.dispatch(updateChannels(authData));
+    });
+  };
 
   const api = {
     sendMessage: emitSocketWithAcknowledgement(actions.newMessage),
@@ -48,11 +53,6 @@ export default async (socket) => {
     removeChannel: emitSocketWithAcknowledgement(actions.removeChannel),
     getStoreData,
   };
-
-  socket.on('reconnect', () => {
-    // store.dispatch(updateChannels(data));
-    console.log('test reconnect');
-  });
 
   socket.on(actions.newChannel, (data) => {
     store.dispatch(addChannel({ channelData: data }));
