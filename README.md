@@ -11,4 +11,4 @@
 
 ## Heroku
 
-* [Chat(Slack)](https://chatslacklvl4.herokuapp.com/)
+[Chat(Slack)](https://chatslacklvl4.herokuapp.com/){target="_blank"}
